@@ -78,7 +78,6 @@ export const createLLMFunction = ({
       },
     });
 
-
     let fullContent = '';
     let generationId = '';
     let currentEditingFileName = null;
@@ -252,8 +251,6 @@ export const createLLMFunction = ({
 
     const chunks = [];
     let reasoningContent = '';
-
-
 
     // Configure reasoning tokens based on enableReasoningTokens flag
     const requestConfig: any = {

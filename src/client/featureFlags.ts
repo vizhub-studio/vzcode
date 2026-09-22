@@ -1,6 +1,14 @@
 export const enableLiveKit =
   import.meta.env.VITE_ENABLE_LIVEKIT === 'true';
 
+// Enables the speech-to-text microphone button in the AI chat
+// input. Off by default: speech recognition is a browser media
+// feature, and merely constructing a `SpeechRecognition` instance
+// can make the browser show a microphone permission prompt. Set
+// `VITE_ENABLE_VOICE_INPUT=true` to opt in.
+export const enableVoiceInput =
+  import.meta.env.VITE_ENABLE_VOICE_INPUT === 'true';
+
 export const enableAIChat = true;
 
 export const enableDiffView = true;

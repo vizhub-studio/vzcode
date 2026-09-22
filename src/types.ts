@@ -262,6 +262,9 @@ export interface ExtendedVizChat extends VizChat {
   currentStatus?: string;
   isStreaming?: boolean;
   model?: string; // The LLM model used for this chat
+  // Phase 3: explicit escalation metadata persisted on the chat.
+  baseCommitId?: string; // Commit the current AI attempt is applied on top of
+  escalationLevel?: number; // How many times "Try Harder" has been pressed
 }
 
 // Extended VizChatMessage with progressive rendering support

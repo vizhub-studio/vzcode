@@ -10,9 +10,49 @@ import {
   ButtonGroup,
   ToggleButton,
 } from '../../client/bootstrap';
-import { enableAskMode } from '../../client/featureFlags';
+import {
+  enableAskMode,
+  enableVoiceInput,
+} from '../../client/featureFlags';
 import { useSpeechRecognition } from './useSpeechRecognition';
 import { MicSVG, MicOffSVG } from '../../client/Icons';
+
+/**
+ * Microphone toggle for voice typing. Purely presentational: the
+ * speech recognition state lives in `ChatInputComponent`, and is only
+ * ever instantiated when the user actually toggles the button.
+ *
+ * Rendered only when `enableVoiceInput` is set. See `featureFlags`.
+ */
+const VoiceInputButton = ({
+  isSpeaking,
+  onToggle,
+}: {
+  isSpeaking: boolean;
+  onToggle: () => void;
+}) => {
+  const label = isSpeaking
+    ? 'Stop voice typing'
+    : 'Start voice typing';
+
+  return (
+    <Button
+      variant={isSpeaking ? 'danger' : 'outline-secondary'}
+      size="sm"
+      onClick={onToggle}
+      aria-label={label}
+      title={label}
+      style={{
+        borderColor: isSpeaking ? undefined : '#dee2e6',
+        borderRadius: '0.375rem',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+      }}
+    >
+      {isSpeaking ? <MicOffSVG /> : <MicSVG />}
+    </Button>
+  );
+};
 
 interface ChatInputProps {
   aiChatMessage: string;
@@ -39,7 +79,8 @@ const ChatInputComponent = ({
 }: ChatInputProps) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Use the speech recognition hook
+  // Speech recognition is created lazily on first toggle, so simply
+  // mounting this hook does not touch any browser media APIs.
   const {
     isSpeaking,
     toggleSpeechRecognition,
@@ -186,33 +227,12 @@ const ChatInputComponent = ({
             {aiChatMessage ? 'Press Enter to send' : ''}
           </span>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <Button
-              variant={
-                isSpeaking ? 'danger' : 'outline-secondary'
-              }
-              size="sm"
-              onClick={toggleSpeechRecognition}
-              aria-label={
-                isSpeaking
-                  ? 'Stop voice typing'
-                  : 'Start voice typing'
-              }
-              title={
-                isSpeaking
-                  ? 'Stop voice typing'
-                  : 'Start voice typing'
-              }
-              style={{
-                borderColor: isSpeaking
-                  ? undefined
-                  : '#dee2e6',
-                borderRadius: '0.375rem',
-                borderWidth: '1px',
-                borderStyle: 'solid',
-              }}
-            >
-              {isSpeaking ? <MicOffSVG /> : <MicSVG />}
-            </Button>
+            {enableVoiceInput && (
+              <VoiceInputButton
+                isSpeaking={isSpeaking}
+                onToggle={toggleSpeechRecognition}
+              />
+            )}
             <Button
               variant={
                 aiChatMessage.trim()

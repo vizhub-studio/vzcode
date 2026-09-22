@@ -26,6 +26,7 @@ import {
 import './style.scss';
 import { useShareDB } from './useShareDB';
 import { useESLint } from '../useESLint';
+import { enableLiveKit } from '../featureFlags';
 
 // Instantiate the Prettier worker.
 const prettierWorker = new PrettierWorker();
@@ -99,6 +100,29 @@ function App() {
   // Clicking on it accepts it but should not.
   const enableCopilot = false;
 
+  // The editor UI itself. Rendered with or without the LiveKit
+  // provider around it, so that LiveKit (and its audio capture) is
+  // only mounted when explicitly enabled.
+  const appContent = (
+    <>
+      <div className="app">
+        <VZLeft />
+        <VZMiddle
+          aiCopilotEndpoint={
+            enableCopilot ? '/ai-copilot' : null
+          }
+          esLintSource={esLintSource}
+        />
+        {enableRightPanel ? <VZRight /> : null}
+        <VZResizer side="left" />
+        {enableRightPanel ? (
+          <VZResizer side="right" />
+        ) : null}
+      </div>
+      <PersistUsername />
+    </>
+  );
+
   return (
     <SplitPaneResizeProvider>
       <VZCodeProvider
@@ -120,30 +144,20 @@ function App() {
         aiChatEndpoint="/ai-chat-message"
         aiChatOptions={{}}
       >
-        <LiveKitRoom
-          audio={true}
-          token={liveKitToken}
-          serverUrl={serverUrl}
-          connect={liveKitConnection}
-          style={{ height: '100%' }}
-        >
-          <div className="app">
-            <VZLeft />
-            <VZMiddle
-              aiCopilotEndpoint={
-                enableCopilot ? '/ai-copilot' : null
-              }
-              esLintSource={esLintSource}
-            />
-            {enableRightPanel ? <VZRight /> : null}
-            <VZResizer side="left" />
-            {enableRightPanel ? (
-              <VZResizer side="right" />
-            ) : null}
-          </div>
-          <PersistUsername />
-          <RoomAudioRenderer />
-        </LiveKitRoom>
+        {enableLiveKit ? (
+          <LiveKitRoom
+            audio={true}
+            token={liveKitToken}
+            serverUrl={serverUrl}
+            connect={liveKitConnection}
+            style={{ height: '100%' }}
+          >
+            {appContent}
+            <RoomAudioRenderer />
+          </LiveKitRoom>
+        ) : (
+          appContent
+        )}
       </VZCodeProvider>
     </SplitPaneResizeProvider>
   );

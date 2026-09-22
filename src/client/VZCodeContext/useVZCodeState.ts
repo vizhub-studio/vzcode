@@ -313,6 +313,22 @@ export const useVZCodeState = ({
     [handleChatError],
   );
 
+  // Phase 5: Restore the prompt into the chat input when the server
+  // populates `currentChatDraft` (e.g. after Undo), then clear it so it
+  // is applied exactly once.
+  useEffect(() => {
+    const draft = (content as any)?.currentChatDraft;
+    if (typeof draft === 'string' && draft.trim()) {
+      setAIChatMessage(draft);
+      submitOperation((currentContent) => {
+        const next: any = { ...currentContent };
+        next.currentChatDraft = undefined;
+        return next;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [(content as any)?.currentChatDraft]);
+
   // Message history navigation functions
   const navigateMessageHistoryUp = useCallback(() => {
     if (messageHistory.length === 0) return;
@@ -509,6 +525,7 @@ export const useVZCodeState = ({
 
         // The backend handles all ShareDB operations for successful responses
         // The loading state is now managed via ShareDB aiStatus
+        return responseData;
       } catch (error) {
         console.error('Error getting AI response:', error);
         setAIErrorMessage(

@@ -81,6 +81,54 @@ export const addUserMessage = (
   return userMessage;
 };
 
+/**
+ * Persists AI metadata fields on a chat (Phase 3).
+ *
+ * `baseCommitId` records the commit the current AI attempt is applied on
+ * top of. `escalationLevel` records how many times the user has pressed
+ * "Try Harder". Persisting these on the chat makes retries idempotent and
+ * keeps the level consistent across reloads and clients.
+ *
+ * Only fields that are explicitly provided are written.
+ */
+export const setChatAIMetadata = (
+  shareDBDoc: ShareDBDoc<VizContent>,
+  chatId: VizChatId,
+  metadata: {
+    baseCommitId?: string;
+    escalationLevel?: number;
+  },
+) => {
+  const chat = shareDBDoc.data.chats[chatId];
+  if (!chat) {
+    return;
+  }
+
+  const updates: Record<string, unknown> = {};
+  if (metadata.baseCommitId !== undefined) {
+    updates.baseCommitId = metadata.baseCommitId;
+  }
+  if (metadata.escalationLevel !== undefined) {
+    updates.escalationLevel = metadata.escalationLevel;
+  }
+  if (Object.keys(updates).length === 0) {
+    return;
+  }
+
+  const op = diff(shareDBDoc.data, {
+    ...shareDBDoc.data,
+    chats: {
+      ...shareDBDoc.data.chats,
+      [chatId]: {
+        ...chat,
+        ...updates,
+        updatedAt: dateToTimestamp(new Date()),
+      },
+    },
+  });
+  shareDBDoc.submitOp(op);
+};
+
 const DEBUG = false;
 
 /**

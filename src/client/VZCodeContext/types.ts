@@ -178,7 +178,7 @@ export type VZCodeContextValue = {
   handleSendMessage: (
     messageToSend?: string,
     options?: Record<string, string>,
-  ) => void;
+  ) => Promise<any>;
 
   // Message history navigation
   navigateMessageHistoryUp: () => void;
@@ -204,7 +204,7 @@ export type VZCodeContextValue = {
     handleSendMessage?: (
       messageToSend?: string,
       options?: Record<string, string>,
-    ) => void;
+    ) => Promise<any>;
   }) => React.ReactNode;
 
   // Feature flags
@@ -254,7 +254,7 @@ export interface VZCodeProviderProps {
     handleSendMessage?: (
       messageToSend?: string,
       options?: Record<string, string>,
-    ) => void;
+    ) => Promise<any>;
   }) => React.ReactNode;
   iframeRef?: React.MutableRefObject<HTMLIFrameElement>;
   handleChatError?: (

@@ -335,30 +335,66 @@ export const finalizeAIMessage = (
 };
 
 /**
- * Adds diff data to the most recent AI message
+ * Adds diff data to a specific AI message by ID
+ * Phase 3 Fix: Use explicit message ID instead of assuming
+ * last message is AI, preventing bugs with rapid message sends
  */
 export const addDiffToAIMessage = (
   shareDBDoc: ShareDBDoc<VizContent>,
   chatId: VizChatId,
   diffData: any,
-  beforeCommitId?: string, // Commit ID before AI changes for VizHub integration
+  beforeCommitId?: string, // Commit ID before AI changes
+  messageId?: string, // Explicit AI message ID to update
 ) => {
   const chat = shareDBDoc.data.chats[chatId];
-  const messages = [...chat.messages];
+  if (!chat || !chat.messages) {
+    console.warn(
+      `Chat ${chatId} not found or has no messages`,
+    );
+    return;
+  }
 
-  // Find the most recent AI message
-  const lastAIMessageIndex = messages.length - 1;
-  if (
-    lastAIMessageIndex >= 0 &&
-    messages[lastAIMessageIndex].role === 'assistant'
-  ) {
+  const messages = [...chat.messages];
+  let targetMessageIndex = -1;
+
+  // Phase 3 Fix: Use explicit message ID if provided
+  if (messageId) {
+    targetMessageIndex = messages.findIndex(
+      (msg) => msg.id === messageId,
+    );
+    if (
+      targetMessageIndex === -1 ||
+      messages[targetMessageIndex].role !== 'assistant'
+    ) {
+      console.warn(
+        `AI message with id ${messageId} not found in chat ${chatId}`,
+      );
+      return;
+    }
+  } else {
+    // Fallback: Find the most recent AI message (safer than
+    // just assuming last message)
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'assistant') {
+        targetMessageIndex = i;
+        break;
+      }
+    }
+
+    if (targetMessageIndex === -1) {
+      console.warn(`No AI message found in chat ${chatId}`);
+      return;
+    }
+  }
+
+  // Update the target message with diff data
+  if (targetMessageIndex >= 0) {
     const newMessage = {
-      ...messages[lastAIMessageIndex],
+      ...messages[targetMessageIndex],
       diffData,
-      ...(beforeCommitId && { beforeCommitId }), // Add beforeCommitId for VizHub integration
+      ...(beforeCommitId && { beforeCommitId }),
     };
-    // Use type assertion to extend the message with diffData
-    (messages[lastAIMessageIndex] as any) = newMessage;
+    (messages[targetMessageIndex] as any) = newMessage;
 
     const messageOp = diff(shareDBDoc.data, {
       ...shareDBDoc.data,
@@ -373,6 +409,11 @@ export const addDiffToAIMessage = (
     });
 
     shareDBDoc.submitOp(messageOp);
+
+    DEBUG &&
+      console.log(
+        `addDiffToAIMessage: Successfully added diff to message ${targetMessageIndex} in chat ${chatId}`,
+      );
   }
 };
 

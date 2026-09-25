@@ -189,6 +189,7 @@ export const getOrCreateEditor = async ({
   rainbowBracketsEnabled = true,
   setIsAIChatOpen,
   setAIChatMessage,
+  enableBuiltInAIChat = true,
 }: {
   // TODO pass this in from the outside
   paneId?: PaneId;
@@ -226,6 +227,10 @@ export const getOrCreateEditor = async ({
   rainbowBracketsEnabled?: boolean; // New parameter type
   setIsAIChatOpen: (isAIChatOpen: boolean) => void;
   setAIChatMessage: (message: string) => void;
+  // When false, skip the "Implement the TODO" widget, which opens
+  // VZCode's built-in AI chat (hosts that own the AI entry point
+  // disable it).
+  enableBuiltInAIChat?: boolean;
 }): Promise<ExtendedEditorCacheValue> => {
   // Cache hit
 
@@ -580,7 +585,7 @@ export const getOrCreateEditor = async ({
       return todoPlugin;
     }
 
-    if (enableToDoPlugin) {
+    if (enableToDoPlugin && enableBuiltInAIChat) {
       extensions.push(createToDoPlugin());
     }
   }

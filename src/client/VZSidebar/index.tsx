@@ -40,14 +40,22 @@ import { useDragAndDrop } from './useDragAndDrop';
 import { createAICopyPasteHandlers } from './aiCopyPaste';
 import {
   enableLiveKit,
-  enableAIChat,
+  enableAIChat as enableAIChatFeatureFlag,
 } from '../featureFlags';
+import { handleAIChatButtonClick } from '../aiChatButtonEvent';
 import './styles.scss';
 import { VisualEditor } from './VisualEditor';
 
 const enableConnectionStatus = true;
 
 export const VZSidebar = ({
+  // Host-provided override so consumers (e.g. VizHub Studio, which has
+  // its own top-bar "AI Edit" entry point) can hide the "Edit with AI"
+  // sidebar button. Defaults to the compile-time feature flag.
+  enableAIChat = enableAIChatFeatureFlag,
+  // When set, clicking the button dispatches this custom event instead
+  // of opening VZCode's built-in AI chat, letting the host handle it.
+  aiChatButtonEvent,
   createFileTooltipText = (
     <>
       <strong>New file</strong>
@@ -135,6 +143,8 @@ export const VZSidebar = ({
   voiceChatToolTipText?: React.ReactNode;
   aiChatToolTipText?: React.ReactNode;
   visualEditorToolTipText?: React.ReactNode;
+  enableAIChat?: boolean;
+  aiChatButtonEvent?: string;
 }) => {
   const {
     files,
@@ -341,11 +351,17 @@ export const VZSidebar = ({
               <i
                 id="ai-chat-icon"
                 className="icon-button icon-button-dark"
-                onClick={() => {
-                  setIsAIChatOpen(true);
-                  setIsSearchOpen(false);
-                  setSidebarView(true); // Switch to AI chat view
-                }}
+                onClick={() =>
+                  handleAIChatButtonClick({
+                    aiChatButtonEvent,
+                    target: window,
+                    openAIChat: () => {
+                      setIsAIChatOpen(true);
+                      setIsSearchOpen(false);
+                      setSidebarView(true); // Switch to AI chat view
+                    },
+                  })
+                }
               >
                 <SparklesSVG />
               </i>

@@ -10,10 +10,25 @@ import { VoiceChatModal } from './VZSidebar/VoiceChatModal';
 // * The sidebar
 // * The settings modal
 // * The create file modal
-export const VZLeft = ({ enableUsernameField = true }) => {
+//
+// `enableAIChat` is forwarded to `VZSidebar` so a host can hide the
+// "Edit with AI" sidebar button. `undefined` falls back to the
+// compile-time feature flag.
+export const VZLeft = ({
+  enableUsernameField = true,
+  enableAIChat,
+  aiChatButtonEvent,
+}: {
+  enableUsernameField?: boolean;
+  enableAIChat?: boolean;
+  aiChatButtonEvent?: string;
+} = {}) => {
   return (
     <div className="left">
-      <VZSidebar />
+      <VZSidebar
+        enableAIChat={enableAIChat}
+        aiChatButtonEvent={aiChatButtonEvent}
+      />
       <VZSettings
         enableUsernameField={enableUsernameField}
       />

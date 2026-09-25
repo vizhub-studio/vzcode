@@ -22,12 +22,14 @@ export const CodeEditor = ({
   customInteractRules,
   aiCopilotEndpoint,
   esLintSource,
+  enableBuiltInAIChat = true,
 }: {
   customInteractRules?: Array<InteractRule>;
   aiCopilotEndpoint?: string;
   esLintSource: (
     view: EditorView,
   ) => Promise<readonly Diagnostic[]>;
+  enableBuiltInAIChat?: boolean;
 }) => {
   const {
     activePane,
@@ -118,6 +120,7 @@ export const CodeEditor = ({
         esLintSource,
         setIsAIChatOpen,
         setAIChatMessage,
+        enableBuiltInAIChat,
       });
 
       if (isMounted) {
@@ -143,6 +146,7 @@ export const CodeEditor = ({
     esLintSource,
     setIsAIChatOpen,
     setAIChatMessage,
+    enableBuiltInAIChat,
   ]);
 
   // Every time the active file switches from one file to another,

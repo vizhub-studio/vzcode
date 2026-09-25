@@ -28,6 +28,7 @@ const PaneView = ({
   aiAssistClickOverride,
   aiCopilotEndpoint,
   esLintSource,
+  enableBuiltInAIChat,
 }) => {
   // This prevents the CodeEditor from rendering
   // during SSR.
@@ -67,6 +68,7 @@ const PaneView = ({
               customInteractRules={customInteractRules}
               aiCopilotEndpoint={aiCopilotEndpoint}
               esLintSource={esLintSource}
+              enableBuiltInAIChat={enableBuiltInAIChat}
             />
           );
         })()}
@@ -104,6 +106,8 @@ export const VZMiddle = ({
   aiCopilotEndpoint,
   customInteractRules,
   esLintSource,
+  enableAIChat = true,
+  aiChatButtonEvent,
 }: {
   enableAIAssist?: boolean;
   aiAssistEndpoint?: string;
@@ -115,7 +119,14 @@ export const VZMiddle = ({
   esLintSource: (
     view: EditorView,
   ) => Promise<readonly Diagnostic[]>;
+  enableAIChat?: boolean;
+  aiChatButtonEvent?: string;
 }) => {
+  // The built-in AI chat (including the TODO widget, which prefills a
+  // chat message) is only reachable when the feature is enabled and the
+  // host hasn't taken over the sidebar button with a custom event.
+  const enableBuiltInAIChat =
+    enableAIChat && !aiChatButtonEvent;
   const { codeEditorWidth } = useContext(
     SplitPaneResizeContext,
   );
@@ -152,6 +163,7 @@ export const VZMiddle = ({
         aiAssistClickOverride={aiAssistClickOverride}
         aiCopilotEndpoint={aiCopilotEndpoint}
         esLintSource={esLintSource}
+        enableBuiltInAIChat={enableBuiltInAIChat}
       />
       <CodeErrorOverlay
         errorMessage={errorMessage}

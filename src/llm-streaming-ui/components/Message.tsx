@@ -13,8 +13,6 @@ import { DiffView, DiffViewRef } from './DiffView';
 import { UnifiedFilesDiff } from '../../utils/fileDiff';
 import { enableDiffView } from '../../client/featureFlags';
 
-const DEBUG = true;
-
 interface MessageProps {
   id: string;
   role: 'user' | 'assistant';

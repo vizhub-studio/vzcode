@@ -14,8 +14,7 @@ describe('aiChatButtonEvent', () => {
     emitAIChatButtonEvent(AI_CHAT_BUTTON_EVENT, target);
 
     expect(listener).toHaveBeenCalledTimes(1);
-    const event = listener.mock
-      .calls[0][0] as CustomEvent;
+    const event = listener.mock.calls[0][0] as CustomEvent;
     expect(event.type).toBe(AI_CHAT_BUTTON_EVENT);
     expect(event.detail).toEqual({
       source: 'vzcode-sidebar',

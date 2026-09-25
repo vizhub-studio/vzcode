@@ -12,6 +12,12 @@ export { VZResizer } from './VZResizer';
 export { VZLeft } from './VZLeft';
 export { VZMiddle } from './VZMiddle';
 export {
+  AI_CHAT_BUTTON_EVENT,
+  emitAIChatButtonEvent,
+  handleAIChatButtonClick,
+} from './aiChatButtonEvent';
+export type { AIChatButtonEventDetail } from './aiChatButtonEvent';
+export {
   SplitPaneResizeProvider,
   SplitPaneResizeContext,
 } from './SplitPaneResizeContext';

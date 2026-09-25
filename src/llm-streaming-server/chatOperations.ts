@@ -314,7 +314,10 @@ export const addDiffToAIMessage = (
     targetMessageIndex = messages.findIndex(
       (msg) => msg.id === messageId,
     );
-    if (targetMessageIndex === -1) {
+    if (
+      targetMessageIndex === -1 ||
+      messages[targetMessageIndex].role !== 'assistant'
+    ) {
       console.warn(
         `AI message with id ${messageId} not found in chat ${chatId}`,
       );

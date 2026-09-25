@@ -427,6 +427,7 @@ export const VZSidebar = ({
                 setIsVisualEditorOpen(true);
                 setIsAIChatOpen(false);
                 setIsSearchOpen(false);
+                setSidebarView(false); // Switch to files view width for visual editor
               }}
             >
               <AdjustmentSVG />

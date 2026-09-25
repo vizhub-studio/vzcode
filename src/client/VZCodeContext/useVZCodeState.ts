@@ -541,6 +541,7 @@ export const useVZCodeState = ({
       activeChatId,
       aiChatMode,
       autoForkAndRetryAI,
+      onAIChatMessageSubmitted,
       DEBUG,
       setAIErrorMessage,
     ],

@@ -10,7 +10,8 @@
  *
  * The constant is exported so hosts don't hardcode the event name.
  */
-export const AI_CHAT_BUTTON_EVENT = 'vzcode:ai-chat-button-click';
+export const AI_CHAT_BUTTON_EVENT =
+  'vzcode:ai-chat-button-click';
 
 export interface AIChatButtonEventDetail {
   source: 'vzcode-sidebar';

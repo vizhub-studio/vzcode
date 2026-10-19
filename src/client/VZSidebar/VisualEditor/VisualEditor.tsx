@@ -12,15 +12,13 @@ import { EmptyState } from '../EmptyState';
 import { color, hcl, HCLColor, rgb } from 'd3-color';
 import { CONFIG_FILE_NAME } from './constants';
 import { getVisualEditorEmptyReason } from './status';
+import { updateVisualEditorProperty } from './updateConfig';
 import { SliderWidget } from './SliderWidget';
 import { CheckboxWidget } from './CheckboxWidget';
 import { TextInputWidget } from './TextInputWidget';
 import { DropdownWidget } from './DropdownWidget';
 import { ColorWidget } from './ColorWidget';
-import {
-  getNestedProperty,
-  setNestedProperty,
-} from './utils';
+import { getNestedProperty } from './utils';
 
 export const VisualEditor = () => {
   const { files, submitOperation, renderVisualEditorEmptyState } =
@@ -71,25 +69,11 @@ export const VisualEditor = () => {
           [property]: newValue,
         }));
 
-        // Update config.json with support for nested properties
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newValue,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newValue),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   const onCheckboxChange = useCallback(
@@ -103,25 +87,11 @@ export const VisualEditor = () => {
           [property]: newValue,
         }));
 
-        // Update config.json with support for nested properties
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newValue,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newValue),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   const onTextInputChange = useCallback(
@@ -135,25 +105,11 @@ export const VisualEditor = () => {
           [property]: newValue,
         }));
 
-        // Update config.json with support for nested properties
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newValue,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newValue),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   const onDropdownChange = useCallback(
@@ -164,25 +120,11 @@ export const VisualEditor = () => {
         [property]: newValue,
       }));
 
-      // Update config.json with support for nested properties
-      const newConfigData = setNestedProperty(
-        configData,
-        property,
-        newValue,
+      submitOperation((document: VizContent) =>
+        updateVisualEditorProperty(document, configFileId, property, newValue),
       );
-
-      submitOperation((document: VizContent) => ({
-        ...document,
-        files: {
-          ...files,
-          [configFileId]: {
-            name: 'config.json',
-            text: JSON.stringify(newConfigData, null, 2),
-          },
-        },
-      }));
     },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   // Custom dropdown handlers
@@ -291,27 +233,12 @@ export const VisualEditor = () => {
           [`${property}_l`]: newhcl[2],
         }));
 
-        // Update config.json with hex value using nested property access
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newHex,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newHex),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
     [
       configData,
-      files,
       configFileId,
       submitOperation,
       localValues,

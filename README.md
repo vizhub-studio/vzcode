@@ -121,6 +121,12 @@ You can also use [npm link](https://docs.npmjs.com/cli/v8/commands/npm-link) to 
 - **Staging Site Editor (Experimental)**:
   Use VZCode on a persistent server, making code changes with multiplayer mode remotely, reflecting instantly on a staging site.
 
+## Embedding the Visual Editor in a host application
+
+Embedded clients can pass `initialSidebarView="visual"` to `VZCodeProvider` to open the Visual panel (standalone VZCode keeps its existing AI chat default). Pass `renderVisualEditorEmptyState={(reason) => ...}` to replace built-in empty states with your own UI. The callback receives `missing-config`, `invalid-config`, `missing-widgets`, `invalid-widgets`, or `empty-widgets`; return `null` to use the default message. A nonempty, valid `visualEditorWidgets` array activates the normal widgets.
+
+When embedding VZCode beside a host-owned visualization iframe, pass the mutable `iframeRef` to `VZCodeProvider`. VZCode sends top-level config patches via `postMessage` after `config.json` changes; the host must make sure the iframe implements the message listener and that iframe recreations receive the current config. Host applications own any AI setup action: VZCode never triggers paid generation itself.
+
 ## Visual Editor
 
 VZCode includes a visual editor feature that allows you to create interactive widgets (like sliders and color pickers) for tweaking configuration parameters in real-time. This is particularly useful for data visualizations where you want to adjust visual properties dynamically without editing code.

@@ -37,6 +37,8 @@ export const useVZCodeState = ({
   docPresence,
   prettierWorker,
   initialUsername,
+  initialSidebarView,
+  renderVisualEditorEmptyState,
   codeError = null,
   connected,
   pending,
@@ -101,7 +103,7 @@ export const useVZCodeState = ({
   // See https://react.dev/reference/react/useReducer
   const [state, dispatch] = useReducer(
     vzReducer,
-    { defaultTheme, initialUsername },
+    { defaultTheme, initialUsername, initialSidebarView },
     createInitialState,
   );
 
@@ -670,6 +672,7 @@ export const useVZCodeState = ({
     setSearchFocusedIndex,
     toggleSearchFocused,
 
+    renderVisualEditorEmptyState,
     isVisualEditorOpen,
     setIsVisualEditorOpen,
 

@@ -305,3 +305,14 @@ export interface StreamingChatMessage {
   currentStatus?: string;
   isComplete?: boolean;
 }
+
+/** Embedding hosts can choose which sidebar VZCode opens initially. */
+export type VZInitialSidebarView = 'ai-chat' | 'files' | 'visual';
+
+/** Reason a visualization cannot yet render visual-editor controls. */
+export type VisualEditorEmptyReason =
+  | 'missing-config'
+  | 'invalid-config'
+  | 'missing-widgets'
+  | 'invalid-widgets'
+  | 'empty-widgets';

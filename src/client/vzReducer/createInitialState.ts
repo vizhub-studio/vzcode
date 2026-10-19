@@ -1,13 +1,15 @@
 import { VZState } from '.';
-import { Username } from '../../types';
+import { Username, VZInitialSidebarView } from '../../types';
 import { ThemeLabel } from '../themes';
 
 export const createInitialState = ({
   defaultTheme,
   initialUsername = 'Anonymous',
+  initialSidebarView = 'ai-chat',
 }: {
   defaultTheme: ThemeLabel;
   initialUsername?: Username;
+  initialSidebarView?: VZInitialSidebarView;
 }): VZState => ({
   pane: {
     id: 'root',
@@ -24,9 +26,9 @@ export const createInitialState = ({
     focusedIndex: null,
     focusedChildIndex: null,
   },
-  isVisualEditorOpen: false,
+  isVisualEditorOpen: initialSidebarView === 'visual',
   isSearchOpen: false,
-  isAIChatOpen: true,
+  isAIChatOpen: initialSidebarView === 'ai-chat',
   aiChatFocused: false,
   aiChatMode: 'edit',
   isSettingsOpen: false,

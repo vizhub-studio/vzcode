@@ -11,18 +11,17 @@ import { VisualEditorConfigEntry } from '../../../types';
 import { EmptyState } from '../EmptyState';
 import { color, hcl, HCLColor, rgb } from 'd3-color';
 import { CONFIG_FILE_NAME } from './constants';
+import { getVisualEditorEmptyReason } from './status';
+import { updateVisualEditorProperty } from './updateConfig';
 import { SliderWidget } from './SliderWidget';
 import { CheckboxWidget } from './CheckboxWidget';
 import { TextInputWidget } from './TextInputWidget';
 import { DropdownWidget } from './DropdownWidget';
 import { ColorWidget } from './ColorWidget';
-import {
-  getNestedProperty,
-  setNestedProperty,
-} from './utils';
+import { getNestedProperty } from './utils';
 
 export const VisualEditor = () => {
-  const { files, submitOperation } =
+  const { files, submitOperation, renderVisualEditorEmptyState } =
     useContext(VZCodeContext);
 
   // Local state to track widget values during user interaction
@@ -70,25 +69,11 @@ export const VisualEditor = () => {
           [property]: newValue,
         }));
 
-        // Update config.json with support for nested properties
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newValue,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newValue),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   const onCheckboxChange = useCallback(
@@ -102,25 +87,11 @@ export const VisualEditor = () => {
           [property]: newValue,
         }));
 
-        // Update config.json with support for nested properties
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newValue,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newValue),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   const onTextInputChange = useCallback(
@@ -134,25 +105,11 @@ export const VisualEditor = () => {
           [property]: newValue,
         }));
 
-        // Update config.json with support for nested properties
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newValue,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newValue),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   const onDropdownChange = useCallback(
@@ -163,25 +120,11 @@ export const VisualEditor = () => {
         [property]: newValue,
       }));
 
-      // Update config.json with support for nested properties
-      const newConfigData = setNestedProperty(
-        configData,
-        property,
-        newValue,
+      submitOperation((document: VizContent) =>
+        updateVisualEditorProperty(document, configFileId, property, newValue),
       );
-
-      submitOperation((document: VizContent) => ({
-        ...document,
-        files: {
-          ...files,
-          [configFileId]: {
-            name: 'config.json',
-            text: JSON.stringify(newConfigData, null, 2),
-          },
-        },
-      }));
     },
-    [configData, files, configFileId, submitOperation],
+    [configFileId, submitOperation],
   );
 
   // Custom dropdown handlers
@@ -290,27 +233,12 @@ export const VisualEditor = () => {
           [`${property}_l`]: newhcl[2],
         }));
 
-        // Update config.json with hex value using nested property access
-        const newConfigData = setNestedProperty(
-          configData,
-          property,
-          newHex,
+        submitOperation((document: VizContent) =>
+          updateVisualEditorProperty(document, configFileId, property, newHex),
         );
-
-        submitOperation((document: VizContent) => ({
-          ...document,
-          files: {
-            ...files,
-            [configFileId]: {
-              name: 'config.json',
-              text: JSON.stringify(newConfigData, null, 2),
-            },
-          },
-        }));
       },
     [
       configData,
-      files,
       configFileId,
       submitOperation,
       localValues,
@@ -319,7 +247,9 @@ export const VisualEditor = () => {
 
   const visualEditorWidgets: VisualEditorConfigEntry[] =
     useMemo(
-      () => configData?.visualEditorWidgets ?? [],
+      () => Array.isArray(configData?.visualEditorWidgets)
+        ? configData.visualEditorWidgets
+        : [],
       [configData],
     );
 
@@ -361,8 +291,7 @@ export const VisualEditor = () => {
           widget.property,
         );
 
-        if (localValues[widget.property] !== hexColor) {
-          if (hexColor) {
+        if (hexColor) {
             try {
               const rgbColor = color(hexColor);
               const lch = hcl(rgbColor);
@@ -378,57 +307,26 @@ export const VisualEditor = () => {
               newLocalValues[`${widget.property}_c`] = 0;
               newLocalValues[`${widget.property}_h`] = 0;
             }
-          }
         }
       }
     });
     setLocalValues(newLocalValues);
-  }, [configData, localValues, visualEditorWidgets]);
+  }, [configData, visualEditorWidgets]);
 
-  if (configFileId === null) {
-    return (
-      <EmptyState>
-        To begin using the visual editor, create a
-        config.json.
-      </EmptyState>
-    );
-  }
-
-  if (!configData) {
-    return (
-      <EmptyState>
-        Your config.json file is not valid json.
-      </EmptyState>
-    );
-  }
-
-  if (
-    configData &&
-    !('visualEditorWidgets' in configData)
-  ) {
-    return (
-      <EmptyState>
-        To begin using the visual editor, make sure your
-        config.json has a key called
-        &quot;visualEditorWidgets&quot;, whose value is the
-        config for the visual editor.
-      </EmptyState>
-    );
-  }
-
-  if (
-    configData &&
-    !Array.isArray(configData.visualEditorWidgets)
-  ) {
-    return (
-      <EmptyState>
-        Your config.json file has
-        &quot;visualEditorWidgets&quot; but it is not an
-        array. Please make sure
-        &quot;visualEditorWidgets&quot; is an array of
-        widget configurations.
-      </EmptyState>
-    );
+  const emptyReason = getVisualEditorEmptyReason(
+    configFileId === null ? null : files?.[configFileId]?.text ?? null,
+  );
+  if (emptyReason) {
+    const hostUI = renderVisualEditorEmptyState?.(emptyReason);
+    if (hostUI != null) return <>{hostUI}</>;
+    const messages = {
+      'missing-config': 'To begin using the visual editor, create a config.json.',
+      'invalid-config': 'Your config.json file is not valid JSON.',
+      'missing-widgets': 'Add a visualEditorWidgets array to config.json.',
+      'invalid-widgets': 'Your visualEditorWidgets configuration is invalid.',
+      'empty-widgets': 'Add at least one widget to visualEditorWidgets.',
+    };
+    return <EmptyState>{messages[emptyReason]}</EmptyState>;
   }
 
   return (

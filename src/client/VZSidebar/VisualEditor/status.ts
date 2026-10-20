@@ -125,7 +125,8 @@ export function getVisualEditorEmptyReason(
           !rgb ||
           !Number.isFinite(rgb.r) ||
           !Number.isFinite(rgb.g) ||
-          !Number.isFinite(rgb.b)
+          !Number.isFinite(rgb.b) ||
+          rgb.opacity !== 1
         ) {
           return 'invalid-widgets';
         }

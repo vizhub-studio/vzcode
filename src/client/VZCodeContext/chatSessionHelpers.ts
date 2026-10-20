@@ -5,7 +5,10 @@ export const shouldReuseChatId = (
   options?.isRetry === 'true' || options?.isUndo === 'true';
 
 export const userMessageHistory = (
-  messages?: ReadonlyArray<{ role: string; content: string }> | null,
+  messages?: ReadonlyArray<{
+    role: string;
+    content: string;
+  }> | null,
 ): string[] =>
   messages
     ? messages

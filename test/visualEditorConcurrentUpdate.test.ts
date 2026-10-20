@@ -53,13 +53,28 @@ describe('visual editor ShareDB updates', () => {
       ),
     ).toBe(doc);
     expect(
-      updateVisualEditorProperty(doc, 'config', '__proto__.bad', 1),
+      updateVisualEditorProperty(
+        doc,
+        'config',
+        '__proto__.bad',
+        1,
+      ),
     ).toBe(doc);
     expect(
-      updateVisualEditorProperty(doc, 'config', 'margin.top', 12),
+      updateVisualEditorProperty(
+        doc,
+        'config',
+        'margin.top',
+        12,
+      ),
     ).toBe(doc);
     expect(
-      updateVisualEditorProperty(doc, 'config', 'pointRadius.x', 4),
+      updateVisualEditorProperty(
+        doc,
+        'config',
+        'pointRadius.x',
+        4,
+      ),
     ).toBe(doc);
   });
 });

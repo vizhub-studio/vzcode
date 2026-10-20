@@ -309,7 +309,6 @@ export function useAIChatSession({
     ],
   );
 
-
   return {
     aiChatMessage,
     setAIChatMessage,

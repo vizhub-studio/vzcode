@@ -6,7 +6,11 @@ describe('definition jump listeners', () => {
     const target = new EventTarget();
     const hover = vi.fn();
     const click = vi.fn();
-    const listeners = createDefinitionJumpListeners(target, hover, click);
+    const listeners = createDefinitionJumpListeners(
+      target,
+      hover,
+      click,
+    );
     listeners.start();
     listeners.start();
     listeners.armClick();
@@ -27,8 +31,16 @@ describe('definition jump listeners', () => {
     const target = new EventTarget();
     const a = vi.fn();
     const b = vi.fn();
-    const first = createDefinitionJumpListeners(target, vi.fn(), a);
-    const second = createDefinitionJumpListeners(target, vi.fn(), b);
+    const first = createDefinitionJumpListeners(
+      target,
+      vi.fn(),
+      a,
+    );
+    const second = createDefinitionJumpListeners(
+      target,
+      vi.fn(),
+      b,
+    );
     first.start();
     second.start();
     first.armClick();

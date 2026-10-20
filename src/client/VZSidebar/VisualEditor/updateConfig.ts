@@ -34,7 +34,10 @@ export function updateVisualEditorProperty(
     return document;
   // A widget may become stale after a concurrent config edit. Never recreate
   // a removed property or change the structure of its parent object.
-  if (!getEditablePropertyValue(currentConfig, property).found) return document;
+  if (
+    !getEditablePropertyValue(currentConfig, property).found
+  )
+    return document;
   let updated: Record<string, unknown>;
   try {
     updated = setNestedProperty(

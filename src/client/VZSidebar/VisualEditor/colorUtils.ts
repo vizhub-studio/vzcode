@@ -1,6 +1,10 @@
 import { color, hcl } from 'd3-color';
 
-export type HclChannels = { h: number; c: number; l: number };
+export type HclChannels = {
+  h: number;
+  c: number;
+  l: number;
+};
 
 export function toHclChannels(value: string): HclChannels {
   const parsed = color(value);

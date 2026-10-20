@@ -105,7 +105,9 @@ export const renderSliderBackground = (
  * Widget paths are own-property paths through JSON objects. This parser is
  * shared by reads, validation and writes to avoid accidental prototype access.
  */
-export const splitEditablePropertyPath = (path: string): string[] | null => {
+export const splitEditablePropertyPath = (
+  path: string,
+): string[] | null => {
   if (typeof path !== 'string' || !path) return null;
   const segments = path.split('.');
   return segments.every(
@@ -145,7 +147,10 @@ export const getNestedProperty = <T = unknown>(
   obj: Record<string, unknown>,
   path: string,
 ): T | undefined => {
-  const { found, value } = getEditablePropertyValue(obj, path);
+  const { found, value } = getEditablePropertyValue(
+    obj,
+    path,
+  );
   return found ? (value as T) : undefined;
 };
 
@@ -158,7 +163,10 @@ export const setNestedProperty = <
   value: unknown,
 ): T => {
   const keys = splitEditablePropertyPath(path);
-  if (!keys) throw new Error('Invalid or unsafe property path: ' + path);
+  if (!keys)
+    throw new Error(
+      'Invalid or unsafe property path: ' + path,
+    );
 
   const newObj = { ...obj };
   let current: Record<string, unknown> = newObj;

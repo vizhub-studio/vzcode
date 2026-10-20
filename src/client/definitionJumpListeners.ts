@@ -34,8 +34,14 @@ export function createDefinitionJumpListeners(
     stop() {
       hovering = false;
       armed = false;
-      target.removeEventListener('mouseover', hoverListener);
-      target.removeEventListener('mousedown', clickListener);
+      target.removeEventListener(
+        'mouseover',
+        hoverListener,
+      );
+      target.removeEventListener(
+        'mousedown',
+        clickListener,
+      );
     },
   };
 }

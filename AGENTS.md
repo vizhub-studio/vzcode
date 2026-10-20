@@ -3,7 +3,7 @@
 ## Build/Test Commands
 
 - **Build**: `npm run build` (builds client and server) - DO NOT RUN THIS EVER, it will crash the machine
-- **Type Check**: `npm run typecheck` (expect 1 baseline error) - run this instead of `npm run build` to validate changes
+- **Type Check**: `npm run typecheck` (expect 0 errors) - run this instead of `npm run build` to validate changes
 - **Tests**: `npm test` (all tests) or `npx vitest run test/filename.test.ts` (single test)
 - **Lint**: `npm run lint` or `npm run lint:fix`
 - **Format**: `npm run prettier` (ALWAYS run after making a series of code changes)
@@ -27,4 +27,4 @@ DO NOT run `git commit`, that will be done manually.
 - Reference .github/copilot-instructions.md for build commands and validation
 - Run `npm run prettier` before every commit
 - Validate changes by starting server and testing in browser at http://localhost:3030
-- Known baseline: 4 test failures, 1 TypeScript error (do not introduce new ones)
+- Known baseline: 0 test failures (1 skipped), 0 TypeScript errors (do not introduce new ones)

@@ -1,48 +1,30 @@
-import {
-  useRef,
-  useEffect,
-  memo,
-  useState,
-  useContext,
-} from 'react';
+import { useRef, useEffect, memo, useState } from 'react';
 import { Message } from './Message';
 import { TypingIndicator } from './TypingIndicator';
 import { ThinkingScratchpad } from './ThinkingScratchpad';
 import { AIEditingStatusIndicator } from './FileEditingIndicator';
-import { VizChatMessage } from '@vizhub/viz-types';
 import { ExtendedVizChatMessage } from '../../types.js';
 import { DiffViewRef } from './DiffView.js';
-import { VZCodeContext } from '../../client/VZCodeContext';
+import type { MessageListProps } from '../props';
 
 const MessageListComponent = ({
   messages,
   isLoading,
-  chatId, // Add chatId prop
-  aiScratchpad, // Add aiScratchpad prop
-  currentStatus, // Add current status prop
-  model, // Add model prop
+  chatId,
+  aiScratchpad,
+  currentStatus,
+  model,
   onNewEvent,
   onJumpToLatest,
   beforeRender,
   afterRender,
-}: {
-  messages: VizChatMessage[];
-  isLoading: boolean;
-  chatId?: string; // Add chatId to the type
-  aiScratchpad?: string; // Add aiScratchpad to the type
-  currentStatus?: string; // Add current status to the type
-  model?: string; // Add model to the type
-  onNewEvent: (targetElement?: HTMLElement) => void;
-  onJumpToLatest: (targetElement?: HTMLElement) => void;
-  beforeRender: () => number;
-  afterRender: (prevScrollHeight: number) => void;
-}) => {
+  additionalWidgets,
+  handleSendMessage,
+  enableDiffView,
+  onOpenFile,
+}: MessageListProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const diffViewRef = useRef<DiffViewRef>(null);
-
-  // Get additional widgets from context
-  const { additionalWidgets, handleSendMessage } =
-    useContext(VZCodeContext);
 
   // Track previous loading state to detect when AI generation completes
   const [prevIsLoading, setPrevIsLoading] =
@@ -197,6 +179,10 @@ const MessageListComponent = ({
             model={
               msg.role === 'assistant' ? model : undefined
             }
+            additionalWidgets={additionalWidgets}
+            handleSendMessage={handleSendMessage}
+            enableDiffView={enableDiffView}
+            onOpenFile={onOpenFile}
             ref={
               isLastMessage && (msg as any).diffData
                 ? diffViewRef

@@ -1,31 +1,10 @@
-import React, {
-  useMemo,
-  useContext,
-  forwardRef,
-} from 'react';
+import React, { useMemo, forwardRef } from 'react';
 import { timestampToDate } from '@vizhub/viz-utils';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { StreamingEvent } from '../../types.js';
 import { IndividualFileDiff } from './IndividualFileDiff';
-import { VZCodeContext } from '../../client/VZCodeContext';
 import { DiffView, DiffViewRef } from './DiffView';
-import { UnifiedFilesDiff } from '../../utils/fileDiff';
-import { enableDiffView } from '../../client/featureFlags';
-
-interface MessageProps {
-  id: string;
-  role: 'user' | 'assistant';
-  content?: string; // For non-streaming messages
-  timestamp: number;
-  events?: StreamingEvent[]; // For streaming messages
-  isActive?: boolean; // Is this the currently streaming message?
-  chatId?: string;
-  showAdditionalWidgets?: boolean;
-  isStreaming?: boolean;
-  diffData?: UnifiedFilesDiff;
-  model?: string; // The LLM model used for this message (assistant only)
-}
+import type { MessageProps } from '../props';
 
 export const Message = forwardRef<
   DiffViewRef,
@@ -45,12 +24,13 @@ export const Message = forwardRef<
       isStreaming = false,
       diffData,
       model,
+      additionalWidgets,
+      handleSendMessage,
+      enableDiffView = true,
+      onOpenFile,
     },
     ref,
   ) => {
-    const { additionalWidgets, handleSendMessage } =
-      useContext(VZCodeContext);
-
     // Memoize date formatting to avoid repeated computation
     const formattedTime = useMemo(() => {
       return timestampToDate(timestamp).toLocaleTimeString(
@@ -86,7 +66,11 @@ export const Message = forwardRef<
           {enableDiffView &&
             diffData &&
             Object.keys(diffData).length > 0 && (
-              <DiffView diffData={diffData} ref={ref} />
+              <DiffView
+                diffData={diffData}
+                ref={ref}
+                onOpenFile={onOpenFile}
+              />
             )}
 
           {/* Render events in order for streaming messages */}

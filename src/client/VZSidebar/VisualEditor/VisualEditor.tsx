@@ -11,6 +11,7 @@ import { VisualEditorConfigEntry } from '../../../types';
 import { EmptyState } from '../EmptyState';
 import {
   toHclChannels,
+  coerceChannelNumber,
   hclChannelsToHex,
 } from './colorUtils';
 import { CONFIG_FILE_NAME } from './constants';
@@ -377,15 +378,18 @@ export const VisualEditor = () => {
             '#000000';
 
           const channels = toHclChannels(currentHex);
-          const currentH =
-            localValues[`${widgetConfig.property}_h`] ??
-            channels.h;
-          const currentC =
-            localValues[`${widgetConfig.property}_c`] ??
-            channels.c;
-          const currentL =
-            localValues[`${widgetConfig.property}_l`] ??
-            channels.l;
+          const currentH = coerceChannelNumber(
+            localValues[`${widgetConfig.property}_h`],
+            channels.h,
+          );
+          const currentC = coerceChannelNumber(
+            localValues[`${widgetConfig.property}_c`],
+            channels.c,
+          );
+          const currentL = coerceChannelNumber(
+            localValues[`${widgetConfig.property}_l`],
+            channels.l,
+          );
 
           return (
             <ColorWidget

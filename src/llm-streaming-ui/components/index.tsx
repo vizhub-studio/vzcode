@@ -1,15 +1,10 @@
-import {
-  useContext,
-  useMemo,
-  useEffect,
-  useCallback,
-} from 'react';
-import { VZCodeContext } from '../../client/VZCodeContext';
+import { useMemo, useEffect, useCallback } from 'react';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { ExtendedVizChat } from '../../types.js';
-import { useAutoScroll } from '../../client/hooks/useAutoScroll';
+import { useAutoScroll } from '../hooks/useAutoScroll';
 import { JumpToLatestButton } from './JumpToLatestButton';
+import type { AIChatProps } from '../props';
 import './styles.scss';
 
 const DEBUG = false;
@@ -47,27 +42,30 @@ const ChatList = ({
   );
 };
 
-export const AIChat = () => {
-  const {
-    aiChatFocused,
-    content,
-    aiChatMode,
-    aiChatMessage,
-    currentChatId,
-    selectedChatId,
-    setSelectedChatId,
-    aiErrorMessage,
-    setAIChatMode,
-    getStoredAIPrompt,
-    setAIChatMessage,
-    handleSendMessage,
-    setAIErrorMessage,
-    navigateMessageHistoryUp,
-    navigateMessageHistoryDown,
-    resetMessageHistoryNavigation,
-    enableMinimalEditFlow,
-  } = useContext(VZCodeContext);
-
+export const AIChat = ({
+  aiChatFocused,
+  content,
+  aiChatMode,
+  aiChatMessage,
+  currentChatId,
+  selectedChatId,
+  setSelectedChatId,
+  aiErrorMessage,
+  setAIChatMode,
+  getStoredAIPrompt,
+  setAIChatMessage,
+  handleSendMessage,
+  setAIErrorMessage,
+  navigateMessageHistoryUp,
+  navigateMessageHistoryDown,
+  resetMessageHistoryNavigation,
+  enableMinimalEditFlow = false,
+  additionalWidgets,
+  enableDiffView = true,
+  enableAskMode = false,
+  enableVoiceInput = false,
+  onOpenFile,
+}: AIChatProps) => {
   // Use the new simplified auto-scroll hook
   const {
     containerRef: messagesContainerRef,
@@ -336,6 +334,10 @@ export const AIChat = () => {
               onJumpToLatest={onJumpToLatest}
               beforeRender={beforeRender}
               afterRender={afterRender}
+              additionalWidgets={additionalWidgets}
+              handleSendMessage={handleSendMessage}
+              enableDiffView={enableDiffView}
+              onOpenFile={onOpenFile}
             />
           )}
           {aiErrorMessage && (
@@ -369,9 +371,11 @@ export const AIChat = () => {
           aiChatMessage={aiChatMessage}
           setAIChatMessage={setAIChatMessage}
           onSendMessage={handleSendMessageWithSelection}
-          focused={aiChatFocused}
+          focused={aiChatFocused ?? false}
           aiChatMode={aiChatMode}
           setAIChatMode={setAIChatMode}
+          enableAskMode={enableAskMode}
+          enableVoiceInput={enableVoiceInput}
           navigateMessageHistoryUp={
             navigateMessageHistoryUp
           }

@@ -7,17 +7,12 @@ import { EditorState } from '@codemirror/state';
 import { VizFileId } from '@vizhub/viz-types';
 import { PaneId } from '../types';
 import { editorCacheKey } from './useEditorCache';
+import { createDefinitionJumpListeners } from './definitionJumpListeners';
 
 /*
   The following is a helpful resource for the following Code Mirror Syntax Tree methods below
   https://lezer.codemirror.net/docs/ref/#common
 */
-
-// Store the element in the current editor DOM to highlight, indicating a potential jump to definition is possible
-let activeJumpingElement: HTMLSpanElement = null;
-
-// Store the syntax node representing the destination within the syntax tree
-let definingNode: SyntaxNode = null;
 
 // Example nesting types for the specific language to find level in the syntax tree
 const nestingTypes = new Set<string>([
@@ -207,6 +202,9 @@ export const useKeyboardShortcuts = ({
       activeFileId,
       activePaneId,
     );
+    // Each mounted editor owns its jump target and listeners.
+    let activeJumpingElement: HTMLSpanElement | null = null;
+    let definingNode: SyntaxNode | null = null;
 
     const handleKeyPress = (event: KeyboardEvent) => {
       if (shouldTriggerRun(event)) {
@@ -245,10 +243,7 @@ export const useKeyboardShortcuts = ({
 
       if (event.ctrlKey === true) {
         // On holding CTRL key, search for a potential definition jump using mouse location
-        document.addEventListener(
-          'mouseover',
-          handleMouseOver,
-        );
+        jumpListeners.start();
       }
 
       if (event.altKey === true) {
@@ -299,17 +294,11 @@ export const useKeyboardShortcuts = ({
       if (activeJumpingElement) {
         activeJumpingElement.style.cursor = 'initial';
         activeJumpingElement.style.textDecoration = 'none';
-        activeJumpingElement = definingNode = null;
+        activeJumpingElement = null;
+        definingNode = null;
       }
 
-      document.removeEventListener(
-        'mouseover',
-        handleMouseOver,
-      );
-      document.removeEventListener(
-        'mousedown',
-        jumpToDefinitionHandler,
-      );
+      jumpListeners.stop();
     };
 
     const jumpToDefinitionHandler = (
@@ -332,8 +321,11 @@ export const useKeyboardShortcuts = ({
 
       // Move current cursor and center view in the editor to destination node
 
-      const editor: EditorView =
-        editorCache.get(cacheKey).editor;
+      const editor = editorCache.get(cacheKey)?.editor;
+      if (!editor) {
+        resetActiveJumpingElement();
+        return;
+      }
       const closestDefinition: SyntaxNode = definingNode;
 
       editor.dispatch({
@@ -365,8 +357,8 @@ export const useKeyboardShortcuts = ({
         return;
       }
 
-      const editor: EditorView =
-        editorCache.get(cacheKey).editor;
+      const editor = editorCache.get(cacheKey)?.editor;
+      if (!editor) return;
       const tree = syntaxTree(editor.state);
       const element = event.target as HTMLSpanElement;
 
@@ -423,19 +415,22 @@ export const useKeyboardShortcuts = ({
             'underline';
 
           // CTRL + Click: Jump to relative definition, which is removed on CTRL key release
-          document.addEventListener(
-            'mousedown',
-            jumpToDefinitionHandler,
-            { once: true },
-          );
+          jumpListeners.armClick();
         }
       }
     };
+
+    const jumpListeners = createDefinitionJumpListeners(
+      document,
+      handleMouseOver,
+      jumpToDefinitionHandler,
+    );
 
     document.addEventListener('keydown', handleKeyPress);
     document.addEventListener('keyup', handleKeyRelease);
 
     return () => {
+      resetActiveJumpingElement();
       document.removeEventListener(
         'keydown',
         handleKeyPress,

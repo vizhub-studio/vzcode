@@ -35,7 +35,7 @@ describe('visual editor ShareDB updates', () => {
     });
     expect(next.files.code.text).toBe('renderChart()');
   });
-  it('ignores vanished or malformed config documents', () => {
+  it('ignores vanished, stale, unsafe or malformed config documents', () => {
     expect(
       updateVisualEditorProperty(
         doc,
@@ -53,12 +53,13 @@ describe('visual editor ShareDB updates', () => {
       ),
     ).toBe(doc);
     expect(
-      updateVisualEditorProperty(
-        doc,
-        'config',
-        '__proto__.bad',
-        1,
-      ),
+      updateVisualEditorProperty(doc, 'config', '__proto__.bad', 1),
+    ).toBe(doc);
+    expect(
+      updateVisualEditorProperty(doc, 'config', 'margin.top', 12),
+    ).toBe(doc);
+    expect(
+      updateVisualEditorProperty(doc, 'config', 'pointRadius.x', 4),
     ).toBe(doc);
   });
 });

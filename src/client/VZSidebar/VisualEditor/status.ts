@@ -1,11 +1,6 @@
 import { color } from 'd3-color';
 import type { VisualEditorEmptyReason } from '../../../types';
-
-const UNSAFE_PATH_SEGMENTS = new Set([
-  '__proto__',
-  'constructor',
-  'prototype',
-]);
+import { getEditablePropertyValue } from './utils';
 
 const isRecord = (
   value: unknown,
@@ -13,39 +8,6 @@ const isRecord = (
   value !== null &&
   typeof value === 'object' &&
   !Array.isArray(value);
-
-/**
- * Resolve only own properties of plain JSON objects, using the same dot-path
- * semantics as setNestedProperty. Missing values, arrays in the path and
- * dangerous keys are not editable targets.
- */
-function editableValueAt(
-  config: Record<string, unknown>,
-  path: string,
-): { found: boolean; value: unknown } {
-  const segments = path.split('.');
-  if (
-    segments.some(
-      (segment) =>
-        !segment || UNSAFE_PATH_SEGMENTS.has(segment),
-    )
-  ) {
-    return { found: false, value: undefined };
-  }
-
-  let value: unknown = config;
-  for (const segment of segments) {
-    if (
-      !isRecord(value) ||
-      !Object.prototype.hasOwnProperty.call(value, segment)
-    ) {
-      return { found: false, value: undefined };
-    }
-    value = value[segment];
-  }
-
-  return { found: true, value };
-}
 
 /** Pure classifier shared by the visual editor and host integration tests. */
 export function getVisualEditorEmptyReason(
@@ -82,7 +44,7 @@ export function getVisualEditorEmptyReason(
       return 'invalid-widgets';
     }
 
-    const { found, value } = editableValueAt(
+    const { found, value } = getEditablePropertyValue(
       config,
       widget.property,
     );

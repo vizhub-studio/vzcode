@@ -9,7 +9,7 @@ import { VZCodeContext } from '../../VZCodeContext';
 import { VizContent, VizFileId } from '@vizhub/viz-types';
 import { VisualEditorConfigEntry } from '../../../types';
 import { EmptyState } from '../EmptyState';
-import { color, hcl, HCLColor, rgb } from 'd3-color';
+import { toHclChannels, hclChannelsToHex } from './colorUtils';
 import { CONFIG_FILE_NAME } from './constants';
 import { getVisualEditorEmptyReason } from './status';
 import { updateVisualEditorProperty } from './updateConfig';
@@ -59,95 +59,54 @@ export const VisualEditor = () => {
     }
   }, [configFileId, files]);
 
-  const onSliderChange = useCallback(
-    (property: string) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = parseFloat(
-          event.currentTarget.value,
-        );
-
-        // Update local state immediately for responsive UI
-        setLocalValues((prev) => ({
-          ...prev,
-          [property]: newValue,
-        }));
-
-        submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(
-            document,
-            configFileId,
-            property,
-            newValue,
-          ),
-        );
-      },
-    [configFileId, submitOperation],
-  );
-
-  const onCheckboxChange = useCallback(
-    (property: string) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.currentTarget.checked;
-
-        // Update local state immediately for responsive UI
-        setLocalValues((prev) => ({
-          ...prev,
-          [property]: newValue,
-        }));
-
-        submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(
-            document,
-            configFileId,
-            property,
-            newValue,
-          ),
-        );
-      },
-    [configFileId, submitOperation],
-  );
-
-  const onTextInputChange = useCallback(
-    (property: string) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.currentTarget.value;
-
-        // Update local state immediately for responsive UI
-        setLocalValues((prev) => ({
-          ...prev,
-          [property]: newValue,
-        }));
-
-        submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(
-            document,
-            configFileId,
-            property,
-            newValue,
-          ),
-        );
-      },
-    [configFileId, submitOperation],
-  );
-
-  const onDropdownChange = useCallback(
-    (property: string, newValue: string) => {
-      // Update local state immediately for responsive UI
+  // All controls share one optimistic state + ShareDB write path.
+  const setWidgetValue = useCallback(
+    (
+      property: string,
+      value: number | boolean | string,
+      extraLocalValues: Record<string, number> = {},
+    ) => {
       setLocalValues((prev) => ({
         ...prev,
-        [property]: newValue,
+        [property]: value,
+        ...extraLocalValues,
       }));
-
       submitOperation((document: VizContent) =>
         updateVisualEditorProperty(
           document,
           configFileId,
           property,
-          newValue,
+          value,
         ),
       );
     },
     [configFileId, submitOperation],
+  );
+
+  const onSliderChange = useCallback(
+    (property: string) =>
+      (event: React.ChangeEvent<HTMLInputElement>) =>
+        setWidgetValue(property, parseFloat(event.currentTarget.value)),
+    [setWidgetValue],
+  );
+
+  const onCheckboxChange = useCallback(
+    (property: string) =>
+      (event: React.ChangeEvent<HTMLInputElement>) =>
+        setWidgetValue(property, event.currentTarget.checked),
+    [setWidgetValue],
+  );
+
+  const onTextInputChange = useCallback(
+    (property: string) =>
+      (event: React.ChangeEvent<HTMLInputElement>) =>
+        setWidgetValue(property, event.currentTarget.value),
+    [setWidgetValue],
+  );
+
+  const onDropdownChange = useCallback(
+    (property: string, value: string) => setWidgetValue(property, value),
+    [setWidgetValue],
   );
 
   // Custom dropdown handlers
@@ -203,72 +162,23 @@ export const VisualEditor = () => {
           getNestedProperty<string>(configData, property) ??
           '#000000';
 
-        // Convert current hex to LCH
-        let hclFromRGB: HCLColor;
-        try {
-          const rgbColor = rgb(currentHex);
-          hclFromRGB = hcl(rgbColor);
-        } catch {
-          // Fallback to black if conversion fails
-          hclFromRGB = hcl('black');
-        }
-
-        const hclArray: number[] = [
-          (localValues[`${property}_h`] as number) ??
-            hclFromRGB.h,
-          (localValues[`${property}_c`] as number) ??
-            hclFromRGB.c,
-          (localValues[`${property}_l`] as number) ??
-            hclFromRGB.l,
-        ];
-
-        // Update the specific LCH component
-        const newhcl = [...hclArray];
-        if (lchComponent === 'h') newhcl[0] = newValue;
-        else if (lchComponent === 'c') newhcl[1] = newValue;
-        else if (lchComponent === 'l') newhcl[2] = newValue;
-
-        // Convert back to hex
-        let newHex;
-        try {
-          const newColor = hcl(
-            newhcl[0],
-            newhcl[1],
-            newhcl[2],
-          );
-
-          if (newColor.displayable()) {
-            newHex = newColor.formatHex();
-          } else {
-            newHex = currentHex;
-          }
-        } catch {
-          // Fallback to current color if conversion fails
-          newHex = currentHex;
-        }
-
-        // Update local state for responsive UI
-        setLocalValues((prev) => ({
-          ...prev,
-          [property]: newHex,
-          [`${property}_h`]: newhcl[0],
-          [`${property}_c`]: newhcl[1],
-          [`${property}_l`]: newhcl[2],
-        }));
-
-        submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(
-            document,
-            configFileId,
-            property,
-            newHex,
-          ),
-        );
+        const base = toHclChannels(currentHex);
+        const channels = {
+          h: (localValues[`${property}_h`] as number) ?? base.h,
+          c: (localValues[`${property}_c`] as number) ?? base.c,
+          l: (localValues[`${property}_l`] as number) ?? base.l,
+        };
+        channels[lchComponent] = newValue;
+        const newHex = hclChannelsToHex(channels, currentHex);
+        setWidgetValue(property, newHex, {
+          [`${property}_h`]: channels.h,
+          [`${property}_c`]: channels.c,
+          [`${property}_l`]: channels.l,
+        });
       },
     [
       configData,
-      configFileId,
-      submitOperation,
+      setWidgetValue,
       localValues,
     ],
   );
@@ -288,52 +198,16 @@ export const VisualEditor = () => {
       [key: string]: number | boolean | string;
     } = {};
     visualEditorWidgets.forEach((widget) => {
-      if (widget.type === 'slider') {
-        newLocalValues[widget.property] = getNestedProperty(
-          configData,
-          widget.property,
-        );
-      } else if (widget.type === 'checkbox') {
-        newLocalValues[widget.property] = getNestedProperty(
-          configData,
-          widget.property,
-        );
-      } else if (widget.type === 'textInput') {
-        newLocalValues[widget.property] = getNestedProperty(
-          configData,
-          widget.property,
-        );
-      } else if (widget.type === 'dropdown') {
-        newLocalValues[widget.property] = getNestedProperty(
-          configData,
-          widget.property,
-        );
-      } else if (widget.type === 'color') {
-        newLocalValues[widget.property] = getNestedProperty(
-          configData,
-          widget.property,
-        );
-
-        // Convert hex to LCH for internal state
-        const hexColor = getNestedProperty<string>(
-          configData,
-          widget.property,
-        );
-
-        if (hexColor) {
-          try {
-            const rgbColor = color(hexColor);
-            const lch = hcl(rgbColor);
-            newLocalValues[`${widget.property}_h`] = lch.h;
-            newLocalValues[`${widget.property}_c`] = lch.c;
-            newLocalValues[`${widget.property}_l`] = lch.l;
-          } catch {
-            // Fallback values if conversion fails
-            newLocalValues[`${widget.property}_l`] = 0;
-            newLocalValues[`${widget.property}_c`] = 0;
-            newLocalValues[`${widget.property}_h`] = 0;
-          }
-        }
+      const value = getNestedProperty<string | number | boolean>(
+        configData,
+        widget.property,
+      );
+      if (value !== undefined) newLocalValues[widget.property] = value;
+      if (widget.type === 'color' && typeof value === 'string') {
+        const channels = toHclChannels(value);
+        newLocalValues[`${widget.property}_h`] = channels.h;
+        newLocalValues[`${widget.property}_c`] = channels.c;
+        newLocalValues[`${widget.property}_l`] = channels.l;
       }
     });
     setLocalValues(newLocalValues);
@@ -484,25 +358,10 @@ export const VisualEditor = () => {
             ) ??
             '#000000';
 
-          // Convert hex to LCH for slider values
-          let hclColor;
-          try {
-            const rgbColor = color(currentHex);
-            hclColor = hcl(rgbColor);
-          } catch {
-            hclColor = hcl('black');
-          }
-
-          // Use local LCH values if available, otherwise convert from hex
-          const currentH =
-            localValues[`${widgetConfig.property}_h`] ??
-            hclColor.h;
-          const currentC =
-            localValues[`${widgetConfig.property}_c`] ??
-            hclColor.c;
-          const currentL =
-            localValues[`${widgetConfig.property}_l`] ??
-            hclColor.l;
+          const channels = toHclChannels(currentHex);
+          const currentH = localValues[`${widgetConfig.property}_h`] ?? channels.h;
+          const currentC = localValues[`${widgetConfig.property}_c`] ?? channels.c;
+          const currentL = localValues[`${widgetConfig.property}_l`] ?? channels.l;
 
           return (
             <ColorWidget

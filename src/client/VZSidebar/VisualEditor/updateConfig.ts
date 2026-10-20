@@ -2,7 +2,10 @@ import type {
   VizContent,
   VizFileId,
 } from '@vizhub/viz-types';
-import { setNestedProperty } from './utils';
+import {
+  setNestedProperty,
+  getEditablePropertyValue,
+} from './utils';
 
 /**
  * Apply a widget edit against the LATEST ShareDB document, not a stale React
@@ -29,6 +32,9 @@ export function updateVisualEditorProperty(
     Array.isArray(currentConfig)
   )
     return document;
+  // A widget may become stale after a concurrent config edit. Never recreate
+  // a removed property or change the structure of its parent object.
+  if (!getEditablePropertyValue(currentConfig, property).found) return document;
   let updated: Record<string, unknown>;
   try {
     updated = setNestedProperty(

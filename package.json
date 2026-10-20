@@ -4,7 +4,9 @@
   "description": "Multiplayer code editor system",
   "main": "src/index.ts",
   "type": "module",
-  "bin": "dist/cli.js",
+  "bin": {
+    "vzcode": "dist/cli.js"
+  },
   "files": [
     "dist/**",
     "src/**"

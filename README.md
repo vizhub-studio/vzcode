@@ -204,6 +204,8 @@ The `visualEditorWidgets` array defines the interactive controls that will be av
 - **step**: Step increment for `slider` widgets (optional, defaults to 1 if not specified)
 - **options**: Array of string options (required for `dropdown` widgets)
 
+Every widget's `property` must resolve to an **existing** value in `config.json` (dot-separated paths such as `margin.left` are supported, but arrays and prototype keys are not editable). Match the value to the widget: finite number for `slider`, boolean for `checkbox`, string for `textInput`, one of `options` for `dropdown`, and a valid, opaque CSS color for `color`. Invalid widget values or paths show the host-configurable `invalid-widgets` empty state rather than rendering broken controls.
+
 ### Setting Up Your Visualization
 
 To make your visualization work with the visual editor, you need to:

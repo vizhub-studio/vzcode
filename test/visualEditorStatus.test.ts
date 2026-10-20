@@ -145,6 +145,10 @@ describe('visual editor configuration', () => {
         value: 'transparent',
         widget: { type: 'color', label: 'Fill', property: 'value' },
       },
+      {
+        value: 'rgba(255, 0, 0, 0.5)',
+        widget: { type: 'color', label: 'Fill', property: 'value' },
+      },
     ];
     for (const { value, widget } of incompatible) {
       expect(

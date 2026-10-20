@@ -3,7 +3,6 @@ import {
   useEffect,
   memo,
   useState,
-  useContext,
 } from 'react';
 import { Message } from './Message';
 import { TypingIndicator } from './TypingIndicator';
@@ -12,7 +11,10 @@ import { AIEditingStatusIndicator } from './FileEditingIndicator';
 import { VizChatMessage } from '@vizhub/viz-types';
 import { ExtendedVizChatMessage } from '../../types.js';
 import { DiffViewRef } from './DiffView.js';
-import { VZCodeContext } from '../../client/VZCodeContext';
+import type {
+  AdditionalChatWidgets,
+  SendChatMessage,
+} from '../types';
 
 const MessageListComponent = ({
   messages,
@@ -25,6 +27,9 @@ const MessageListComponent = ({
   onJumpToLatest,
   beforeRender,
   afterRender,
+  additionalWidgets,
+  handleSendMessage,
+  onOpenDiffFile,
 }: {
   messages: VizChatMessage[];
   isLoading: boolean;
@@ -36,13 +41,12 @@ const MessageListComponent = ({
   onJumpToLatest: (targetElement?: HTMLElement) => void;
   beforeRender: () => number;
   afterRender: (prevScrollHeight: number) => void;
+  additionalWidgets?: AdditionalChatWidgets;
+  handleSendMessage?: SendChatMessage;
+  onOpenDiffFile?: (fileName: string) => void;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const diffViewRef = useRef<DiffViewRef>(null);
-
-  // Get additional widgets from context
-  const { additionalWidgets, handleSendMessage } =
-    useContext(VZCodeContext);
 
   // Track previous loading state to detect when AI generation completes
   const [prevIsLoading, setPrevIsLoading] =
@@ -197,6 +201,9 @@ const MessageListComponent = ({
             model={
               msg.role === 'assistant' ? model : undefined
             }
+            additionalWidgets={additionalWidgets}
+            handleSendMessage={handleSendMessage}
+            onOpenDiffFile={onOpenDiffFile}
             ref={
               isLastMessage && (msg as any).diffData
                 ? diffViewRef

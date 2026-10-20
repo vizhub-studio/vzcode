@@ -32,7 +32,7 @@ import { MicSVG } from '../Icons/MicSVG';
 import { sortFileTree } from '../sortFileTree';
 import { SplitPaneResizeContext } from '../SplitPaneResizeContext';
 import { VZCodeContext } from '../VZCodeContext';
-import { AIChat } from '../../llm-streaming-ui/components/index.js';
+import { AIChatWrapper } from './AIChatWrapper';
 import { Listing } from './Listing';
 import { Search } from './Search';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
@@ -581,7 +581,7 @@ export const VZSidebar = ({
         >
           {isAIChatOpen ? (
             <div className="sidebar-ai-chat">
-              <AIChat />
+              <AIChatWrapper />
             </div>
           ) : isSearchOpen ? (
             <div className="sidebar-search">

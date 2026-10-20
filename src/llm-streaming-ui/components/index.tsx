@@ -1,10 +1,9 @@
 import {
-  useContext,
   useMemo,
   useEffect,
   useCallback,
 } from 'react';
-import { VZCodeContext } from '../../client/VZCodeContext';
+import type { AIChatProps } from '../types';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { ExtendedVizChat } from '../../types.js';
@@ -47,26 +46,26 @@ const ChatList = ({
   );
 };
 
-export const AIChat = () => {
-  const {
-    aiChatFocused,
-    content,
-    aiChatMode,
-    aiChatMessage,
-    currentChatId,
-    selectedChatId,
-    setSelectedChatId,
-    aiErrorMessage,
-    setAIChatMode,
-    getStoredAIPrompt,
-    setAIChatMessage,
-    handleSendMessage,
-    setAIErrorMessage,
-    navigateMessageHistoryUp,
-    navigateMessageHistoryDown,
-    resetMessageHistoryNavigation,
-    enableMinimalEditFlow,
-  } = useContext(VZCodeContext);
+export const AIChat = ({
+  aiChatFocused,
+  content,
+  aiChatMode,
+  aiChatMessage,
+  currentChatId,
+  selectedChatId,
+  setSelectedChatId,
+  aiErrorMessage,
+  setAIChatMode,
+  getStoredAIPrompt,
+  setAIChatMessage,
+  handleSendMessage,
+  setAIErrorMessage,
+  navigateMessageHistoryUp,
+  navigateMessageHistoryDown,
+  resetMessageHistoryNavigation,
+  additionalWidgets,
+  onOpenDiffFile,
+}: AIChatProps) => {
 
   // Use the new simplified auto-scroll hook
   const {
@@ -95,12 +94,6 @@ export const AIChat = () => {
   const model = (currentChat as ExtendedVizChat)?.model;
 
   DEBUG && console.log('AIChat: aiStatus:', aiStatus);
-  DEBUG &&
-    console.log(
-      'AIChat: enableMinimalEditFlow:',
-      enableMinimalEditFlow,
-    );
-
   // Transform messages to ensure they have required id field - memoized to avoid recreation
   const messages = useMemo(
     () =>
@@ -336,6 +329,9 @@ export const AIChat = () => {
               onJumpToLatest={onJumpToLatest}
               beforeRender={beforeRender}
               afterRender={afterRender}
+              additionalWidgets={additionalWidgets}
+              handleSendMessage={handleSendMessage}
+              onOpenDiffFile={onOpenDiffFile}
             />
           )}
           {aiErrorMessage && (

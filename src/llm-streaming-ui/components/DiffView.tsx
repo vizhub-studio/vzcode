@@ -1,5 +1,4 @@
 import React, {
-  useContext,
   useEffect,
   useRef,
   forwardRef,
@@ -15,16 +14,15 @@ import {
 import * as Diff2Html from 'diff2html';
 import 'diff2html/bundles/css/diff2html.min.css';
 import './DiffView.scss';
-import { VZCodeContext } from '../../client/VZCodeContext';
 import {
   scrollToFirstDiff,
   getHeaderOffset,
   announceDiffSummary,
 } from '../../client/utils/scrollUtils';
-import { getFileId } from '@vizhub/viz-utils';
 
 interface DiffViewProps {
   diffData: UnifiedFilesDiff;
+  onOpenFile?: (fileName: string) => void;
 }
 
 // Methods that can be called on DiffView from parent components
@@ -38,9 +36,7 @@ export interface DiffViewRef {
 export const DiffView = forwardRef<
   DiffViewRef,
   DiffViewProps
->(({ diffData }, ref) => {
-  const { content, openTab, setIsAIChatOpen } =
-    useContext(VZCodeContext);
+>(({ diffData, onOpenFile }, ref) => {
   const diffContainerRef = useRef<HTMLDivElement>(null);
 
   const allDiffs = Object.values(diffData).filter(
@@ -124,20 +120,8 @@ export const DiffView = forwardRef<
         event.preventDefault();
         event.stopPropagation();
 
-        console.log('File name clicked');
-
         const fileName = target.textContent?.trim();
-
-        console.log('Clicked file name:', fileName);
-        if (fileName && content) {
-          const fileId = getFileId(content, fileName);
-
-          if (fileId) {
-            // Open the file tab and switch to files view
-            openTab({ fileId, isTransient: false });
-            setIsAIChatOpen(false);
-          }
-        }
+        if (fileName) onOpenFile?.(fileName);
       }
     };
 
@@ -167,7 +151,7 @@ export const DiffView = forwardRef<
         );
       });
     };
-  }, [diffHtml, content, openTab, setIsAIChatOpen]);
+  }, [diffHtml, onOpenFile]);
 
   if (allDiffs.length === 0) {
     return null;

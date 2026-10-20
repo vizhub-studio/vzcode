@@ -1,6 +1,5 @@
 import React, {
   useMemo,
-  useContext,
   forwardRef,
 } from 'react';
 import { timestampToDate } from '@vizhub/viz-utils';
@@ -8,7 +7,10 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { StreamingEvent } from '../../types.js';
 import { IndividualFileDiff } from './IndividualFileDiff';
-import { VZCodeContext } from '../../client/VZCodeContext';
+import type {
+  AdditionalChatWidgets,
+  SendChatMessage,
+} from '../types';
 import { DiffView, DiffViewRef } from './DiffView';
 import { UnifiedFilesDiff } from '../../utils/fileDiff';
 import { enableDiffView } from '../../client/featureFlags';
@@ -25,6 +27,9 @@ interface MessageProps {
   isStreaming?: boolean;
   diffData?: UnifiedFilesDiff;
   model?: string; // The LLM model used for this message (assistant only)
+  additionalWidgets?: AdditionalChatWidgets;
+  handleSendMessage?: SendChatMessage;
+  onOpenDiffFile?: (fileName: string) => void;
 }
 
 export const Message = forwardRef<
@@ -45,12 +50,12 @@ export const Message = forwardRef<
       isStreaming = false,
       diffData,
       model,
+      additionalWidgets,
+      handleSendMessage,
+      onOpenDiffFile,
     },
     ref,
   ) => {
-    const { additionalWidgets, handleSendMessage } =
-      useContext(VZCodeContext);
-
     // Memoize date formatting to avoid repeated computation
     const formattedTime = useMemo(() => {
       return timestampToDate(timestamp).toLocaleTimeString(
@@ -86,7 +91,11 @@ export const Message = forwardRef<
           {enableDiffView &&
             diffData &&
             Object.keys(diffData).length > 0 && (
-              <DiffView diffData={diffData} ref={ref} />
+              <DiffView
+                diffData={diffData}
+                onOpenFile={onOpenDiffFile}
+                ref={ref}
+              />
             )}
 
           {/* Render events in order for streaming messages */}

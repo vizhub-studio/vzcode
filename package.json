@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "test": "vitest run",
+    "test:e2e": "vitest run test/serverE2E.test.ts",
     "test-interactive": "cd test/sampleDirectories/playground && tsx ../../../src/server/index.ts",
     "prettier": "prettier {*.*,**/*.*} --write",
     "typecheck": "tsc --noEmit",

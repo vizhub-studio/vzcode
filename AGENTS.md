@@ -5,6 +5,7 @@
 - **Build**: `npm run build` (builds client and server) - DO NOT RUN THIS EVER, it will crash the machine
 - **Type Check**: `npm run typecheck` (expect 0 errors) - run this instead of `npm run build` to validate changes
 - **Tests**: `npm test` (all tests) or `npx vitest run test/filename.test.ts` (single test)
+- **E2E Tests**: `npm run test:e2e` runs `test/serverE2E.test.ts`, which boots a real server in-process (HTTP + ShareDB/WebSocket) against a temp workspace. The server factory lives in `src/server/createServer.ts`; the entry point `src/server/index.ts` is a thin wrapper.
 - **Lint**: `npm run lint` or `npm run lint:fix`
 - **Format**: `npm run prettier` (ALWAYS run after making a series of code changes)
 - **Dev Server**: `npm run test-interactive` (port 3030) or `npm run dev` (port 5173 with hot reload) - DO NOT RUN THIS EVER, it will crash the process, always ask for manual testing

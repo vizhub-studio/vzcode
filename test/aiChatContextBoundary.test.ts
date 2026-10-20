@@ -6,6 +6,11 @@ import { AIChat } from '../src/llm-streaming-ui/components/index';
 import { MessageList } from '../src/llm-streaming-ui/components/MessageList';
 import { Message } from '../src/llm-streaming-ui/components/Message';
 import type { AIChatProps } from '../src/llm-streaming-ui/types';
+import { AIChatWrapper } from '../src/client/VZSidebar/AIChatWrapper';
+import {
+  VZCodeContext,
+  type VZCodeContextValue,
+} from '../src/client/VZCodeContext';
 
 const chatProps = (): AIChatProps => ({
   content: null,
@@ -32,6 +37,22 @@ describe('standalone AI chat UI', () => {
     );
     expect(markup).toContain('Edit with AI');
     expect(markup).toContain('How can I help you?');
+  });
+
+  it('the VZCode wrapper adapts context into the same standalone UI', () => {
+    const context = {
+      ...chatProps(),
+      openTab: vi.fn(),
+      setIsAIChatOpen: vi.fn(),
+    } as unknown as VZCodeContextValue;
+    const markup = renderToStaticMarkup(
+      createElement(
+        VZCodeContext.Provider,
+        { value: context },
+        createElement(AIChatWrapper),
+      ),
+    );
+    expect(markup).toContain('Edit with AI');
   });
 
   it('passes additional widgets through the last assistant message', () => {

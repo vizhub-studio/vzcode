@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { getFileId } from '@vizhub/viz-utils';
 import { VZCodeContext } from '../VZCodeContext';
-import { AIChat } from '../../llm-streaming-ui/components';
+import { AIChat } from '../../llm-streaming-ui/components/index.js';
 import type { AIChatProps } from '../../llm-streaming-ui/types';
 
 /** Adapter: editor context stays outside of the reusable AI chat UI. */

@@ -117,11 +117,12 @@ export const DiffView = forwardRef<
     const handleFileNameClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (target.classList.contains('d2h-file-name')) {
+        if (!onOpenFile) return;
         event.preventDefault();
         event.stopPropagation();
 
         const fileName = target.textContent?.trim();
-        if (fileName) onOpenFile?.(fileName);
+        if (fileName) onOpenFile(fileName);
       }
     };
 
@@ -132,6 +133,7 @@ export const DiffView = forwardRef<
 
     // Add click event listeners and cursor pointer style
     fileNameElements.forEach((element) => {
+      if (!onOpenFile) return;
       element.addEventListener(
         'click',
         handleFileNameClick,

@@ -60,15 +60,27 @@ describe('visual editor configuration', () => {
           visualEditorWidgets: [
             slider('radius'),
             slider('margin.left'),
-            { type: 'checkbox', label: 'Enabled', property: 'enabled' },
-            { type: 'textInput', label: 'Title', property: 'title' },
+            {
+              type: 'checkbox',
+              label: 'Enabled',
+              property: 'enabled',
+            },
+            {
+              type: 'textInput',
+              label: 'Title',
+              property: 'title',
+            },
             {
               type: 'dropdown',
               label: 'Axis',
               property: 'axis',
               options: ['x', 'y'],
             },
-            { type: 'color', label: 'Fill', property: 'fill' },
+            {
+              type: 'color',
+              label: 'Fill',
+              property: 'fill',
+            },
           ],
         }),
       ),
@@ -77,7 +89,11 @@ describe('visual editor configuration', () => {
       getVisualEditorEmptyReason(
         configWithWidget(
           { fill: 'black' },
-          { type: 'color', label: 'Color', property: 'fill' },
+          {
+            type: 'color',
+            label: 'Color',
+            property: 'fill',
+          },
         ),
       ),
     ).toBeNull();
@@ -118,11 +134,19 @@ describe('visual editor configuration', () => {
       { value: '17', widget: slider('value') },
       {
         value: 1,
-        widget: { type: 'checkbox', label: 'Enabled', property: 'value' },
+        widget: {
+          type: 'checkbox',
+          label: 'Enabled',
+          property: 'value',
+        },
       },
       {
         value: null,
-        widget: { type: 'textInput', label: 'Title', property: 'value' },
+        widget: {
+          type: 'textInput',
+          label: 'Title',
+          property: 'value',
+        },
       },
       {
         value: 0,
@@ -135,19 +159,35 @@ describe('visual editor configuration', () => {
       },
       {
         value: 10,
-        widget: { type: 'color', label: 'Fill', property: 'value' },
+        widget: {
+          type: 'color',
+          label: 'Fill',
+          property: 'value',
+        },
       },
       {
         value: 'not-a-css-color',
-        widget: { type: 'color', label: 'Fill', property: 'value' },
+        widget: {
+          type: 'color',
+          label: 'Fill',
+          property: 'value',
+        },
       },
       {
         value: 'transparent',
-        widget: { type: 'color', label: 'Fill', property: 'value' },
+        widget: {
+          type: 'color',
+          label: 'Fill',
+          property: 'value',
+        },
       },
       {
         value: 'rgba(255, 0, 0, 0.5)',
-        widget: { type: 'color', label: 'Fill', property: 'value' },
+        widget: {
+          type: 'color',
+          label: 'Fill',
+          property: 'value',
+        },
       },
     ];
     for (const { value, widget } of incompatible) {
@@ -208,7 +248,11 @@ describe('visual editor configuration', () => {
       getVisualEditorEmptyReason(
         configWithWidget(
           { radius: 5 },
-          { type: 'unknown', label: 'Radius', property: 'radius' },
+          {
+            type: 'unknown',
+            label: 'Radius',
+            property: 'radius',
+          },
         ),
       ),
     ).toBe('invalid-widgets');

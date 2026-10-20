@@ -59,7 +59,12 @@ export function getVisualEditorEmptyReason(
     return 'invalid-config';
   }
   if (!isRecord(config)) return 'invalid-config';
-  if (!Object.prototype.hasOwnProperty.call(config, 'visualEditorWidgets'))
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      config,
+      'visualEditorWidgets',
+    )
+  )
     return 'missing-widgets';
 
   const widgets = config.visualEditorWidgets;
@@ -89,7 +94,8 @@ export function getVisualEditorEmptyReason(
           !Number.isFinite(value) ||
           !Number.isFinite(widget.min) ||
           !Number.isFinite(widget.max) ||
-          (widget.min as number) >= (widget.max as number) ||
+          (widget.min as number) >=
+            (widget.max as number) ||
           (widget.step !== undefined &&
             (!Number.isFinite(widget.step) ||
               (widget.step as number) <= 0))
@@ -98,10 +104,12 @@ export function getVisualEditorEmptyReason(
         }
         break;
       case 'checkbox':
-        if (typeof value !== 'boolean') return 'invalid-widgets';
+        if (typeof value !== 'boolean')
+          return 'invalid-widgets';
         break;
       case 'textInput':
-        if (typeof value !== 'string') return 'invalid-widgets';
+        if (typeof value !== 'string')
+          return 'invalid-widgets';
         break;
       case 'dropdown':
         if (
@@ -117,7 +125,8 @@ export function getVisualEditorEmptyReason(
         }
         break;
       case 'color': {
-        if (typeof value !== 'string') return 'invalid-widgets';
+        if (typeof value !== 'string')
+          return 'invalid-widgets';
         // A color widget converts through RGB/HCL. A mere string (or the
         // special transparent color with NaN RGB channels) is not usable.
         const rgb = color(value)?.rgb();

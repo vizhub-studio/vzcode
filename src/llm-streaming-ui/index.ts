@@ -32,3 +32,9 @@ export { ChatInput } from './components/ChatInput.js';
 
 // Custom hooks
 export { useSpeechRecognition } from './components/useSpeechRecognition.js';
+
+export type {
+  AIChatProps,
+  AdditionalChatWidgets,
+  SendChatMessage,
+} from './types.js';

@@ -307,7 +307,10 @@ export interface StreamingChatMessage {
 }
 
 /** Embedding hosts can choose which sidebar VZCode opens initially. */
-export type VZInitialSidebarView = 'ai-chat' | 'files' | 'visual';
+export type VZInitialSidebarView =
+  | 'ai-chat'
+  | 'files'
+  | 'visual';
 
 /** Reason a visualization cannot yet render visual-editor controls. */
 export type VisualEditorEmptyReason =

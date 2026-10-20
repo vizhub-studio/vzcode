@@ -21,8 +21,11 @@ import { ColorWidget } from './ColorWidget';
 import { getNestedProperty } from './utils';
 
 export const VisualEditor = () => {
-  const { files, submitOperation, renderVisualEditorEmptyState } =
-    useContext(VZCodeContext);
+  const {
+    files,
+    submitOperation,
+    renderVisualEditorEmptyState,
+  } = useContext(VZCodeContext);
 
   // Local state to track widget values during user interaction
   const [localValues, setLocalValues] = useState<{
@@ -70,7 +73,12 @@ export const VisualEditor = () => {
         }));
 
         submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(document, configFileId, property, newValue),
+          updateVisualEditorProperty(
+            document,
+            configFileId,
+            property,
+            newValue,
+          ),
         );
       },
     [configFileId, submitOperation],
@@ -88,7 +96,12 @@ export const VisualEditor = () => {
         }));
 
         submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(document, configFileId, property, newValue),
+          updateVisualEditorProperty(
+            document,
+            configFileId,
+            property,
+            newValue,
+          ),
         );
       },
     [configFileId, submitOperation],
@@ -106,7 +119,12 @@ export const VisualEditor = () => {
         }));
 
         submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(document, configFileId, property, newValue),
+          updateVisualEditorProperty(
+            document,
+            configFileId,
+            property,
+            newValue,
+          ),
         );
       },
     [configFileId, submitOperation],
@@ -121,7 +139,12 @@ export const VisualEditor = () => {
       }));
 
       submitOperation((document: VizContent) =>
-        updateVisualEditorProperty(document, configFileId, property, newValue),
+        updateVisualEditorProperty(
+          document,
+          configFileId,
+          property,
+          newValue,
+        ),
       );
     },
     [configFileId, submitOperation],
@@ -234,7 +257,12 @@ export const VisualEditor = () => {
         }));
 
         submitOperation((document: VizContent) =>
-          updateVisualEditorProperty(document, configFileId, property, newHex),
+          updateVisualEditorProperty(
+            document,
+            configFileId,
+            property,
+            newHex,
+          ),
         );
       },
     [
@@ -247,9 +275,10 @@ export const VisualEditor = () => {
 
   const visualEditorWidgets: VisualEditorConfigEntry[] =
     useMemo(
-      () => Array.isArray(configData?.visualEditorWidgets)
-        ? configData.visualEditorWidgets
-        : [],
+      () =>
+        Array.isArray(configData?.visualEditorWidgets)
+          ? configData.visualEditorWidgets
+          : [],
       [configData],
     );
 
@@ -292,21 +321,18 @@ export const VisualEditor = () => {
         );
 
         if (hexColor) {
-            try {
-              const rgbColor = color(hexColor);
-              const lch = hcl(rgbColor);
-              newLocalValues[`${widget.property}_h`] =
-                lch.h;
-              newLocalValues[`${widget.property}_c`] =
-                lch.c;
-              newLocalValues[`${widget.property}_l`] =
-                lch.l;
-            } catch {
-              // Fallback values if conversion fails
-              newLocalValues[`${widget.property}_l`] = 0;
-              newLocalValues[`${widget.property}_c`] = 0;
-              newLocalValues[`${widget.property}_h`] = 0;
-            }
+          try {
+            const rgbColor = color(hexColor);
+            const lch = hcl(rgbColor);
+            newLocalValues[`${widget.property}_h`] = lch.h;
+            newLocalValues[`${widget.property}_c`] = lch.c;
+            newLocalValues[`${widget.property}_l`] = lch.l;
+          } catch {
+            // Fallback values if conversion fails
+            newLocalValues[`${widget.property}_l`] = 0;
+            newLocalValues[`${widget.property}_c`] = 0;
+            newLocalValues[`${widget.property}_h`] = 0;
+          }
         }
       }
     });
@@ -314,17 +340,25 @@ export const VisualEditor = () => {
   }, [configData, visualEditorWidgets]);
 
   const emptyReason = getVisualEditorEmptyReason(
-    configFileId === null ? null : files?.[configFileId]?.text ?? null,
+    configFileId === null
+      ? null
+      : (files?.[configFileId]?.text ?? null),
   );
   if (emptyReason) {
-    const hostUI = renderVisualEditorEmptyState?.(emptyReason);
+    const hostUI =
+      renderVisualEditorEmptyState?.(emptyReason);
     if (hostUI != null) return <>{hostUI}</>;
     const messages = {
-      'missing-config': 'To begin using the visual editor, create a config.json.',
-      'invalid-config': 'Your config.json file is not valid JSON.',
-      'missing-widgets': 'Add a visualEditorWidgets array to config.json.',
-      'invalid-widgets': 'Your visualEditorWidgets configuration is invalid.',
-      'empty-widgets': 'Add at least one widget to visualEditorWidgets.',
+      'missing-config':
+        'To begin using the visual editor, create a config.json.',
+      'invalid-config':
+        'Your config.json file is not valid JSON.',
+      'missing-widgets':
+        'Add a visualEditorWidgets array to config.json.',
+      'invalid-widgets':
+        'Your visualEditorWidgets configuration is invalid.',
+      'empty-widgets':
+        'Add at least one widget to visualEditorWidgets.',
     };
     return <EmptyState>{messages[emptyReason]}</EmptyState>;
   }

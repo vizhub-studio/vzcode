@@ -1,5 +1,8 @@
 import { VZState } from '.';
-import { Username, VZInitialSidebarView } from '../../types';
+import {
+  Username,
+  VZInitialSidebarView,
+} from '../../types';
 import { ThemeLabel } from '../themes';
 
 export const createInitialState = ({

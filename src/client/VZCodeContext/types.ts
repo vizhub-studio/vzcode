@@ -94,7 +94,9 @@ export type VZCodeContextValue = {
   setSearch: (pattern: string) => void;
 
   /** Host-provided replacement for the built-in visual-editor empty states. */
-  renderVisualEditorEmptyState?: (reason: VisualEditorEmptyReason) => React.ReactNode;
+  renderVisualEditorEmptyState?: (
+    reason: VisualEditorEmptyReason,
+  ) => React.ReactNode;
   isVisualEditorOpen: boolean;
   setIsVisualEditorOpen: (
     isVisualEditorOpen: boolean,
@@ -233,7 +235,9 @@ export interface VZCodeProviderProps {
   /** Initial sidebar selection; defaults to VZCode's historical AI chat. */
   initialSidebarView?: VZInitialSidebarView;
   /** Optional host UI for a missing/invalid/unconfigured visual editor. */
-  renderVisualEditorEmptyState?: (reason: VisualEditorEmptyReason) => React.ReactNode;
+  renderVisualEditorEmptyState?: (
+    reason: VisualEditorEmptyReason,
+  ) => React.ReactNode;
   children: React.ReactNode;
   codeError?: string | null;
   connected?: boolean;

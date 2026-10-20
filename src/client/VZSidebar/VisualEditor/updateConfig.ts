@@ -1,4 +1,7 @@
-import type { VizContent, VizFileId } from '@vizhub/viz-types';
+import type {
+  VizContent,
+  VizFileId,
+} from '@vizhub/viz-types';
 import { setNestedProperty } from './utils';
 
 /**
@@ -20,11 +23,19 @@ export function updateVisualEditorProperty(
   } catch {
     return document;
   }
-  if (!currentConfig || typeof currentConfig !== 'object' || Array.isArray(currentConfig))
+  if (
+    !currentConfig ||
+    typeof currentConfig !== 'object' ||
+    Array.isArray(currentConfig)
+  )
     return document;
   let updated: Record<string, unknown>;
   try {
-    updated = setNestedProperty(currentConfig as Record<string, unknown>, property, value);
+    updated = setNestedProperty(
+      currentConfig as Record<string, unknown>,
+      property,
+      value,
+    );
   } catch {
     return document;
   }

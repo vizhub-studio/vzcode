@@ -9,20 +9,17 @@ import {
   Button,
   ButtonGroup,
   ToggleButton,
-} from '../../client/bootstrap';
-import {
-  enableAskMode,
-  enableVoiceInput,
-} from '../../client/featureFlags';
+} from './bootstrap';
 import { useSpeechRecognition } from './useSpeechRecognition';
-import { MicSVG, MicOffSVG } from '../../client/Icons';
+import { MicSVG, MicOffSVG } from './icons';
+import type { ChatInputProps } from '../props';
 
 /**
  * Microphone toggle for voice typing. Purely presentational: the
  * speech recognition state lives in `ChatInputComponent`, and is only
  * ever instantiated when the user actually toggles the button.
  *
- * Rendered only when `enableVoiceInput` is set. See `featureFlags`.
+ * Rendered only when `enableVoiceInput` is set. See `props`.
  */
 const VoiceInputButton = ({
   isSpeaking,
@@ -54,18 +51,6 @@ const VoiceInputButton = ({
   );
 };
 
-interface ChatInputProps {
-  aiChatMessage: string;
-  setAIChatMessage: (message: string) => void;
-  onSendMessage: () => void;
-  focused: boolean;
-  aiChatMode: 'ask' | 'edit';
-  setAIChatMode: (mode: 'ask' | 'edit') => void;
-  navigateMessageHistoryUp: () => void;
-  navigateMessageHistoryDown: () => void;
-  resetMessageHistoryNavigation: () => void;
-}
-
 const ChatInputComponent = ({
   aiChatMessage,
   setAIChatMessage,
@@ -76,6 +61,8 @@ const ChatInputComponent = ({
   navigateMessageHistoryUp,
   navigateMessageHistoryDown,
   resetMessageHistoryNavigation,
+  enableAskMode = false,
+  enableVoiceInput = false,
 }: ChatInputProps) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 

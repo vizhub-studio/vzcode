@@ -1,4 +1,4 @@
-import { Spinner } from '../../client/AIAssist/Spinner';
+import { Spinner } from './Spinner';
 
 interface AIEditingStatusIndicatorProps {
   status: string;

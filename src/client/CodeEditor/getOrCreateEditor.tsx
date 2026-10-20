@@ -384,21 +384,7 @@ export const getOrCreateEditor = async ({
       widgets({ onInteract, customInteractRules }),
     );
 
-    // TODO fix the bugginess in this one where
-    // the highlight persists after the mouse leaves.
-    // extensions.push(highlightWidgets);
-
     extensions.push(rotationIndicator);
-
-    // extensions.push(
-    //   AIAssistCodeMirrorKeyMap({
-    //     shareDBDoc,
-    //     fileId,
-    //     tabList,
-    //     aiAssistEndpoint,
-    //     aiAssistOptions,
-    //   }),
-    // );
 
     // Add the extension that provides indentation markers.
     extensions.push(

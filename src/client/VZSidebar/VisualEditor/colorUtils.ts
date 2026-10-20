@@ -16,6 +16,20 @@ export function toHclChannels(value: string): HclChannels {
   };
 }
 
+/**
+ * Coerces a widget value to a finite number, falling back when
+ * the stored value is not numeric (widget values may be strings or
+ * booleans for other widget types).
+ */
+export function coerceChannelNumber(
+  value: unknown,
+  fallback: number,
+): number {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? value
+    : fallback;
+}
+
 export function hclChannelsToHex(
   channels: HclChannels,
   fallback: string,

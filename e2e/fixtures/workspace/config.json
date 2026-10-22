@@ -1,0 +1,18 @@
+{
+  "pointRadius": 10,
+  "label": "hello",
+  "visualEditorWidgets": [
+    {
+      "type": "slider",
+      "label": "Point Radius",
+      "property": "pointRadius",
+      "min": 1,
+      "max": 30
+    },
+    {
+      "type": "textInput",
+      "label": "Label",
+      "property": "label"
+    }
+  ]
+}

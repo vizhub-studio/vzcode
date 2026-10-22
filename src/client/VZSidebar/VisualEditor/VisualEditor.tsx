@@ -9,7 +9,11 @@ import { VZCodeContext } from '../../VZCodeContext';
 import { VizContent, VizFileId } from '@vizhub/viz-types';
 import { VisualEditorConfigEntry } from '../../../types';
 import { EmptyState } from '../EmptyState';
-import { toHclChannels, hclChannelsToHex } from './colorUtils';
+import {
+  toHclChannels,
+  coerceChannelNumber,
+  hclChannelsToHex,
+} from './colorUtils';
 import { CONFIG_FILE_NAME } from './constants';
 import { getVisualEditorEmptyReason } from './status';
 import { updateVisualEditorProperty } from './updateConfig';
@@ -86,14 +90,20 @@ export const VisualEditor = () => {
   const onSliderChange = useCallback(
     (property: string) =>
       (event: React.ChangeEvent<HTMLInputElement>) =>
-        setWidgetValue(property, parseFloat(event.currentTarget.value)),
+        setWidgetValue(
+          property,
+          parseFloat(event.currentTarget.value),
+        ),
     [setWidgetValue],
   );
 
   const onCheckboxChange = useCallback(
     (property: string) =>
       (event: React.ChangeEvent<HTMLInputElement>) =>
-        setWidgetValue(property, event.currentTarget.checked),
+        setWidgetValue(
+          property,
+          event.currentTarget.checked,
+        ),
     [setWidgetValue],
   );
 
@@ -105,7 +115,8 @@ export const VisualEditor = () => {
   );
 
   const onDropdownChange = useCallback(
-    (property: string, value: string) => setWidgetValue(property, value),
+    (property: string, value: string) =>
+      setWidgetValue(property, value),
     [setWidgetValue],
   );
 
@@ -164,23 +175,28 @@ export const VisualEditor = () => {
 
         const base = toHclChannels(currentHex);
         const channels = {
-          h: (localValues[`${property}_h`] as number) ?? base.h,
-          c: (localValues[`${property}_c`] as number) ?? base.c,
-          l: (localValues[`${property}_l`] as number) ?? base.l,
+          h:
+            (localValues[`${property}_h`] as number) ??
+            base.h,
+          c:
+            (localValues[`${property}_c`] as number) ??
+            base.c,
+          l:
+            (localValues[`${property}_l`] as number) ??
+            base.l,
         };
         channels[lchComponent] = newValue;
-        const newHex = hclChannelsToHex(channels, currentHex);
+        const newHex = hclChannelsToHex(
+          channels,
+          currentHex,
+        );
         setWidgetValue(property, newHex, {
           [`${property}_h`]: channels.h,
           [`${property}_c`]: channels.c,
           [`${property}_l`]: channels.l,
         });
       },
-    [
-      configData,
-      setWidgetValue,
-      localValues,
-    ],
+    [configData, setWidgetValue, localValues],
   );
 
   const visualEditorWidgets: VisualEditorConfigEntry[] =
@@ -198,12 +214,15 @@ export const VisualEditor = () => {
       [key: string]: number | boolean | string;
     } = {};
     visualEditorWidgets.forEach((widget) => {
-      const value = getNestedProperty<string | number | boolean>(
-        configData,
-        widget.property,
-      );
-      if (value !== undefined) newLocalValues[widget.property] = value;
-      if (widget.type === 'color' && typeof value === 'string') {
+      const value = getNestedProperty<
+        string | number | boolean
+      >(configData, widget.property);
+      if (value !== undefined)
+        newLocalValues[widget.property] = value;
+      if (
+        widget.type === 'color' &&
+        typeof value === 'string'
+      ) {
         const channels = toHclChannels(value);
         newLocalValues[`${widget.property}_h`] = channels.h;
         newLocalValues[`${widget.property}_c`] = channels.c;
@@ -359,9 +378,18 @@ export const VisualEditor = () => {
             '#000000';
 
           const channels = toHclChannels(currentHex);
-          const currentH = localValues[`${widgetConfig.property}_h`] ?? channels.h;
-          const currentC = localValues[`${widgetConfig.property}_c`] ?? channels.c;
-          const currentL = localValues[`${widgetConfig.property}_l`] ?? channels.l;
+          const currentH = coerceChannelNumber(
+            localValues[`${widgetConfig.property}_h`],
+            channels.h,
+          );
+          const currentC = coerceChannelNumber(
+            localValues[`${widgetConfig.property}_c`],
+            channels.c,
+          );
+          const currentL = coerceChannelNumber(
+            localValues[`${widgetConfig.property}_l`],
+            channels.l,
+          );
 
           return (
             <ColorWidget

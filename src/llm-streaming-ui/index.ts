@@ -32,9 +32,16 @@ export { ChatInput } from './components/ChatInput.js';
 
 // Custom hooks
 export { useSpeechRecognition } from './components/useSpeechRecognition.js';
+export { useAutoScroll } from './hooks/useAutoScroll.js';
 
+// Public prop types
 export type {
   AIChatProps,
-  AdditionalChatWidgets,
-  SendChatMessage,
-} from './types.js';
+  AIChatMode,
+  AdditionalWidgets,
+  ChatInputProps,
+  DiffViewProps,
+  HandleSendMessage,
+  MessageListProps,
+  MessageProps,
+} from './props.js';

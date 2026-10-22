@@ -4,17 +4,23 @@ Client-side React UI components for displaying streaming AI edits and chat.
 
 ## Overview
 
-This module is being extracted from VZCode's AI chat interface to become a standalone, reusable React component library. It provides client-side UI functionality for:
+This module is a standalone, reusable React component library extracted
+from VZCode's AI chat interface. It provides client-side UI for:
 
 - **AI Chat Interface**: Main chat container component
-- **Message Display**: Rendering user and AI messages with streaming support
+- **Message Display**: Rendering user and assistant messages with streaming support
 - **Diff Visualization**: Showing code changes with syntax highlighting
 - **Status Indicators**: Displaying AI thinking/reasoning and file editing status
 - **Voice Input**: Speech recognition for voice-based chat input
 
-## Current Status
+## Status
 
-⚠️ **Work in Progress**: This is Phase 1 of the extraction plan. The files have been copied to this directory and imports have been updated, but the components are not yet decoupled from VZCode.
+The library is **decoupled** from VZCode. It does **not** import from
+`src/client` and contains no reference to `VZCodeContext`. All
+application state and callbacks are supplied via props.
+
+VZCode binds those props using the `AIChatWrapper` component in
+`src/client/VZSidebar/AIChatWrapper.tsx`.
 
 ## Components
 
@@ -36,68 +42,64 @@ This module is being extracted from VZCode's AI chat interface to become a stand
 - `TypingIndicator.tsx` - Animated typing/loading indicator
 - `ThinkingScratchpad.tsx` - AI reasoning/thinking display
 - `JumpToLatestButton.tsx` - Button to scroll to latest message
+- `Spinner.tsx` - Animated loading spinner
 
 ### Hooks
 
 - `useSpeechRecognition.ts` - Voice input functionality
+- `hooks/useAutoScroll.ts` - Auto-scroll behavior for the message list
+
+### Support Modules
+
+- `components/bootstrap.ts` - react-bootstrap component wrappers
+- `components/icons.tsx` - Self-contained microphone icons
+- `utils/scrollUtils.ts` - Diff scrolling and accessibility helpers
+- `props.ts` - Public prop and callback types
 
 ### Styles
 
-- `styles.scss` - Main component styles
-- `DiffView.scss` - Diff viewer styles
+- `components/styles.scss` - Main component styles
+- `components/DiffView.scss` - Diff viewer styles
+- `components/Spinner.scss` - Spinner styles
 
 ## Dependencies
 
-Currently depends on:
-
 - React and React hooks
-- VZCode context: `../../client/VZCodeContext`
-- VZCode types: `../../types.js`
-- VZCode utilities: `../../client/hooks/*`, `../../utils/*`
-- Bootstrap components
+- react-bootstrap
 - diff2html for diff rendering
 - react-markdown for message rendering
-
-## Future Plans
-
-This module will eventually be:
-
-1. Decoupled from VZCode-specific context and utilities
-2. Published as `@vizhub/llm-streaming-ui` on npm
-3. Made themeable and customizable
-4. Provided with Storybook documentation
-5. Fully typed with exported TypeScript interfaces
-
-See the [main issue](https://github.com/vizhub-core/vzcode/issues/XXX) for the full extraction plan.
+- `@vizhub/viz-types` for chat/content types
+- Shared, framework-agnostic VZCode utilities: `../types.js`
+  and `../utils/fileDiff`
 
 ## Usage (Current)
 
-Currently, this module is imported by `src/client/VZSidebar/index.tsx`:
+`src/client/VZSidebar/index.tsx` renders `AIChatWrapper`, which passes
+`VZCodeContext` state and callbacks into the standalone `AIChat`:
 
 ```typescript
-import { AIChat } from '../../llm-streaming-ui/components/index.js';
+import { AIChat } from '../../llm-streaming-ui';
 ```
 
-The AIChat component expects VZCode context to be available and receives props like:
+```tsx
+<AIChat
+  content={content}
+  aiChatMode={aiChatMode}
+  handleSendMessage={handleSendMessage}
+  // ...chat state, callbacks, feature flags
+/>
+```
 
-- Chat state from VZCodeContext
-- Message sending handlers
-- Auto-scroll configuration
+See `AIChatProps` in `props.ts` for the full contract.
 
 ## Contributing
 
-As this module is being extracted, please:
-
-- Keep changes minimal and focused
-- Maintain backward compatibility with VZCode
-- Update component tests when modifying functionality
-- Consider future consumers when adding new dependencies
-- Document component props and behavior
+- Keep the library free of imports from `src/client`
+- Prefer props over context for all host interaction
+- Add or update tests when changing behavior
+- Document new props and side effects
 
 ## Theming
 
-The components currently use VZCode's theming system via SCSS variables. Future versions will provide:
-
-- CSS custom properties for theming
-- Light/dark theme presets
-- Customizable component styling
+The components currently use VZCode's theming system via SCSS variables.
+Future versions will provide CSS custom properties and theme presets.

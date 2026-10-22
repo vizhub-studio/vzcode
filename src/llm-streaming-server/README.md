@@ -27,9 +27,9 @@ This module is being extracted from VZCode's AI chat functionality to become a s
 
 ## Dependencies
 
-Currently depends on:
+Declared in `package.json`:
 
-- `openai` - OpenAI SDK for LLM interactions
+- `openai` - OpenAI SDK for LLM interactions (declared directly; also used transitively by `@langchain/openai`)
 - `sharedb` - Real-time collaborative editing framework
 - `llm-code-format` - Markdown parsing for code blocks
 - `editcodewithai` - Code editing utilities
@@ -44,7 +44,9 @@ This module will eventually be:
 3. Made framework-agnostic (can work with Express, Fastify, etc.)
 4. Fully documented with usage examples
 
-See the [main issue](https://github.com/vizhub-core/vzcode/issues/XXX) for the full extraction plan.
+This module is being extracted into a standalone package
+(`@vizhub/llm-streaming-server`). Follow the conventions in
+`../llm-streaming-ui/README.md` when contributing.
 
 ## Usage (Current)
 

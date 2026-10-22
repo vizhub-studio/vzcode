@@ -1,14 +1,10 @@
-import {
-  useMemo,
-  useEffect,
-  useCallback,
-} from 'react';
-import type { AIChatProps } from '../types';
+import { useMemo, useEffect, useCallback } from 'react';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { ExtendedVizChat } from '../../types.js';
-import { useAutoScroll } from '../../client/hooks/useAutoScroll';
+import { useAutoScroll } from '../hooks/useAutoScroll';
 import { JumpToLatestButton } from './JumpToLatestButton';
+import type { AIChatProps } from '../props';
 import './styles.scss';
 
 const DEBUG = false;
@@ -63,10 +59,13 @@ export const AIChat = ({
   navigateMessageHistoryUp,
   navigateMessageHistoryDown,
   resetMessageHistoryNavigation,
+  enableMinimalEditFlow = false,
   additionalWidgets,
-  onOpenDiffFile,
+  enableDiffView = true,
+  enableAskMode = false,
+  enableVoiceInput = false,
+  onOpenFile,
 }: AIChatProps) => {
-
   // Use the new simplified auto-scroll hook
   const {
     containerRef: messagesContainerRef,
@@ -94,6 +93,12 @@ export const AIChat = ({
   const model = (currentChat as ExtendedVizChat)?.model;
 
   DEBUG && console.log('AIChat: aiStatus:', aiStatus);
+  DEBUG &&
+    console.log(
+      'AIChat: enableMinimalEditFlow:',
+      enableMinimalEditFlow,
+    );
+
   // Transform messages to ensure they have required id field - memoized to avoid recreation
   const messages = useMemo(
     () =>
@@ -331,7 +336,8 @@ export const AIChat = ({
               afterRender={afterRender}
               additionalWidgets={additionalWidgets}
               handleSendMessage={handleSendMessage}
-              onOpenDiffFile={onOpenDiffFile}
+              enableDiffView={enableDiffView}
+              onOpenFile={onOpenFile}
             />
           )}
           {aiErrorMessage && (
@@ -365,9 +371,11 @@ export const AIChat = ({
           aiChatMessage={aiChatMessage}
           setAIChatMessage={setAIChatMessage}
           onSendMessage={handleSendMessageWithSelection}
-          focused={aiChatFocused}
+          focused={aiChatFocused ?? false}
           aiChatMode={aiChatMode}
           setAIChatMode={setAIChatMode}
+          enableAskMode={enableAskMode}
+          enableVoiceInput={enableVoiceInput}
           navigateMessageHistoryUp={
             navigateMessageHistoryUp
           }

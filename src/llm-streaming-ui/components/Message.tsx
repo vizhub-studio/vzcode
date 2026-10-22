@@ -1,36 +1,10 @@
-import React, {
-  useMemo,
-  forwardRef,
-} from 'react';
+import React, { useMemo, forwardRef } from 'react';
 import { timestampToDate } from '@vizhub/viz-utils';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { StreamingEvent } from '../../types.js';
 import { IndividualFileDiff } from './IndividualFileDiff';
-import type {
-  AdditionalChatWidgets,
-  SendChatMessage,
-} from '../types';
 import { DiffView, DiffViewRef } from './DiffView';
-import { UnifiedFilesDiff } from '../../utils/fileDiff';
-import { enableDiffView } from '../../client/featureFlags';
-
-interface MessageProps {
-  id: string;
-  role: 'user' | 'assistant';
-  content?: string; // For non-streaming messages
-  timestamp: number;
-  events?: StreamingEvent[]; // For streaming messages
-  isActive?: boolean; // Is this the currently streaming message?
-  chatId?: string;
-  showAdditionalWidgets?: boolean;
-  isStreaming?: boolean;
-  diffData?: UnifiedFilesDiff;
-  model?: string; // The LLM model used for this message (assistant only)
-  additionalWidgets?: AdditionalChatWidgets;
-  handleSendMessage?: SendChatMessage;
-  onOpenDiffFile?: (fileName: string) => void;
-}
+import type { MessageProps } from '../props';
 
 export const Message = forwardRef<
   DiffViewRef,
@@ -52,7 +26,8 @@ export const Message = forwardRef<
       model,
       additionalWidgets,
       handleSendMessage,
-      onOpenDiffFile,
+      enableDiffView = true,
+      onOpenFile,
     },
     ref,
   ) => {
@@ -93,8 +68,8 @@ export const Message = forwardRef<
             Object.keys(diffData).length > 0 && (
               <DiffView
                 diffData={diffData}
-                onOpenFile={onOpenDiffFile}
                 ref={ref}
+                onOpenFile={onOpenFile}
               />
             )}
 

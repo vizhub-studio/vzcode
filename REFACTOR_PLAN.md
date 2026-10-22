@@ -1,18 +1,40 @@
-# Refactoring Plan: LLM Streaming UI Migration
+# Refactoring Plan: LLM Streaming UI Extraction
 
-## Completed: VZCode context boundary (2026-10-20)
+Status: **Completed.**
 
-- Phases 1–3: `AIChatWrapper` in `src/client/VZSidebar` is now the only VZCode context reader for the chat message tree.
-- `AIChat`, `MessageList`, `Message`, and `DiffView` consume typed props instead of `VZCodeContext`.
-- The wrapper owns file navigation for diff clicks; standalone `DiffView` can render without an editor host by omitting `onOpenFile`.
-- `ChatInput` already consumes callbacks via props; it did not need context migration.
-- Existing host-facing `VZCodeContextValue` and external behavior are unchanged.
+The `llm-streaming-ui` module has been decoupled from the VZCode client.
+It no longer imports from `src/client` and no longer reads
+`VZCodeContext`; all host interaction happens through props. VZCode
+binds those props in `src/client/VZSidebar/AIChatWrapper.tsx`.
 
-## Remaining: independent reusable component library
+This is enforced by `test/llmStreamingUiArchitecture.test.ts`, which
+fails if any file under `src/llm-streaming-ui` imports `src/client` or
+`VZCodeContext`.
 
-1. **Hooks:** Move or share `useAutoScroll` from `src/client/hooks` into `src/llm-streaming-ui` without duplication.
-2. **Utilities and feature flags:** Move/share diff and scroll helpers; supply `enableDiffView`, `enableAskMode`, and `enableVoiceInput` through explicit props or local UI defaults.
-3. **Presentation dependencies:** Remove direct imports of `src/client/Icons` and `src/client/bootstrap` by passing UI primitives or moving portable assets into the library.
-4. **Packaging:** After dependency direction is clean, evaluate publishing `llm-streaming-ui` as its own package. Do not duplicate source or remove host capabilities prematurely.
+## What was done
 
-The earlier instruction to delete `src/client/VZSidebar/AIChat` was obsolete: that legacy directory no longer exists.
+1. **Wrapper**: `src/client/VZSidebar/AIChatWrapper.tsx` consumes
+   `VZCodeContext` and supplies props to `AIChat`.
+2. **AIChat**: reads only props; types in `src/llm-streaming-ui/props.ts`.
+3. **MessageList / Message / DiffView**: no longer use context; receive
+   `additionalWidgets`, `handleSendMessage`, `enableDiffView`, and
+   `onOpenFile` via props.
+4. **useAutoScroll**: moved to `src/llm-streaming-ui/hooks/`.
+5. **scrollUtils**: moved to `src/llm-streaming-ui/utils/`.
+6. **Icons**: the microphone icons are self-contained in
+   `src/llm-streaming-ui/components/icons.tsx`.
+7. **Bootstrap UI**: react-bootstrap wrappers live in
+   `src/llm-streaming-ui/components/bootstrap.ts`.
+8. **Spinner**: self-contained in
+   `src/llm-streaming-ui/components/Spinner.tsx`.
+9. **Barrel**: `src/llm-streaming-ui/index.ts` now exports the
+   component API, hooks, and public prop types; `VZSidebar` uses the
+   `AIChatWrapper`.
+
+## Intentional deviation
+
+`fileDiff.ts` remains in `src/utils/fileDiff.ts`. It is
+framework-agnostic and is shared by the client UI **and** the
+server-side module `src/llm-streaming-server/aiEditing.ts`, so it is
+treated as a shared utility rather than being moved under the UI
+library.

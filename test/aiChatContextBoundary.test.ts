@@ -5,7 +5,7 @@ import type { VizChatMessage } from '@vizhub/viz-types';
 import { AIChat } from '../src/llm-streaming-ui/components/index';
 import { MessageList } from '../src/llm-streaming-ui/components/MessageList';
 import { Message } from '../src/llm-streaming-ui/components/Message';
-import type { AIChatProps } from '../src/llm-streaming-ui/types';
+import type { AIChatProps } from '../src/llm-streaming-ui/props';
 import { AIChatWrapper } from '../src/client/VZSidebar/AIChatWrapper';
 import {
   VZCodeContext,
@@ -58,12 +58,31 @@ describe('standalone AI chat UI', () => {
   it('passes additional widgets through the last assistant message', () => {
     const renderWidgets = vi.fn(
       ({ messageId }: { messageId: string }) =>
-        createElement('button', null, 'Action for ' + messageId),
+        createElement(
+          'button',
+          null,
+          'Action for ' + messageId,
+        ),
     );
     const messages = [
-      { id: 'user-1', role: 'user', content: 'Make it blue', timestamp: 1 },
-      { id: 'assistant-1', role: 'assistant', content: 'Done', timestamp: 2 },
-      { id: 'assistant-2', role: 'assistant', content: 'Updated', timestamp: 3 },
+      {
+        id: 'user-1',
+        role: 'user',
+        content: 'Make it blue',
+        timestamp: 1,
+      },
+      {
+        id: 'assistant-1',
+        role: 'assistant',
+        content: 'Done',
+        timestamp: 2,
+      },
+      {
+        id: 'assistant-2',
+        role: 'assistant',
+        content: 'Updated',
+        timestamp: 3,
+      },
     ] as VizChatMessage[];
     const send = vi.fn(async () => undefined);
     const markup = renderToStaticMarkup(
@@ -90,7 +109,9 @@ describe('standalone AI chat UI', () => {
   });
 
   it('does not render completion widgets for streaming messages', () => {
-    const widgets = vi.fn(() => createElement('button', null, 'Approve'));
+    const widgets = vi.fn(() =>
+      createElement('button', null, 'Approve'),
+    );
     const markup = renderToStaticMarkup(
       createElement(Message, {
         id: 'assistant-1',

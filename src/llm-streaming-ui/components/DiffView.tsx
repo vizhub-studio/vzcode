@@ -5,7 +5,6 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import {
-  UnifiedFilesDiff,
   parseUnifiedDiffStats,
   combineUnifiedDiffs,
   isFileDeletion,
@@ -18,12 +17,8 @@ import {
   scrollToFirstDiff,
   getHeaderOffset,
   announceDiffSummary,
-} from '../../client/utils/scrollUtils';
-
-interface DiffViewProps {
-  diffData: UnifiedFilesDiff;
-  onOpenFile?: (fileName: string) => void;
-}
+} from '../utils/scrollUtils';
+import type { DiffViewProps } from '../props';
 
 // Methods that can be called on DiffView from parent components
 export interface DiffViewRef {
@@ -117,12 +112,14 @@ export const DiffView = forwardRef<
     const handleFileNameClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (target.classList.contains('d2h-file-name')) {
-        if (!onOpenFile) return;
         event.preventDefault();
         event.stopPropagation();
 
         const fileName = target.textContent?.trim();
-        if (fileName) onOpenFile(fileName);
+
+        if (fileName && onOpenFile) {
+          onOpenFile(fileName);
+        }
       }
     };
 
@@ -133,7 +130,6 @@ export const DiffView = forwardRef<
 
     // Add click event listeners and cursor pointer style
     fileNameElements.forEach((element) => {
-      if (!onOpenFile) return;
       element.addEventListener(
         'click',
         handleFileNameClick,

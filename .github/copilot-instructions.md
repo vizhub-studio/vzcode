@@ -17,13 +17,13 @@ npm install  # Set timeout to 5+ minutes
 # Build the application - NEVER CANCEL: Takes ~40 seconds
 npm run build  # Set timeout to 3+ minutes
 
-# Run tests - Takes ~3 seconds, expect 4 test failures (baseline)
+# Run tests - Takes ~3 seconds, expect all tests to pass (baseline)
 npm test  # Set timeout to 1+ minute
 
 # Format code (always run before committing) - Takes ~3 seconds
 npm run prettier  # Set timeout to 1+ minute
 
-# Type checking - Takes ~5 seconds, expect 1 TypeScript error (baseline)
+# Type checking - Takes ~5 seconds, expect 0 errors (baseline)
 npm run typecheck  # Set timeout to 1+ minute
 ```
 
@@ -114,13 +114,15 @@ npm run build-release         # Production build with release mode
 npm run preview               # Build + preview server
 
 # Testing and validation
-npm test                      # ~3 seconds, expect 4 failures baseline
+npm test                      # ~3 seconds, expect all tests to pass
+npm run test:e2e              # Server E2E: real HTTP + ShareDB/WebSocket on a temp workspace
+npm run e2e                   # Browser E2E (Playwright): real client + backend, Vite on 5199
 npm run test-interactive      # Starts dev server on port 3030
 npm run dev                   # ~10 seconds - NEVER CANCEL, dual server startup
 
 # Code quality
 npm run prettier              # ~3 seconds - ALWAYS run before commits
-npm run typecheck            # ~5 seconds, expect 1 error baseline
+npm run typecheck            # ~5 seconds, expect 0 errors
 
 # Tauri desktop (if Rust available)
 npm run tauri:dev            # Desktop development
@@ -152,8 +154,8 @@ src-tauri/           # Tauri desktop app configuration
 
 ## Known Issues and Workarounds
 
-- **Test Failures**: 4 out of 94 tests fail in baseline - this is expected
-- **TypeScript Error**: 1 error in AIChat component - ignore for now
+- **Tests**: All tests pass in baseline (1 test is intentionally skipped)
+- **TypeScript**: No type errors in baseline
 - **Font Loading**: External font requests blocked in sandboxed environments - cosmetic issue only
 - **Windows Only**: Large chunks warning in build output - performance consideration only
 

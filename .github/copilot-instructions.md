@@ -116,6 +116,7 @@ npm run preview               # Build + preview server
 # Testing and validation
 npm test                      # ~3 seconds, expect all tests to pass
 npm run test:e2e              # Server E2E: real HTTP + ShareDB/WebSocket on a temp workspace
+npm run e2e                   # Browser E2E (Playwright): real client + backend, Vite on 5199
 npm run test-interactive      # Starts dev server on port 3030
 npm run dev                   # ~10 seconds - NEVER CANCEL, dual server startup
 

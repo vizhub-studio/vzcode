@@ -7,3 +7,7 @@ dist-ssr
 .history
 .aider*
 test/sampleDirectories/fixtures/
+e2e/.workspace
+test-results
+playwright-report
+.playwright-cli

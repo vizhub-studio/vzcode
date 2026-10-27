@@ -3,7 +3,7 @@
  * Importing them never loads Bootstrap, VizHub UI, or a page-wide reset.
  */
 import React, {
-  createContext, forwardRef, useContext, useEffect, useId, useRef, useState,
+  createContext, forwardRef, useContext, useEffect, useId, useRef, useState, useCallback,
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
@@ -122,7 +122,7 @@ export const OverlayTrigger = ({
 }) => {
   const anchor = useRef<HTMLSpanElement>(null);
   const [position, setPosition] = useState<React.CSSProperties | null>(null);
-  const update = () => {
+  const update = useCallback(() => {
     const rect = anchor.current?.getBoundingClientRect();
     if (!rect) return;
     const centerX = rect.left + rect.width / 2;
@@ -137,7 +137,7 @@ export const OverlayTrigger = ({
             ? { left: centerX, top: rect.bottom + offset, transform: 'translateX(-50%)' }
             : { left: centerX, top: rect.top - offset, transform: 'translate(-50%, -100%)' };
     setPosition(next);
-  };
+  }, [placement]);
   useEffect(() => {
     if (!position) return;
     window.addEventListener('scroll', update, true);
@@ -146,7 +146,7 @@ export const OverlayTrigger = ({
       window.removeEventListener('scroll', update, true);
       window.removeEventListener('resize', update);
     };
-  }, [position, placement]);
+  }, [position, update]);
 
   return (
     <span ref={anchor} className="vz-ui-tooltip-anchor" tabIndex={0}

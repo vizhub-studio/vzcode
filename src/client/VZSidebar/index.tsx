@@ -351,7 +351,7 @@ export const VZSidebar = ({
             >
               <i
                 id="ai-chat-icon"
-                className="icon-button icon-button-dark"
+                className="vz-icon-button"
                 onClick={() =>
                   handleAIChatButtonClick({
                     aiChatButtonEvent,
@@ -379,7 +379,7 @@ export const VZSidebar = ({
           >
             <i
               id="files-icon"
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={() => {
                 setIsSearchOpen(false);
                 setIsAIChatOpen(false);
@@ -401,7 +401,7 @@ export const VZSidebar = ({
           >
             <i
               id="search-icon"
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={() => {
                 setIsSearchOpen(true);
                 setIsAIChatOpen(false);
@@ -423,7 +423,7 @@ export const VZSidebar = ({
           >
             <i
               id="visual-editor-icon"
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={() => {
                 setIsVisualEditorOpen(true);
                 setIsAIChatOpen(false);
@@ -445,7 +445,7 @@ export const VZSidebar = ({
           >
             <i
               id="shortcut-icon"
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={handleQuestionMarkClick}
             >
               <QuestionMarkSVG />
@@ -467,7 +467,7 @@ export const VZSidebar = ({
             >
               <i
                 id="bug-icon"
-                className="icon-button icon-button-dark"
+                className="vz-icon-button"
               >
                 <BugSVG />
               </i>
@@ -484,7 +484,7 @@ export const VZSidebar = ({
           >
             <i
               id="settings-icon"
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={handleSettingsClick}
             >
               <GearSVG />
@@ -501,7 +501,7 @@ export const VZSidebar = ({
           >
             <i
               id="new-file-icon"
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={handleOpenCreateFileModal}
             >
               <NewSVG />
@@ -519,7 +519,7 @@ export const VZSidebar = ({
           >
             <i
               id="new-directory-icon"
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={handleOpenCreateDirModal}
             >
               <FileSVG />
@@ -539,7 +539,7 @@ export const VZSidebar = ({
           >
             <i
               id="auto-focus-icon"
-              className={`icon-button icon-button-dark${
+              className={`vz-icon-button${
                 enableAutoFollow
                   ? ' vz-color-success-01'
                   : ''
@@ -562,7 +562,7 @@ export const VZSidebar = ({
             >
               <i
                 id="mic-icon"
-                className="icon-button icon-button-dark"
+                className="vz-icon-button"
                 onClick={() => {
                   setVoiceChatModalOpen(true);
                 }}

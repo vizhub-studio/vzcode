@@ -27,7 +27,9 @@ const VoiceInputButton = ({
     : 'Start voice typing';
 
   return (
-    <button type="button" className={`vz-chat-button ${isSpeaking ? 'vz-chat-button--danger' : 'vz-chat-button--outline-secondary'}`}
+    <button
+      type="button"
+      className={`vz-chat-button ${isSpeaking ? 'vz-chat-button--danger' : 'vz-chat-button--outline-secondary'}`}
       onClick={onToggle}
       aria-label={label}
       title={label}
@@ -147,8 +149,24 @@ const ChatInputComponent = ({
           style={{ marginBottom: '8px' }}
         >
           <div className="vz-chat-button-group">
-            <button type="button" id="ai-chat-mode-ask" className={`vz-chat-button ${aiChatMode === 'ask' ? 'vz-chat-button--primary' : 'vz-chat-button--outline-primary'}`} aria-pressed={aiChatMode === 'ask'} onClick={() => setAIChatMode('ask')}>💬 Ask</button>
-            <button type="button" id="ai-chat-mode-edit" className={`vz-chat-button ${aiChatMode === 'edit' ? 'vz-chat-button--primary' : 'vz-chat-button--outline-primary'}`} aria-pressed={aiChatMode === 'edit'} onClick={() => setAIChatMode('edit')}>✏️ Edit</button>
+            <button
+              type="button"
+              id="ai-chat-mode-ask"
+              className={`vz-chat-button ${aiChatMode === 'ask' ? 'vz-chat-button--primary' : 'vz-chat-button--outline-primary'}`}
+              aria-pressed={aiChatMode === 'ask'}
+              onClick={() => setAIChatMode('ask')}
+            >
+              💬 Ask
+            </button>
+            <button
+              type="button"
+              id="ai-chat-mode-edit"
+              className={`vz-chat-button ${aiChatMode === 'edit' ? 'vz-chat-button--primary' : 'vz-chat-button--outline-primary'}`}
+              aria-pressed={aiChatMode === 'edit'}
+              onClick={() => setAIChatMode('edit')}
+            >
+              ✏️ Edit
+            </button>
           </div>
           <div className="ai-chat-mode-description">
             {aiChatMode === 'ask'
@@ -183,10 +201,11 @@ const ChatInputComponent = ({
                 onToggle={toggleSpeechRecognition}
               />
             )}
-            <button type="button"
+            <button
+              type="button"
               onClick={handleSendClick}
               disabled={!aiChatMessage.trim()}
-              className={`ai-chat-send-button vz-chat-button ${aiChatMessage.trim() ? "vz-chat-button--primary" : "vz-chat-button--outline-secondary"}`}
+              className={`ai-chat-send-button vz-chat-button ${aiChatMessage.trim() ? 'vz-chat-button--primary' : 'vz-chat-button--outline-secondary'}`}
               aria-label="Send message"
               title="Send message (Enter)"
             >

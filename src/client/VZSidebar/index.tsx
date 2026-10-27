@@ -14,7 +14,12 @@ import {
   PresenceIndicator,
 } from '../../types';
 import { VizFileId } from '@vizhub/viz-types';
-import { Download, Copy, ClipboardPlus, Trash2 } from 'lucide-react';
+import {
+  Download,
+  Copy,
+  ClipboardPlus,
+  Trash2,
+} from 'lucide-react';
 import { OverlayTrigger, Tooltip } from '../ui';
 import { getFileTree } from '../getFileTree';
 import {

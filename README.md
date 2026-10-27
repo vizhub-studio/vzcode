@@ -522,7 +522,6 @@ VZCode is inspired by [VizHub v2](https://github.com/vizhub-core/vizhub/). VizHu
 - [GitHub Repository](https://github.com/vizhub-core/vzcode)
 - [Discord Channel within RCOS](https://discord.com/channels/738593165438746634/1066068656045441044)
 
-
 ### Embedded editor styling
 
 VZCode uses native React controls and editor-scoped SCSS. Importing the editor

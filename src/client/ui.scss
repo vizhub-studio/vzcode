@@ -87,9 +87,14 @@
   white-space: normal; box-shadow: 0 8px 20px #0006;
   opacity: 0; visibility: hidden;
 }
-.vz-ui-tooltip-anchor:hover .vz-ui-tooltip,
-.vz-ui-tooltip-anchor:focus-within .vz-ui-tooltip { opacity: 1; visibility: visible; }
-.vz-ui-tooltip-anchor--right .vz-ui-tooltip { left: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
-.vz-ui-tooltip-anchor--left .vz-ui-tooltip { right: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
-.vz-ui-tooltip-anchor--top .vz-ui-tooltip { bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
-.vz-ui-tooltip-anchor--bottom .vz-ui-tooltip { top: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
+.vz-ui-tooltip-floating {
+  position: fixed;
+  z-index: 10050;
+  pointer-events: none;
+}
+.vz-ui-tooltip-floating .vz-ui-tooltip {
+  position: static;
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}

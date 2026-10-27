@@ -1,4 +1,4 @@
-import { Button, Modal } from '../bootstrap';
+import { Button, Modal } from '../ui';
 import { useCallback, useEffect } from 'react';
 
 // Confirmation modal for deleting a file or directory.

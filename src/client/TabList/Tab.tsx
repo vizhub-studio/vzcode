@@ -55,7 +55,7 @@ export const Tab = ({
 
   return (
     <div
-      className={`tab user-select-none ${
+      className={`tab ${
         isActive ? 'active' : ''
       } ${isTransient ? 'transient' : ''}`}
       onClick={handleClick}

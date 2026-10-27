@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
+import './standalone.scss';
 import { BrowserRouter } from 'react-router-dom';
 
 // Global error handler to catch CodeMirror DOM position errors

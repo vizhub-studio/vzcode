@@ -50,7 +50,7 @@ export const Spinner = ({
   return (
     show && (
       <div
-        className={`vh-spinner${fadeIn ? ' fade-in' : ''}`}
+        className={`vz-spinner${fadeIn ? ' fade-in' : ''}`}
       >
         <svg
           height={height}
@@ -58,7 +58,7 @@ export const Spinner = ({
           style={{ opacity: 1 }}
         >
           <g transform="translate(50, 50)" fill={fill}>
-            <g className="vh-spinner-dots">
+            <g className="vz-spinner-dots">
               {dots.map(({ x, y, r }, i) => (
                 <circle
                   key={i}

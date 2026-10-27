@@ -154,7 +154,6 @@
     "@vizhub/viz-types": "^0.5.0",
     "@vizhub/viz-utils": "^1.5.0",
     "body-parser": "^2.2.1",
-    "bootstrap-icons": "^1.13.1",
     "codemirror": "^6.0.2",
     "codemirror-copilot": "^0.0.7",
     "codemirror-ot": "^5.8.0",
@@ -178,7 +177,6 @@
     "openai": "^6.9.1",
     "prettier-plugin-svelte": "^3.4.1",
     "react": "^18",
-    "react-bootstrap": "^2.10.10",
     "react-dom": "^18",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.11.0",
@@ -186,7 +184,6 @@
     "sharedb": "^5.2.2",
     "sharedb-client-browser": "^5.2.2",
     "uuid": "^13.0.0",
-    "vizhub-ui": "^3.24.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {

@@ -19,10 +19,10 @@
 /* Fade in after a delay */
 /* https://stackoverflow.com/questions/29846224/css-animation-with-delay-and-opacity */
 .vz-spinner.fade-in svg {
-  animation: 1s linear 0s normal forwards 1 fadein;
+  animation: 1s linear 0s normal forwards 1 vz-assist-fadein;
 }
 
-@keyframes fadein {
+@keyframes vz-assist-fadein {
   0% {
     opacity: 0;
   }
@@ -37,11 +37,11 @@
 /* Infinite rotation */
 /* https://stackoverflow.com/questions/6410730/css-endless-rotation-animation */
 .vz-spinner-dots {
-  animation: rotate 3s linear infinite;
+  animation: vz-assist-rotate 3s linear infinite;
 }
 
-@keyframes rotate {
+@keyframes vz-assist-rotate {
   to {
-    transform: rotate(360deg);
+    transform: vz-assist-rotate(360deg);
   }
 }

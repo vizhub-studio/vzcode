@@ -27,12 +27,12 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--vh-color-neutral-02);
+    background: var(--vz-color-neutral-02);
     border-radius: 3px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--vh-color-neutral-04);
+    background: var(--vz-color-neutral-04);
     border-radius: 3px;
   }
 }
@@ -61,19 +61,19 @@
   .ai-chat-empty-title {
     font-size: 18px;
     font-weight: 600;
-    color: var(--vh-color-neutral-04);
+    color: var(--vz-color-neutral-04);
     margin-bottom: 15px;
   }
 
   .ai-chat-empty-text {
     font-size: 14px;
-    color: var(--vh-color-neutral-04);
+    color: var(--vz-color-neutral-04);
     margin-bottom: 20px;
     line-height: 1.5;
   }
 
   .ai-chat-empty-examples {
-    background: var(--vh-color-neutral-02);
+    background: var(--vz-color-neutral-02);
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
@@ -83,7 +83,7 @@
     h4 {
       font-size: 15px;
       font-weight: 600;
-      color: var(--vh-color-neutral-04);
+      color: var(--vz-color-neutral-04);
       margin-bottom: 10px;
     }
 
@@ -94,33 +94,33 @@
       margin: 0;
 
       .ai-chat-suggested-prompt {
-        background: var(--vh-color-neutral-03);
-        border: 1px solid var(--vh-color-neutral-04);
+        background: var(--vz-color-neutral-03);
+        border: 1px solid var(--vz-color-neutral-04);
         border-radius: 6px;
         padding: 8px 12px;
         font-size: 13px;
-        color: var(--vh-color-neutral-04);
+        color: var(--vz-color-neutral-04);
         text-align: left;
         cursor: pointer;
         transition: all 0.2s ease;
         line-height: 1.4;
 
         &:hover {
-          background: var(--vh-color-neutral-04);
-          color: var(--vh-color-neutral-01);
-          border-color: var(--vh-color-primary-01);
+          background: var(--vz-color-neutral-04);
+          color: var(--vz-color-neutral-01);
+          border-color: var(--vz-color-primary-01);
         }
 
         &:active {
-          background: var(--vh-color-primary-01);
+          background: var(--vz-color-primary-01);
           color: white;
-          border-color: var(--vh-color-primary-01);
+          border-color: var(--vz-color-primary-01);
         }
 
         &.selected {
-          background: var(--vh-color-primary-01);
+          background: var(--vz-color-primary-01);
           color: white;
-          border-color: var(--vh-color-primary-01);
+          border-color: var(--vz-color-primary-01);
         }
       }
     }
@@ -253,7 +253,7 @@
     h4 {
       font-size: 14px;
       font-weight: 600;
-      color: var(--vh-color-neutral-04);
+      color: var(--vz-color-neutral-04);
       margin-bottom: 10px;
     }
   }
@@ -270,7 +270,7 @@
 
   &.user {
     .ai-chat-message-content {
-      background: var(--vh-color-primary-01);
+      background: var(--vz-color-primary-01);
       color: white;
       margin-left: 20px;
       border-radius: 12px 12px 4px 12px;
@@ -284,7 +284,7 @@
 
   &.assistant {
     .ai-chat-message-content {
-      background: var(--vh-color-neutral-02);
+      background: var(--vz-color-neutral-02);
       color: white;
       margin-right: 20px;
       border-radius: 12px 12px 12px 4px;
@@ -297,7 +297,7 @@
 
     &.streaming {
       .ai-chat-message-content {
-        background: var(--vh-color-neutral-02);
+        background: var(--vz-color-neutral-02);
         color: white;
         border-radius: 12px 12px 12px 4px;
       }
@@ -356,10 +356,10 @@
   }
 
   blockquote {
-    border-left: 3px solid var(--vh-color-neutral-03);
+    border-left: 3px solid var(--vz-color-neutral-03);
     padding-left: 1rem;
     margin: 0.5rem 0;
-    color: var(--vh-color-neutral-03);
+    color: var(--vz-color-neutral-03);
     font-style: italic;
   }
 
@@ -415,21 +415,21 @@
 
 .ai-chat-message-time {
   font-size: 11px;
-  color: var(--vh-color-neutral-03);
+  color: var(--vz-color-neutral-03);
   margin-top: 4px;
 }
 
 .ai-chat-status {
   font-size: 0.75rem;
   font-style: italic;
-  color: var(--vh-color-neutral-03);
+  color: var(--vz-color-neutral-03);
   margin-bottom: 0.5rem;
   margin-left: 20px;
   margin-right: 20px;
   padding: 0.25rem 0.5rem;
-  background-color: var(--vh-color-neutral-02);
+  background-color: var(--vz-color-neutral-02);
   border-radius: 0.25rem;
-  border: 1px solid var(--vh-color-neutral-03);
+  border: 1px solid var(--vz-color-neutral-03);
   text-align: left;
 }
 
@@ -441,7 +441,7 @@
   span {
     width: 6px;
     height: 6px;
-    background: var(--vh-color-neutral-03);
+    background: var(--vz-color-neutral-03);
     border-radius: 50%;
     animation: typing 1.4s infinite ease-in-out;
 
@@ -526,9 +526,9 @@
 }
 
 .ai-chat-input-container {
-  border-top: 1px solid var(--vh-color-neutral-02);
+  border-top: 1px solid var(--vz-color-neutral-02);
   padding-top: 10px;
-  background: var(--vh-color-neutral-01);
+  background: var(--vz-color-neutral-01);
 }
 
 .ai-chat-mode-toggle {
@@ -536,32 +536,32 @@
   flex-direction: column;
   gap: 4px;
 
-  .btn-group {
+  .vz-chat-button-group {
     justify-content: center;
   }
 
-  .btn-group .btn {
+  .vz-chat-button-group .vz-chat-button {
     font-size: 12px;
     font-weight: 500;
     padding: 4px 12px;
-    border: 1px solid var(--vh-color-neutral-03);
-    background: var(--vh-color-neutral-02);
-    color: var(--vh-color-neutral-04);
+    border: 1px solid var(--vz-color-neutral-03);
+    background: var(--vz-color-neutral-02);
+    color: var(--vz-color-neutral-04);
     transition: all 0.2s ease;
 
     &:hover {
-      background: var(--vh-color-neutral-03);
-      border-color: var(--vh-color-neutral-04);
+      background: var(--vz-color-neutral-03);
+      border-color: var(--vz-color-neutral-04);
     }
 
-    &.btn-primary {
-      background: var(--vh-color-primary-01);
-      border-color: var(--vh-color-primary-01);
+    &.vz-chat-button--primary {
+      background: var(--vz-color-primary-01);
+      border-color: var(--vz-color-primary-01);
       color: white;
 
       &:hover {
-        background: var(--vh-color-primary-02);
-        border-color: var(--vh-color-primary-02);
+        background: var(--vz-color-primary-02);
+        border-color: var(--vz-color-primary-02);
       }
     }
 
@@ -573,7 +573,7 @@
 
   .ai-chat-mode-description {
     font-size: 11px;
-    color: var(--vh-color-neutral-03);
+    color: var(--vz-color-neutral-03);
     text-align: center;
     font-style: italic;
   }
@@ -587,9 +587,9 @@
 
   textarea {
     flex: 1;
-    background: var(--vh-color-neutral-02) !important;
-    border: 1px solid var(--vh-color-neutral-03) !important;
-    color: var(--vh-color-neutral-04) !important;
+    background: var(--vz-color-neutral-02) !important;
+    border: 1px solid var(--vz-color-neutral-03) !important;
+    color: var(--vz-color-neutral-04) !important;
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
@@ -600,13 +600,13 @@
 
     &:focus {
       outline: none !important;
-      border-color: var(--vh-color-primary-01) !important;
+      border-color: var(--vz-color-primary-01) !important;
       box-shadow: 0 0 0 2px rgba(38, 67, 153, 0.2) !important;
-      color: var(--vh-color-neutral-04) !important;
+      color: var(--vz-color-neutral-04) !important;
     }
 
     &::placeholder {
-      color: var(--vh-color-neutral-03) !important;
+      color: var(--vz-color-neutral-03) !important;
     }
 
     &:disabled {
@@ -620,7 +620,7 @@
     justify-content: space-between;
     align-items: center;
     font-size: 12px;
-    color: var(--vh-color-neutral-03);
+    color: var(--vz-color-neutral-03);
     min-height: 40px; // Prevent layout jumping
 
     .ai-chat-hint {
@@ -639,32 +639,32 @@
     min-width: 80px;
     flex-shrink: 0;
 
-    &.btn-primary {
-      background: var(--vh-color-primary-01);
-      border-color: var(--vh-color-primary-01);
+    &.vz-chat-button--primary {
+      background: var(--vz-color-primary-01);
+      border-color: var(--vz-color-primary-01);
       color: white;
 
       &:hover:not(:disabled) {
-        background: var(--vh-color-primary-02);
-        border-color: var(--vh-color-primary-02);
+        background: var(--vz-color-primary-02);
+        border-color: var(--vz-color-primary-02);
       }
     }
 
-    &.btn-outline-secondary {
+    &.vz-chat-button--outline-secondary {
       background: transparent;
-      border-color: var(--vh-color-neutral-03);
-      color: var(--vh-color-neutral-03);
+      border-color: var(--vz-color-neutral-03);
+      color: var(--vz-color-neutral-03);
 
       &:hover:not(:disabled) {
-        background: var(--vh-color-neutral-03);
-        color: var(--vh-color-neutral-01);
+        background: var(--vz-color-neutral-03);
+        color: var(--vz-color-neutral-01);
       }
     }
 
     &:disabled {
-      background: var(--vh-color-neutral-03);
-      border-color: var(--vh-color-neutral-03);
-      color: var(--vh-color-neutral-02);
+      background: var(--vz-color-neutral-03);
+      border-color: var(--vz-color-neutral-03);
+      color: var(--vz-color-neutral-02);
       cursor: not-allowed;
     }
   }
@@ -679,7 +679,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--vh-color-primary-01);
+  background: var(--vz-color-primary-01);
   border: none;
   color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -691,13 +691,13 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: var(--vh-color-primary-02);
+    background: var(--vz-color-primary-02);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     transform: translateX(-50%) scale(1.05);
   }
 
   &:focus {
-    outline: 2px solid var(--vh-color-primary-01);
+    outline: 2px solid var(--vz-color-primary-01);
     outline-offset: 2px;
   }
 
@@ -727,8 +727,8 @@
 
 // Thinking scratchpad styles
 .thinking-scratchpad {
-  background: var(--vh-color-neutral-02);
-  border: 1px solid var(--vh-color-neutral-03);
+  background: var(--vz-color-neutral-02);
+  border: 1px solid var(--vz-color-neutral-03);
   border-radius: 8px;
   margin: 10px 0;
   padding: 0;
@@ -736,8 +736,8 @@
   font-size: 13px;
 
   .thinking-scratchpad-header {
-    background: var(--vh-color-neutral-03);
-    color: var(--vh-color-neutral-04);
+    background: var(--vz-color-neutral-03);
+    color: var(--vz-color-neutral-04);
     padding: 8px 12px;
     font-weight: 600;
     display: flex;
@@ -757,7 +757,7 @@
     padding: 12px;
     max-height: 200px;
     overflow-y: auto;
-    background: var(--vh-color-neutral-02);
+    background: var(--vz-color-neutral-02);
     scroll-behavior: smooth;
 
     &::-webkit-scrollbar {
@@ -765,12 +765,12 @@
     }
 
     &::-webkit-scrollbar-track {
-      background: var(--vh-color-neutral-02);
+      background: var(--vz-color-neutral-02);
       border-radius: 3px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--vh-color-neutral-04);
+      background: var(--vz-color-neutral-04);
       border-radius: 3px;
     }
 
@@ -778,7 +778,7 @@
     p {
       margin: 0 0 8px 0;
       line-height: 1.4;
-      color: var(--vh-color-neutral-04);
+      color: var(--vz-color-neutral-04);
 
       &:last-child {
         margin-bottom: 0;
@@ -801,7 +801,7 @@
 
       li {
         margin-bottom: 4px;
-        color: var(--vh-color-neutral-04);
+        color: var(--vz-color-neutral-04);
       }
     }
 
@@ -812,7 +812,7 @@
     h5,
     h6 {
       margin: 8px 0 6px 0;
-      color: var(--vh-color-neutral-04);
+      color: var(--vz-color-neutral-04);
       font-weight: 600;
 
       &:first-child {
@@ -838,4 +838,25 @@
       font-size: 0.8125rem; // 13px at 16px base
     }
   }
+}
+
+/* Native chat controls; no Bootstrap CSS or utility classes. */
+.ai-chat-container {
+  --vz-color-neutral-01: #292c34;
+  --vz-color-neutral-02: #383d48;
+  --vz-color-neutral-03: #aab4c3;
+  --vz-color-neutral-04: #f1f5f9;
+  --vz-color-primary-01: #2563eb;
+  --vz-color-primary-02: #1d4ed8;
+  .vz-chat-button-group { display: inline-flex; gap: 4px; }
+  .vz-chat-button {
+    font: inherit; border: 1px solid #64748b; border-radius: 6px;
+    color: #e2e8f0; background: #383d48; padding: 5px 10px; cursor: pointer;
+  }
+  .vz-chat-button--primary { background: #2563eb; color: white; border-color: #2563eb; }
+  .vz-chat-button--danger { background: #b91c1c; color: white; border-color: #b91c1c; }
+  .vz-chat-button--outline-primary { border-color: #60a5fa; background: transparent; }
+  .vz-chat-button--outline-secondary { border-color: #94a3b8; background: transparent; }
+  .vz-chat-button:disabled { opacity: .5; cursor: not-allowed; }
+  .vz-chat-button:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
 }

@@ -32,7 +32,7 @@ const VoiceInputButton = ({
       aria-label={label}
       title={label}
       style={{
-        borderColor: isSpeaking ? undefined : '#dee2e6',
+        borderColor: isSpeaking ? undefined : '#94a3b8',
         borderRadius: '0.375rem',
         borderWidth: '1px',
         borderStyle: 'solid',

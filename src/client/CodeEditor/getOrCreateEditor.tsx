@@ -478,7 +478,7 @@ export const getOrCreateEditor = async ({
           wrap.style.display = 'inline-flex'; // prevent block expansion
           wrap.style.alignItems = 'center';
           wrap.style.justifyContent = 'center';
-          wrap.className = 'icon-button icon-button-dark';
+          wrap.className = 'vz-icon-button';
           wrap.style.cursor = 'pointer';
 
           // Handle click directly on the wrapper element

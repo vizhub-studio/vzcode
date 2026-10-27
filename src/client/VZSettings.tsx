@@ -196,7 +196,7 @@ export const VZSettings = ({
       </Modal.Header>
       <Modal.Body>
         {enableUsernameField ? (
-          <Form.Group className="mb-3" controlId="formFork">
+          <Form.Group controlId="vz-settings-username">
             <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
@@ -205,16 +205,17 @@ export const VZSettings = ({
               placeholder="Enter username"
               value={username}
             />
-            <Form.Text className="text-muted">
+            <Form.Text>
               Enter a username to be displayed on your
               cursor
             </Form.Text>
           </Form.Group>
         ) : null}
 
-        <Form.Group className="mb-3" controlId="formFork">
+        <Form.Group controlId="vz-settings-theme">
           <Form.Label>Theme</Form.Label>
           <select
+            id="vz-settings-theme"
             className="vz-ui-select"
             value={theme}
             onChange={(e) =>
@@ -229,9 +230,10 @@ export const VZSettings = ({
           </select>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formFork">
+        <Form.Group controlId="vz-settings-font">
           <Form.Label>Font</Form.Label>
           <select
+            id="vz-settings-font"
             className="vz-ui-select"
             onChange={(e) =>
               setSelectedFont(e.target.value)
@@ -246,9 +248,10 @@ export const VZSettings = ({
           </select>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formFork">
+        <Form.Group controlId="vz-settings-size">
           <Form.Label>Font Size</Form.Label>
           <select
+            id="vz-settings-size"
             className="vz-ui-select"
             onChange={(e) =>
               setSelectedFontSize(e.target.value)

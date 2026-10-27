@@ -133,7 +133,7 @@ export const AIAssistWidget = ({
             }
           >
             <i
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
               onClick={aiAssistClickOverride || handleClick}
             >
               <SparklesSVG />

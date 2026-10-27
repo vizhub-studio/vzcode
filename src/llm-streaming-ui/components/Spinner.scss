@@ -1,4 +1,4 @@
-.vh-spinner {
+.vz-spinner {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -8,7 +8,7 @@
 }
 
 /* Fade in after a delay */
-.vh-spinner.fade-in svg {
+.vz-spinner.fade-in svg {
   animation: 1s linear 0s normal forwards 1
     llm-spinner-fadein;
 }
@@ -26,7 +26,7 @@
 }
 
 /* Infinite rotation */
-.vh-spinner-dots {
+.vz-spinner-dots {
   animation: llm-spinner-rotate 3s linear infinite;
 }
 

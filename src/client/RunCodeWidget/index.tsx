@@ -88,7 +88,7 @@ export const RunCodeWidget = ({
           >
             <i
               onClick={handleSplitEditor}
-              className="icon-button icon-button-dark"
+              className="vz-icon-button"
             >
               <SplitEditorSVG />
             </i>
@@ -105,7 +105,7 @@ export const RunCodeWidget = ({
           }
         >
           <i
-            className={`icon-button icon-button-dark ${isRunning ? 'rotate-icon' : ''}`}
+            className={`vz-icon-button ${isRunning ? 'rotate-icon' : ''}`}
             onClick={handleClick}
           >
             <PlaySVG />

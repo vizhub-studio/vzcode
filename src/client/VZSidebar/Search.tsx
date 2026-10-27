@@ -5,7 +5,7 @@ import {
   useState,
   useCallback,
 } from 'react';
-import { Form } from '../bootstrap';
+import { Form } from '../ui';
 import { VZCodeContext } from '../VZCodeContext';
 import { VizFileId } from '@vizhub/viz-types';
 import { SearchFile } from '../../types';

@@ -4,12 +4,6 @@ import {
   useCallback,
   memo,
 } from 'react';
-import {
-  Form,
-  Button,
-  ButtonGroup,
-  ToggleButton,
-} from './bootstrap';
 import { useSpeechRecognition } from './useSpeechRecognition';
 import { MicSVG, MicOffSVG } from './icons';
 import type { ChatInputProps } from '../props';
@@ -33,9 +27,7 @@ const VoiceInputButton = ({
     : 'Start voice typing';
 
   return (
-    <Button
-      variant={isSpeaking ? 'danger' : 'outline-secondary'}
-      size="sm"
+    <button type="button" className={`vz-chat-button ${isSpeaking ? 'vz-chat-button--danger' : 'vz-chat-button--outline-secondary'}`}
       onClick={onToggle}
       aria-label={label}
       title={label}
@@ -47,7 +39,7 @@ const VoiceInputButton = ({
       }}
     >
       {isSpeaking ? <MicOffSVG /> : <MicSVG />}
-    </Button>
+    </button>
   );
 };
 
@@ -154,38 +146,10 @@ const ChatInputComponent = ({
           className="ai-chat-mode-toggle"
           style={{ marginBottom: '8px' }}
         >
-          <ButtonGroup size="sm">
-            <ToggleButton
-              id="ai-chat-mode-ask"
-              type="radio"
-              variant={
-                aiChatMode === 'ask'
-                  ? 'primary'
-                  : 'outline-primary'
-              }
-              name="ai-chat-mode"
-              value="ask"
-              checked={aiChatMode === 'ask'}
-              onChange={() => setAIChatMode('ask')}
-            >
-              💬 Ask
-            </ToggleButton>
-            <ToggleButton
-              id="ai-chat-mode-edit"
-              type="radio"
-              variant={
-                aiChatMode === 'edit'
-                  ? 'primary'
-                  : 'outline-primary'
-              }
-              name="ai-chat-mode"
-              value="edit"
-              checked={aiChatMode === 'edit'}
-              onChange={() => setAIChatMode('edit')}
-            >
-              ✏️ Edit
-            </ToggleButton>
-          </ButtonGroup>
+          <div className="vz-chat-button-group">
+            <button type="button" id="ai-chat-mode-ask" className={`vz-chat-button ${aiChatMode === 'ask' ? 'vz-chat-button--primary' : 'vz-chat-button--outline-primary'}`} aria-pressed={aiChatMode === 'ask'} onClick={() => setAIChatMode('ask')}>💬 Ask</button>
+            <button type="button" id="ai-chat-mode-edit" className={`vz-chat-button ${aiChatMode === 'edit' ? 'vz-chat-button--primary' : 'vz-chat-button--outline-primary'}`} aria-pressed={aiChatMode === 'edit'} onClick={() => setAIChatMode('edit')}>✏️ Edit</button>
+          </div>
           <div className="ai-chat-mode-description">
             {aiChatMode === 'ask'
               ? 'Ask questions without editing files'
@@ -193,9 +157,8 @@ const ChatInputComponent = ({
           </div>
         </div>
       )}
-      <Form.Group className="ai-chat-input-group">
-        <Form.Control
-          as="textarea"
+      <div className="ai-chat-input-group">
+        <textarea
           rows={10}
           value={aiChatMessage}
           onChange={handleChange}
@@ -220,23 +183,18 @@ const ChatInputComponent = ({
                 onToggle={toggleSpeechRecognition}
               />
             )}
-            <Button
-              variant={
-                aiChatMessage.trim()
-                  ? 'primary'
-                  : 'outline-secondary'
-              }
+            <button type="button"
               onClick={handleSendClick}
               disabled={!aiChatMessage.trim()}
-              className="ai-chat-send-button"
+              className={`ai-chat-send-button vz-chat-button ${aiChatMessage.trim() ? "vz-chat-button--primary" : "vz-chat-button--outline-secondary"}`}
               aria-label="Send message"
               title="Send message (Enter)"
             >
               Send
-            </Button>
+            </button>
           </div>
         </div>
-      </Form.Group>
+      </div>
     </div>
   );
 };

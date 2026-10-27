@@ -77,6 +77,7 @@ export const VZSettings = ({
     setTheme,
     username,
     setUsername,
+    sidebarRef,
   } = useContext(VZCodeContext);
 
   // State variables for managing font and font size
@@ -143,19 +144,19 @@ export const VZSettings = ({
 
   // Update font family in the document's style
   useEffect(() => {
-    document.querySelector<HTMLElement>('.app')?.style.setProperty(
+    sidebarRef.current?.closest<HTMLElement>('.app')?.style.setProperty(
       '--vzcode-font-family',
       selectedFont,
     );
-  }, [selectedFont]);
+  }, [selectedFont, sidebarRef]);
 
   // Update font size in the document's style
   useEffect(() => {
-    document.querySelector<HTMLElement>('.app')?.style.setProperty(
+    sidebarRef.current?.closest<HTMLElement>('.app')?.style.setProperty(
       '--vzcode-font-size',
       selectedFontSize,
     );
-  }, [selectedFontSize]);
+  }, [selectedFontSize, sidebarRef]);
 
   const usernameRef = useRef<HTMLInputElement>(null);
 

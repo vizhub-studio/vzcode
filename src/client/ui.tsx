@@ -3,7 +3,7 @@
  * Importing them never loads Bootstrap, VizHub UI, or a page-wide reset.
  */
 import React, {
-  createContext, forwardRef, useContext, useEffect, useId, useRef,
+  createContext, forwardRef, useContext, useEffect, useId, useRef, useState,
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
@@ -110,13 +110,53 @@ export const Tooltip = ({
 }: { id: string; children: ReactNode }) => (
   <span id={id} role="tooltip" className="vz-ui-tooltip">{children}</span>
 );
+/**
+ * Tooltips render in a portal so the sidebar's overflow: hidden/auto does
+ * not crop them (as Bootstrap's overlays previously avoided).
+ */
 export const OverlayTrigger = ({
   children, overlay, placement = 'top',
 }: {
   children: ReactNode; overlay: ReactNode;
   placement?: 'top' | 'right' | 'bottom' | 'left';
-}) => (
-  <span className={`vz-ui-tooltip-anchor vz-ui-tooltip-anchor--${placement}`} tabIndex={0}>
-    {children}{overlay}
-  </span>
-);
+}) => {
+  const anchor = useRef<HTMLSpanElement>(null);
+  const [position, setPosition] = useState<React.CSSProperties | null>(null);
+  const update = () => {
+    const rect = anchor.current?.getBoundingClientRect();
+    if (!rect) return;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const offset = 8;
+    const next: React.CSSProperties =
+      placement === 'right'
+        ? { left: rect.right + offset, top: centerY, transform: 'translateY(-50%)' }
+        : placement === 'left'
+          ? { left: rect.left - offset, top: centerY, transform: 'translate(-100%, -50%)' }
+          : placement === 'bottom'
+            ? { left: centerX, top: rect.bottom + offset, transform: 'translateX(-50%)' }
+            : { left: centerX, top: rect.top - offset, transform: 'translate(-50%, -100%)' };
+    setPosition(next);
+  };
+  useEffect(() => {
+    if (!position) return;
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [position, placement]);
+
+  return (
+    <span ref={anchor} className="vz-ui-tooltip-anchor" tabIndex={0}
+      onPointerEnter={update} onPointerLeave={() => setPosition(null)}
+      onFocus={update} onBlur={() => setPosition(null)}>
+      {children}
+      {position && typeof document !== 'undefined' && createPortal(
+        <span className="vz-ui-tooltip-floating" style={position}>{overlay}</span>,
+        document.body,
+      )}
+    </span>
+  );
+};

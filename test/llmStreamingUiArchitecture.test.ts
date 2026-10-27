@@ -69,12 +69,12 @@ describe('llm-streaming-ui independence', () => {
 });
 
 describe('llm-streaming-ui local support modules', () => {
-  it('bundles its own spinner, icons, and bootstrap wrappers', () => {
+  it('bundles its own spinner and icons without Bootstrap', () => {
     const components = join(libRoot, 'components');
     const names = readdirSync(components);
     expect(names).toContain('Spinner.tsx');
     expect(names).toContain('icons.tsx');
-    expect(names).toContain('bootstrap.ts');
+    expect(names).not.toContain('bootstrap.ts');
   });
 
   it('ships the relocated auto-scroll hook and scroll utils', () => {

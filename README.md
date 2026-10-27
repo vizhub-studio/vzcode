@@ -521,3 +521,17 @@ VZCode is inspired by [VizHub v2](https://github.com/vizhub-core/vizhub/). VizHu
 - [VizHub Discord](https://discord.com/invite/wbtJ7SCtYr)
 - [GitHub Repository](https://github.com/vizhub-core/vzcode)
 - [Discord Channel within RCOS](https://discord.com/channels/738593165438746634/1066068656045441044)
+
+
+### Embedded editor styling
+
+VZCode uses native React controls and editor-scoped SCSS. Importing the editor
+does not inject Bootstrap, Bootstrap Icons, or VizHub UI CSS. The editor's
+colors are exposed as overridable `--vz-color-*` variables on the `.app`
+container. `src/client/App/style.scss` does not reset `html`, `body`,
+or `:root`; the standalone app loads `src/client/standalone.scss` to size
+its own document.
+
+Hosts like VizHub AI Studio can continue importing
+`vzcode/src/client/App/style.scss` in their client editor chunk.
+The controls and dialogs are styled without requiring a host framework.

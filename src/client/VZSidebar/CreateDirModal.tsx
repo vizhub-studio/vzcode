@@ -83,7 +83,7 @@ export const CreateDirModal = ({
         <Modal.Title>Create Directory</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form.Group className="mb-3" controlId="fileName">
+        <Form.Group controlId="fileName">
           <Form.Label>Directory Name</Form.Label>
           <Form.Control
             type="text"
@@ -92,7 +92,7 @@ export const CreateDirModal = ({
             ref={inputRef}
             spellCheck="false"
           />
-          <Form.Text className="text-muted">
+          <Form.Text>
             Enter the name for your file
           </Form.Text>
         </Form.Group>

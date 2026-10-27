@@ -14,7 +14,8 @@ import {
   PresenceIndicator,
 } from '../../types';
 import { VizFileId } from '@vizhub/viz-types';
-import { OverlayTrigger, Tooltip } from '../bootstrap';
+import { Download, Copy, ClipboardPlus, Trash2 } from 'lucide-react';
+import { OverlayTrigger, Tooltip } from '../ui';
 import { getFileTree } from '../getFileTree';
 import {
   BugSVG,
@@ -540,7 +541,7 @@ export const VZSidebar = ({
               id="auto-focus-icon"
               className={`icon-button icon-button-dark${
                 enableAutoFollow
-                  ? ' vh-color-success-01'
+                  ? ' vz-color-success-01'
                   : ''
               }`}
               onClick={toggleAutoFollow}
@@ -646,7 +647,7 @@ export const VZSidebar = ({
               onClick={handleExportToZip}
               title="Export files to ZIP"
             >
-              <i className="bi bi-download"></i>
+              <Download size={14} aria-hidden="true" />
               {exportButtonText}
             </button>
           )}
@@ -656,7 +657,7 @@ export const VZSidebar = ({
               onClick={handleCopyForAI}
               title="Copy files formatted for AI"
             >
-              <i className="bi bi-clipboard"></i>
+              <Copy size={14} aria-hidden="true" />
               {copyButtonText}
             </button>
           )}
@@ -666,7 +667,7 @@ export const VZSidebar = ({
             onClick={handlePasteForAI}
             title="Paste files from AI"
           >
-            <i className="bi bi-clipboard-plus"></i>
+            <ClipboardPlus size={14} aria-hidden="true" />
             {pasteButtonText}
           </button>
 
@@ -676,7 +677,7 @@ export const VZSidebar = ({
               onClick={handleDeleteAllClick}
               title="Delete all files"
             >
-              <i className="bi bi-trash"></i>
+              <Trash2 size={14} aria-hidden="true" />
               delete all
             </button>
           )}

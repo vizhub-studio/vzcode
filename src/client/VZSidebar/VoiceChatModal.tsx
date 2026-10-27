@@ -5,7 +5,7 @@ import {
   useRoomContext,
 } from '@livekit/components-react';
 import { useContext, useState } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal } from '../ui';
 import { v4 } from 'uuid';
 import { VZCodeContext } from '../VZCodeContext';
 

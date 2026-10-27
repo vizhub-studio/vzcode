@@ -74,7 +74,8 @@ const ModalRoot = ({
     <modalContext.Provider value={{ close: onHide, titleId }}>
       <dialog ref={ref} className={`vz-ui-modal ${className}`}
         aria-labelledby={titleId} onKeyDown={onKeyDown}
-        onCancel={(event) => { event.preventDefault(); onHide(); }}>
+        onCancel={(event) => { event.preventDefault(); onHide(); }}
+        onClick={(event) => { if (event.target === event.currentTarget) onHide(); }}>
         <div className="vz-ui-modal-content">{children}</div>
       </dialog>
     </modalContext.Provider>,

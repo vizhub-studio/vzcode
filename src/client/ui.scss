@@ -100,6 +100,14 @@
   padding: 6px 12px; font: 400 16px/1.5 Inter, sans-serif;
 }
 .vz-ui-help { color: #797979; font-size: 14px; }
+/* The same native field is also used in the dark file-search sidebar.
+ * Modal controls are light; editor controls remain legible on navy. */
+.app .vz-ui-control {
+  background-color: var(--vz-color-neutral-02);
+  color: var(--vz-color-neutral-04);
+  border-color: var(--vz-color-neutral-03);
+}
+.app .vz-ui-control::placeholder { color: var(--vz-color-neutral-04); opacity: .65; }
 .vz-ui-modal {
   box-sizing: border-box; width: min(500px, calc(100vw - 32px));
   max-height: calc(100dvh - 32px); padding: 0; border: 0;

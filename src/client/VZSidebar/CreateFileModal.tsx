@@ -5,7 +5,7 @@ import {
   useEffect,
   useContext,
 } from 'react';
-import { Modal, Form, Button } from '../bootstrap';
+import { Modal, Form, Button } from '../ui';
 import { VZCodeContext } from '../VZCodeContext';
 
 export const CreateFileModal = ({

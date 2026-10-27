@@ -7,7 +7,7 @@ import {
 import { PlaySVG } from '../Icons';
 import { SplitEditorSVG } from '../Icons/SplitEditorSVG';
 import { VZCodeContext } from '../VZCodeContext';
-import { OverlayTrigger, Tooltip } from '../bootstrap';
+import { OverlayTrigger, Tooltip } from '../ui';
 
 import './style.scss';
 

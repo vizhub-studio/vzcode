@@ -5,6 +5,7 @@
   overflow-x: auto;
 
   .tab {
+    user-select: none;
     // background: #47546b;
     color: #fff;
     font-family: var(--vzcode-font-family);

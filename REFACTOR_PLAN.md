@@ -23,8 +23,8 @@ fails if any file under `src/llm-streaming-ui` imports `src/client` or
 5. **scrollUtils**: moved to `src/llm-streaming-ui/utils/`.
 6. **Icons**: the microphone icons are self-contained in
    `src/llm-streaming-ui/components/icons.tsx`.
-7. **Bootstrap UI**: react-bootstrap wrappers live in
-   `src/llm-streaming-ui/components/bootstrap.ts`.
+7. **Native editor UI**: chat controls live in
+   `src/llm-streaming-ui/components/ChatInput.tsx`.
 8. **Spinner**: self-contained in
    `src/llm-streaming-ui/components/Spinner.tsx`.
 9. **Barrel**: `src/llm-streaming-ui/index.ts` now exports the

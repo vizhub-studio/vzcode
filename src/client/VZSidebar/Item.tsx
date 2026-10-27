@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { ItemId } from '../../types';
 import { EditSVG, TrashSVG } from '../Icons';
-import { Tooltip, OverlayTrigger } from '../bootstrap';
+import { Tooltip, OverlayTrigger } from '../ui';
 import { VZCodeContext } from '../VZCodeContext';
 import { FileTypeIcon } from './FileTypeIcon';
 
@@ -152,7 +152,7 @@ export const Item = ({
 
   return (
     <div
-      className={`file-or-directory user-select-none ${
+      className={`file-or-directory ${
         isActive ? 'active-file' : ''
       }`}
       onClick={isRenaming ? null : handleClick}

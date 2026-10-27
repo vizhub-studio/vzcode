@@ -4,10 +4,10 @@
   // right: 32px;
   bottom: 16px;
   right: 16px;
-  color: var(--vh-color-caution-01);
+  color: var(--vz-color-caution-01);
 }
 
-.vh-spinner {
+.vz-spinner {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -18,7 +18,7 @@
 
 /* Fade in after a delay */
 /* https://stackoverflow.com/questions/29846224/css-animation-with-delay-and-opacity */
-.vh-spinner.fade-in svg {
+.vz-spinner.fade-in svg {
   animation: 1s linear 0s normal forwards 1 fadein;
 }
 
@@ -36,7 +36,7 @@
 
 /* Infinite rotation */
 /* https://stackoverflow.com/questions/6410730/css-endless-rotation-animation */
-.vh-spinner-dots {
+.vz-spinner-dots {
   animation: rotate 3s linear infinite;
 }
 

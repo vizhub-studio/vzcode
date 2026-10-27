@@ -51,7 +51,7 @@ VZCode binds those props using the `AIChatWrapper` component in
 
 ### Support Modules
 
-- `components/bootstrap.ts` - react-bootstrap component wrappers
+- `components/ChatInput.tsx` - native React buttons and textarea component wrappers
 - `components/icons.tsx` - Self-contained microphone icons
 - `utils/scrollUtils.ts` - Diff scrolling and accessibility helpers
 - `props.ts` - Public prop and callback types
@@ -65,7 +65,7 @@ VZCode binds those props using the `AIChatWrapper` component in
 ## Dependencies
 
 - React and React hooks
-- react-bootstrap
+- native React buttons and textarea
 - diff2html for diff rendering
 - react-markdown for message rendering
 - `@vizhub/viz-types` for chat/content types

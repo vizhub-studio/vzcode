@@ -63,7 +63,7 @@ export const Tab = ({
     >
       {tabName}
       <i
-        className="icon-button icon-button-dark"
+        className="vz-icon-button"
         onClick={handleCloseClick}
       >
         <CloseSVG />

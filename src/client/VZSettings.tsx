@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Button, Modal, Form } from './bootstrap';
+import { Button, Modal, Form } from './ui';
 import { ThemeLabel, themes } from './themes';
 import { VZCodeContext } from './VZCodeContext';
 
@@ -143,7 +143,7 @@ export const VZSettings = ({
 
   // Update font family in the document's style
   useEffect(() => {
-    document.body.style.setProperty(
+    document.querySelector<HTMLElement>('.app')?.style.setProperty(
       '--vzcode-font-family',
       selectedFont,
     );
@@ -151,7 +151,7 @@ export const VZSettings = ({
 
   // Update font size in the document's style
   useEffect(() => {
-    document.body.style.setProperty(
+    document.querySelector<HTMLElement>('.app')?.style.setProperty(
       '--vzcode-font-size',
       selectedFontSize,
     );
@@ -214,7 +214,7 @@ export const VZSettings = ({
         <Form.Group className="mb-3" controlId="formFork">
           <Form.Label>Theme</Form.Label>
           <select
-            className="form-select"
+            className="vz-ui-select"
             value={theme}
             onChange={(e) =>
               setTheme(e.target.value as ThemeLabel)
@@ -231,7 +231,7 @@ export const VZSettings = ({
         <Form.Group className="mb-3" controlId="formFork">
           <Form.Label>Font</Form.Label>
           <select
-            className="form-select"
+            className="vz-ui-select"
             onChange={(e) =>
               setSelectedFont(e.target.value)
             }
@@ -248,7 +248,7 @@ export const VZSettings = ({
         <Form.Group className="mb-3" controlId="formFork">
           <Form.Label>Font Size</Form.Label>
           <select
-            className="form-select"
+            className="vz-ui-select"
             onChange={(e) =>
               setSelectedFontSize(e.target.value)
             }

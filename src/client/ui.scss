@@ -89,7 +89,7 @@
 .vz-ui-button:disabled { opacity: .5; cursor: not-allowed; }
 .vz-ui-button--primary { background: #3866e9; color: #fff; }
 .vz-ui-button--danger { background: #eb1c69; color: #fff; }
-.vz-ui-button--outline-secondary { background: transparent; border-color: #e0e8ff; color: #fff; }
+.vz-ui-button--outline-secondary { background: transparent; border-color: #576786; color: #576786; }
 .vz-ui-button--outline-primary { background: transparent; border-color: #3866e9; color: #3866e9; }
 .vz-ui-button--sm { padding: 4px 8px; font-size: 12px; }
 .vz-ui-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
@@ -132,7 +132,7 @@
   position: absolute; pointer-events: none; z-index: 30;
   width: max-content; max-width: 240px; padding: 5px 9px;
   border-radius: 6px; background: #161514; border: 1px solid #161514;
-  color: #161514; font: 12px/1.5 system-ui, sans-serif;
+  color: #fff; font: 14px/1.5 Inter, sans-serif;
   white-space: normal; box-shadow: 0 8px 20px #0006;
   opacity: 0; visibility: hidden;
 }

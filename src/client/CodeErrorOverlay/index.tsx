@@ -66,7 +66,7 @@ export const CodeErrorOverlay = ({
       <pre>{errorMessage}</pre>
       {enableErrorDismiss ? (
         <i
-          className="icon-button icon-button-dark error-dismiss-button"
+          className="vz-icon-button error-dismiss-button"
           onClick={handleCloseClick}
         >
           <CloseSVG />

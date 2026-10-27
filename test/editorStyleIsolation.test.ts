@@ -1,30 +1,46 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import {
+  readFileSync,
+  readdirSync,
+  statSync,
+} from 'node:fs';
 import { join } from 'node:path';
 
 const root = process.cwd();
-const read = (file: string) => readFileSync(join(root, file), 'utf8');
+const read = (file: string) =>
+  readFileSync(join(root, file), 'utf8');
 const walk = (folder: string): string[] =>
   readdirSync(join(root, folder)).flatMap((name) => {
     const path = folder + '/' + name;
-    return statSync(join(root, path)).isDirectory() ? walk(path) : [path];
+    return statSync(join(root, path)).isDirectory()
+      ? walk(path)
+      : [path];
   });
 
 describe('framework-independent VZCode styles', () => {
   it('does not import Bootstrap, Bootstrap icons, or vizhub-ui', () => {
     const offenders = walk('src')
       .filter((path) => /\.(tsx?|jsx?|s?css)$/.test(path))
-      .filter((path) => /(?:react-bootstrap|bootstrap-icons|vizhub-ui\/dist|--vh-|--bs-|vh-spinner|user-select-none)/.test(read(path)));
+      .filter((path) =>
+        /(?:react-bootstrap|bootstrap-icons|vizhub-ui\/dist|--vh-|--bs-|vh-spinner|user-select-none)/.test(
+          read(path),
+        ),
+      );
     expect(offenders).toEqual([]);
   });
 
   it('does not depend on the retired packages', () => {
-    const deps = JSON.parse(read('package.json')).dependencies;
-    for (const name of ['react-bootstrap', 'bootstrap-icons', 'vizhub-ui']) {
+    const deps = JSON.parse(
+      read('package.json'),
+    ).dependencies;
+    for (const name of [
+      'react-bootstrap',
+      'bootstrap-icons',
+      'vizhub-ui',
+    ]) {
       expect(deps).not.toHaveProperty(name);
     }
   });
-
 
   it('preserves VizHub legacy color values and fonts without global CSS', () => {
     const source = read('src/client/ui.scss');
@@ -46,9 +62,15 @@ describe('framework-independent VZCode styles', () => {
         `--vz-color-${name.replace('_', '-')}: ${hex};`,
       );
     }
-    expect(source).toContain('--vz-font-body: Inter, sans-serif');
-    expect(source).toContain('--vz-font-heading: Poppins, sans-serif');
-    expect(read('src/client/App/style.scss')).toContain("'Roboto Mono'");
+    expect(source).toContain(
+      '--vz-font-body: Inter, sans-serif',
+    );
+    expect(source).toContain(
+      '--vz-font-heading: Poppins, sans-serif',
+    );
+    expect(read('src/client/App/style.scss')).toContain(
+      "'Roboto Mono'",
+    );
     expect(source).not.toMatch(/:root\s*\{/);
     expect(source).not.toMatch(/^\s*(?:html|body)\s*\{/m);
     expect(source).toContain('.vz-ui-modal');
@@ -61,7 +83,9 @@ describe('framework-independent VZCode styles', () => {
       .flatMap((path) => {
         const lines = read(path).split('\n');
         return lines.flatMap((line, i) =>
-          /\b(?:mb-3|pt-1|text-muted|form-control|form-label|form-select|btn-primary|btn-secondary|btn-group|user-select-none|icon-button-dark)\b/.test(line)
+          /\b(?:mb-3|pt-1|text-muted|form-control|form-label|form-select|btn-primary|btn-secondary|btn-group|user-select-none|icon-button-dark)\b/.test(
+            line,
+          )
             ? [`${path}:${i + 1}: ${line.trim()}`]
             : [],
         );
@@ -74,6 +98,8 @@ describe('framework-independent VZCode styles', () => {
     expect(css).not.toMatch(/:root\s*\{/);
     expect(css).not.toMatch(/html,\s*body,\s*#root/);
     expect(css).toContain('.app');
-    expect(read('src/client/VZSettings.tsx')).not.toContain('document.body.style.setProperty');
+    expect(read('src/client/VZSettings.tsx')).not.toContain(
+      'document.body.style.setProperty',
+    );
   });
 });

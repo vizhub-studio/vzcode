@@ -20,8 +20,8 @@
   --vz-color-caution-02: #fff4df;
   --vz-color-success-01: #36bb4a;
   --vz-color-success-02: #d7f6dc;
-  --vz-color-hover-dark: rgba(255, 255, 255, .1);
-  --vz-color-active-dark: rgba(255, 255, 255, .2);
+  --vz-color-hover-dark: rgba(255, 255, 255, 0.1);
+  --vz-color-active-dark: rgba(255, 255, 255, 0.2);
   /* VZCode-only aliases for colors used by recent components. */
   --vz-color-primary-01: var(--vz-color-action-01);
   --vz-color-primary-02: var(--vz-color-action-02);
@@ -43,63 +43,159 @@
   line-height: 1.5;
   color: var(--vz-color-neutral-04);
 }
-.app, .app *, .app *::before, .app *::after,
-.vz-ui-modal, .vz-ui-modal *, .vz-ui-modal *::before, .vz-ui-modal *::after {
+.app,
+.app *,
+.app *::before,
+.app *::after,
+.vz-ui-modal,
+.vz-ui-modal *,
+.vz-ui-modal *::before,
+.vz-ui-modal *::after {
   box-sizing: border-box;
 }
-:where(.app) :is(button, input, select, textarea) { font: inherit; }
+:where(.app) :is(button, input, select, textarea) {
+  font: inherit;
+}
 :where(.app) :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--vz-font-heading);
   font-weight: 600;
   line-height: 1.2;
   margin-top: 0;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
-:where(.app) h1 { font-size: 3rem; font-weight: 700; }
-:where(.app) h2 { font-size: 2.125rem; }
-:where(.app) h3 { font-size: 1.875rem; }
-:where(.app) h4 { font-size: 1.25rem; }
-:where(.app) h5 { font-size: 1.125rem; }
-:where(.app) h6 { font-size: 1rem; }
-:where(.app) p { margin-top: 0; margin-bottom: 1rem; }
-:where(.app) a { color: var(--vz-color-action-01); }
+:where(.app) h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+:where(.app) h2 {
+  font-size: 2.125rem;
+}
+:where(.app) h3 {
+  font-size: 1.875rem;
+}
+:where(.app) h4 {
+  font-size: 1.25rem;
+}
+:where(.app) h5 {
+  font-size: 1.125rem;
+}
+:where(.app) h6 {
+  font-size: 1rem;
+}
+:where(.app) p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+:where(.app) a {
+  color: var(--vz-color-action-01);
+}
 
 .app .vz-icon-button {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 4px; border-radius: 4px;
-  color: var(--vz-color-neutral-04); cursor: pointer;
-  min-width: 28px; min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--vz-color-neutral-04);
+  cursor: pointer;
+  min-width: 28px;
+  min-height: 28px;
 }
-.app .vz-icon-button:hover { background: var(--vz-color-hover-dark); }
-.app .vz-icon-button:active { background: var(--vz-color-active-dark); }
-.app .vz-icon-button:focus-visible { outline: 2px solid var(--vz-color-action-01); outline-offset: 2px; }
-.app .vz-color-success-01 { color: var(--vz-color-success-01); }
-.app .file-or-directory { user-select: none; }
+.app .vz-icon-button:hover {
+  background: var(--vz-color-hover-dark);
+}
+.app .vz-icon-button:active {
+  background: var(--vz-color-active-dark);
+}
+.app .vz-icon-button:focus-visible {
+  outline: 2px solid var(--vz-color-action-01);
+  outline-offset: 2px;
+}
+.app .vz-color-success-01 {
+  color: var(--vz-color-success-01);
+}
+.app .file-or-directory {
+  user-select: none;
+}
 .vz-ui-button {
-  appearance: none; display: inline-flex; justify-content: center;
-  align-items: center; gap: 6px; border: 1px solid transparent;
-  border-radius: 4px; padding: 6px 12px;
-  background: #e0e8ff; color: #3866e9; cursor: pointer;
-  font: 500 16px/1.5 Inter, sans-serif;
+  appearance: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 6px 12px;
+  background: #e0e8ff;
+  color: #3866e9;
+  cursor: pointer;
+  font:
+    500 16px/1.5 Inter,
+    sans-serif;
 }
-.vz-ui-button:hover { filter: brightness(.95); }
+.vz-ui-button:hover {
+  filter: brightness(0.95);
+}
 .vz-ui-button:focus-visible,
 .vz-ui-control:focus-visible,
-.vz-ui-close:focus-visible { outline: 2px solid #3866e9; outline-offset: 2px; }
-.vz-ui-button:disabled { opacity: .5; cursor: not-allowed; }
-.vz-ui-button--primary { background: #3866e9; color: #fff; }
-.vz-ui-button--danger { background: #eb1c69; color: #fff; }
-.vz-ui-button--outline-secondary { background: transparent; border-color: #576786; color: #576786; }
-.vz-ui-button--outline-primary { background: transparent; border-color: #3866e9; color: #3866e9; }
-.vz-ui-button--sm { padding: 4px 8px; font-size: 12px; }
-.vz-ui-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
-.vz-ui-label { font-size: 16px; font-weight: 500; color: #161514; }
-.vz-ui-control, .vz-ui-select {
-  box-sizing: border-box; width: 100%; border: 1px solid #dee2e6;
-  border-radius: 4px; background: transparent; color: #161514;
-  padding: 6px 12px; font: 400 16px/1.5 Inter, sans-serif;
+.vz-ui-close:focus-visible {
+  outline: 2px solid #3866e9;
+  outline-offset: 2px;
 }
-.vz-ui-help { color: #797979; font-size: 14px; }
+.vz-ui-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.vz-ui-button--primary {
+  background: #3866e9;
+  color: #fff;
+}
+.vz-ui-button--danger {
+  background: #eb1c69;
+  color: #fff;
+}
+.vz-ui-button--outline-secondary {
+  background: transparent;
+  border-color: #576786;
+  color: #576786;
+}
+.vz-ui-button--outline-primary {
+  background: transparent;
+  border-color: #3866e9;
+  color: #3866e9;
+}
+.vz-ui-button--sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+.vz-ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+.vz-ui-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #161514;
+}
+.vz-ui-control,
+.vz-ui-select {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: transparent;
+  color: #161514;
+  padding: 6px 12px;
+  font:
+    400 16px/1.5 Inter,
+    sans-serif;
+}
+.vz-ui-help {
+  color: #797979;
+  font-size: 14px;
+}
 /* The same native field is also used in the dark file-search sidebar.
  * Modal controls are light; editor controls remain legible on navy. */
 .app .vz-ui-control {
@@ -107,42 +203,106 @@
   color: var(--vz-color-neutral-04);
   border-color: var(--vz-color-neutral-03);
 }
-.app .vz-ui-control::placeholder { color: var(--vz-color-neutral-04); opacity: .65; }
+.app .vz-ui-control::placeholder {
+  color: var(--vz-color-neutral-04);
+  opacity: 0.65;
+}
 .vz-ui-modal {
-  box-sizing: border-box; width: min(500px, calc(100vw - 32px));
-  max-height: calc(100dvh - 32px); padding: 0; border: 0;
-  border-radius: 4px; background: white; color: #161514;
-  box-shadow: rgba(0,0,0,.15) 0 1px 4px, 0 16px 40px #0004;
-  font: 400 16px/1.5 Inter, sans-serif;
+  box-sizing: border-box;
+  width: min(500px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: white;
+  color: #161514;
+  box-shadow:
+    rgba(0, 0, 0, 0.15) 0 1px 4px,
+    0 16px 40px #0004;
+  font:
+    400 16px/1.5 Inter,
+    sans-serif;
 }
-.vz-ui-modal::backdrop { background: rgba(0,0,0,.5); }
-.vz-ui-modal-content { display: flex; flex-direction: column; }
+.vz-ui-modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+.vz-ui-modal-content {
+  display: flex;
+  flex-direction: column;
+}
 .vz-ui-modal-header {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 16px 20px; border-bottom: 1px solid #e6eaf2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e6eaf2;
 }
-.vz-ui-modal-title { font: 600 20px/1.2 Poppins, sans-serif; margin: 0; }
+.vz-ui-modal-title {
+  font:
+    600 20px/1.2 Poppins,
+    sans-serif;
+  margin: 0;
+}
 .vz-ui-close {
-  border: 0; border-radius: 4px; background: none; color: #576786;
-  cursor: pointer; font-size: 24px; padding: 0 5px; line-height: 1;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: #576786;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 0 5px;
+  line-height: 1;
 }
-.vz-ui-modal-body { padding: 20px; overflow: auto; }
-.vz-ui-modal-body p { margin: 0 0 12px; }
-.vz-ui-modal-body ul { padding-left: 22px; }
-.vz-ui-modal-body li { margin: 8px 0; }
-.vz-ui-modal-body kbd { padding: 2px 5px; border-radius: 4px; background: #e6eaf2; }
+.vz-ui-modal-body {
+  padding: 20px;
+  overflow: auto;
+}
+.vz-ui-modal-body p {
+  margin: 0 0 12px;
+}
+.vz-ui-modal-body ul {
+  padding-left: 22px;
+}
+.vz-ui-modal-body li {
+  margin: 8px 0;
+}
+.vz-ui-modal-body kbd {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #e6eaf2;
+}
 .vz-ui-modal-footer {
-  display: flex; justify-content: flex-end; align-items: center;
-  gap: 10px; padding: 14px 20px; border-top: 1px solid #e6eaf2;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #e6eaf2;
 }
-.vz-ui-tooltip-anchor { display: inline-flex; position: relative; align-items: center; }
+.vz-ui-tooltip-anchor {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+}
 .vz-ui-tooltip {
-  position: absolute; pointer-events: none; z-index: 30;
-  width: max-content; max-width: 240px; padding: 5px 9px;
-  border-radius: 6px; background: #161514; border: 1px solid #161514;
-  color: #fff; font: 14px/1.5 Inter, sans-serif;
-  white-space: normal; box-shadow: 0 8px 20px #0006;
-  opacity: 0; visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+  z-index: 30;
+  width: max-content;
+  max-width: 240px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: #161514;
+  border: 1px solid #161514;
+  color: #fff;
+  font:
+    14px/1.5 Inter,
+    sans-serif;
+  white-space: normal;
+  box-shadow: 0 8px 20px #0006;
+  opacity: 0;
+  visibility: hidden;
 }
 .vz-ui-tooltip-floating {
   position: fixed;

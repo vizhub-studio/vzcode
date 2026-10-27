@@ -2,7 +2,7 @@ import { Button, Modal } from '../ui';
 import { useCallback, useEffect } from 'react';
 
 // Confirmation modal for deleting a file or directory.
-// Inspired by https://react-bootstrap.netlify.app/docs/components/modal/#live-demo
+// Built on VZCode's native dialog-based modal primitives.
 
 export const DeleteConfirmationModal = ({
   show,

@@ -144,18 +144,22 @@ export const VZSettings = ({
 
   // Update font family in the document's style
   useEffect(() => {
-    sidebarRef.current?.closest<HTMLElement>('.app')?.style.setProperty(
-      '--vzcode-font-family',
-      selectedFont,
-    );
+    sidebarRef.current
+      ?.closest<HTMLElement>('.app')
+      ?.style.setProperty(
+        '--vzcode-font-family',
+        selectedFont,
+      );
   }, [selectedFont, sidebarRef]);
 
   // Update font size in the document's style
   useEffect(() => {
-    sidebarRef.current?.closest<HTMLElement>('.app')?.style.setProperty(
-      '--vzcode-font-size',
-      selectedFontSize,
-    );
+    sidebarRef.current
+      ?.closest<HTMLElement>('.app')
+      ?.style.setProperty(
+        '--vzcode-font-size',
+        selectedFontSize,
+      );
   }, [selectedFontSize, sidebarRef]);
 
   const usernameRef = useRef<HTMLInputElement>(null);

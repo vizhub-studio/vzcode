@@ -20,9 +20,9 @@ export const VZKeyboardShortcutsDoc = ({
       <Modal.Header closeButton>
         <Modal.Title>Keyboard Shortcuts</Modal.Title>
       </Modal.Header>
-      <Modal.Body className="pt-1">
-        <Form.Group className="mb-3">
-          <Form.Text className="text-muted">
+      <Modal.Body>
+        <Form.Group>
+          <Form.Text>
             Keyboard shortcuts and interactive widgets for
             quick actions
           </Form.Text>

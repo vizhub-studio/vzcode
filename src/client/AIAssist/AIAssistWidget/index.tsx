@@ -1,5 +1,5 @@
 import { useCallback, useContext, useState } from 'react';
-import { OverlayTrigger, Tooltip } from '../../bootstrap';
+import { OverlayTrigger, Tooltip } from '../../ui';
 import { PaneId, TabState } from '../../../types';
 import { VizFileId } from '@vizhub/viz-types';
 import { VZCodeContext } from '../../VZCodeContext';

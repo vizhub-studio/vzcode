@@ -47,22 +47,22 @@
 .vz-ui-modal, .vz-ui-modal *, .vz-ui-modal *::before, .vz-ui-modal *::after {
   box-sizing: border-box;
 }
-.app :is(button, input, select, textarea) { font: inherit; }
-.app :is(h1, h2, h3, h4, h5, h6) {
+:where(.app) :is(button, input, select, textarea) { font: inherit; }
+:where(.app) :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--vz-font-heading);
   font-weight: 600;
   line-height: 1.2;
   margin-top: 0;
   margin-bottom: .5rem;
 }
-.app h1 { font-size: 3rem; font-weight: 700; }
-.app h2 { font-size: 2.125rem; }
-.app h3 { font-size: 1.875rem; }
-.app h4 { font-size: 1.25rem; }
-.app h5 { font-size: 1.125rem; }
-.app h6 { font-size: 1rem; }
-.app p { margin-top: 0; margin-bottom: 1rem; }
-.app a { color: var(--vz-color-action-01); }
+:where(.app) h1 { font-size: 3rem; font-weight: 700; }
+:where(.app) h2 { font-size: 2.125rem; }
+:where(.app) h3 { font-size: 1.875rem; }
+:where(.app) h4 { font-size: 1.25rem; }
+:where(.app) h5 { font-size: 1.125rem; }
+:where(.app) h6 { font-size: 1rem; }
+:where(.app) p { margin-top: 0; margin-bottom: 1rem; }
+:where(.app) a { color: var(--vz-color-action-01); }
 
 .app .vz-icon-button {
   display: inline-flex; align-items: center; justify-content: center;

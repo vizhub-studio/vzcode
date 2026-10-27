@@ -1,89 +1,146 @@
-/* Editor-local palette. Hosts may override these variables on the editor root. */
+/*
+ * Original VizHub palette and typography, copied from vizhub-ui/scss:
+ * _variables.scss and _overrides.scss (v3.24.0).
+ * Retain the visual design without importing Bootstrap or vizhub-ui CSS.
+ * These variables belong to VZCode's containers, never :root or body.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap');
+
 :where(.app, .ai-chat-container, .vz-ui-modal) {
-  --vz-color-neutral-01: #292c34;
-  --vz-color-neutral-02: #383d48;
-  --vz-color-neutral-03: #aab4c3;
-  --vz-color-neutral-04: #f1f5f9;
-  --vz-color-primary-01: #2563eb;
-  --vz-color-primary-02: #1d4ed8;
-  --vz-color-primary-03: #60a5fa;
-  --vz-color-primary-04: #93c5fd;
-  --vz-color-action-03: #93c5fd;
-  --vz-color-hover-dark: #475569;
-  --vz-color-success-01: #22c55e;
-  --vz-color-success-03: #4ade80;
-  --vz-color-success-04: #86efac;
-  --vz-color-caution-01: #fbbf24;
-  --vz-color-caution-02: #f59e0b;
-  --vz-color-warning-01: #ef4444;
-  --vz-color-danger-03: #f87171;
-  --vz-color-danger-04: #fca5a5;
+  --vz-color-neutral-01: #1f2022;
+  --vz-color-neutral-02: #202e46;
+  --vz-color-neutral-03: #576786;
+  --vz-color-neutral-04: #bdc7dc;
+  --vz-color-action-01: #3866e9;
+  --vz-color-action-02: #022a9f;
+  --vz-color-action-03: #e0e8ff;
+  --vz-color-warning-01: #eb1c69;
+  --vz-color-warning-02: #ffeff2;
+  --vz-color-caution-01: #ffa800;
+  --vz-color-caution-02: #fff4df;
+  --vz-color-success-01: #36bb4a;
+  --vz-color-success-02: #d7f6dc;
+  --vz-color-hover-dark: rgba(255, 255, 255, .1);
+  --vz-color-active-dark: rgba(255, 255, 255, .2);
+  /* VZCode-only aliases for colors used by recent components. */
+  --vz-color-primary-01: var(--vz-color-action-01);
+  --vz-color-primary-02: var(--vz-color-action-02);
+  --vz-color-primary-03: var(--vz-color-action-01);
+  --vz-color-primary-04: var(--vz-color-action-03);
+  --vz-color-success-03: #36bb4a;
+  --vz-color-success-04: #d7f6dc;
+  --vz-color-danger-03: #eb1c69;
+  --vz-color-danger-04: #ffeff2;
+  --vz-font-body: Inter, sans-serif;
+  --vz-font-heading: Poppins, sans-serif;
 }
-.app .icon-button {
+
+/* Scoped equivalent of Bootstrap's typography/reboot defaults. */
+.app {
+  font-family: var(--vz-font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--vz-color-neutral-04);
+}
+.app, .app *, .app *::before, .app *::after,
+.vz-ui-modal, .vz-ui-modal *, .vz-ui-modal *::before, .vz-ui-modal *::after {
+  box-sizing: border-box;
+}
+:where(.app) :is(button, input, select, textarea) { font: inherit; }
+:where(.app) :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--vz-font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: .5rem;
+}
+:where(.app) h1 { font-size: 3rem; font-weight: 700; }
+:where(.app) h2 { font-size: 2.125rem; }
+:where(.app) h3 { font-size: 1.875rem; }
+:where(.app) h4 { font-size: 1.25rem; }
+:where(.app) h5 { font-size: 1.125rem; }
+:where(.app) h6 { font-size: 1rem; }
+:where(.app) p { margin-top: 0; margin-bottom: 1rem; }
+:where(.app) a { color: var(--vz-color-action-01); }
+
+.app .vz-icon-button {
   display: inline-flex; align-items: center; justify-content: center;
-  color: #e2e8f0; cursor: pointer; border-radius: 6px;
+  padding: 4px; border-radius: 4px;
+  color: var(--vz-color-neutral-04); cursor: pointer;
   min-width: 28px; min-height: 28px;
 }
-.app .icon-button:hover,
-.app .icon-button:focus-visible { background: rgba(255, 255, 255, .12); }
+.app .vz-icon-button:hover { background: var(--vz-color-hover-dark); }
+.app .vz-icon-button:active { background: var(--vz-color-active-dark); }
+.app .vz-icon-button:focus-visible { outline: 2px solid var(--vz-color-action-01); outline-offset: 2px; }
 .app .vz-color-success-01 { color: var(--vz-color-success-01); }
 .app .file-or-directory { user-select: none; }
 .vz-ui-button {
   appearance: none; display: inline-flex; justify-content: center;
   align-items: center; gap: 6px; border: 1px solid transparent;
-  border-radius: 6px; padding: 7px 12px; background: #475569;
-  color: #f8fafc; cursor: pointer; font: inherit; line-height: 1.4;
+  border-radius: 4px; padding: 6px 12px;
+  background: #e0e8ff; color: #3866e9; cursor: pointer;
+  font: 500 16px/1.5 Inter, sans-serif;
 }
-.vz-ui-button:hover { filter: brightness(1.12); }
+.vz-ui-button:hover { filter: brightness(.95); }
 .vz-ui-button:focus-visible,
 .vz-ui-control:focus-visible,
-.vz-ui-close:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
+.vz-ui-close:focus-visible { outline: 2px solid #3866e9; outline-offset: 2px; }
 .vz-ui-button:disabled { opacity: .5; cursor: not-allowed; }
-.vz-ui-button--primary { background: #2563eb; }
-.vz-ui-button--danger { background: #b91c1c; }
-.vz-ui-button--outline-secondary { background: transparent; border-color: #94a3b8; color: #e2e8f0; }
-.vz-ui-button--outline-primary { background: transparent; border-color: #60a5fa; color: #bfdbfe; }
+.vz-ui-button--primary { background: #3866e9; color: #fff; }
+.vz-ui-button--danger { background: #eb1c69; color: #fff; }
+.vz-ui-button--outline-secondary { background: transparent; border-color: #576786; color: #576786; }
+.vz-ui-button--outline-primary { background: transparent; border-color: #3866e9; color: #3866e9; }
 .vz-ui-button--sm { padding: 4px 8px; font-size: 12px; }
 .vz-ui-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
-.vz-ui-label { font-size: 13px; font-weight: 600; color: inherit; }
+.vz-ui-label { font-size: 16px; font-weight: 500; color: #161514; }
 .vz-ui-control, .vz-ui-select {
-  box-sizing: border-box; width: 100%; border: 1px solid #64748b;
-  border-radius: 6px; background: #1e293b; color: #f8fafc;
-  padding: 8px 10px; font: inherit;
+  box-sizing: border-box; width: 100%; border: 1px solid #dee2e6;
+  border-radius: 4px; background: transparent; color: #161514;
+  padding: 6px 12px; font: 400 16px/1.5 Inter, sans-serif;
 }
-.vz-ui-help { color: #cbd5e1; font-size: 12px; }
+.vz-ui-help { color: #797979; font-size: 14px; }
+/* The same native field is also used in the dark file-search sidebar.
+ * Modal controls are light; editor controls remain legible on navy. */
+.app .vz-ui-control {
+  background-color: var(--vz-color-neutral-02);
+  color: var(--vz-color-neutral-04);
+  border-color: var(--vz-color-neutral-03);
+}
+.app .vz-ui-control::placeholder { color: var(--vz-color-neutral-04); opacity: .65; }
 .vz-ui-modal {
-  box-sizing: border-box; width: min(480px, calc(100vw - 32px));
-  max-height: calc(100dvh - 32px); padding: 0; border: 1px solid #475569;
-  border-radius: 12px; background: #292c34; color: #f8fafc;
-  box-shadow: 0 22px 60px #0009; font: 14px/1.5 system-ui, sans-serif;
+  box-sizing: border-box; width: min(500px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px); padding: 0; border: 0;
+  border-radius: 4px; background: white; color: #161514;
+  box-shadow: rgba(0,0,0,.15) 0 1px 4px, 0 16px 40px #0004;
+  font: 400 16px/1.5 Inter, sans-serif;
 }
-.vz-ui-modal::backdrop { background: #020617b3; }
+.vz-ui-modal::backdrop { background: rgba(0,0,0,.5); }
 .vz-ui-modal-content { display: flex; flex-direction: column; }
 .vz-ui-modal-header {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 16px 20px; border-bottom: 1px solid #475569;
+  gap: 16px; padding: 16px 20px; border-bottom: 1px solid #e6eaf2;
 }
-.vz-ui-modal-title { font-size: 17px; line-height: 1.3; margin: 0; font-weight: 600; }
+.vz-ui-modal-title { font: 600 20px/1.2 Poppins, sans-serif; margin: 0; }
 .vz-ui-close {
-  border: 0; border-radius: 4px; background: none; color: #e2e8f0;
+  border: 0; border-radius: 4px; background: none; color: #576786;
   cursor: pointer; font-size: 24px; padding: 0 5px; line-height: 1;
 }
 .vz-ui-modal-body { padding: 20px; overflow: auto; }
 .vz-ui-modal-body p { margin: 0 0 12px; }
 .vz-ui-modal-body ul { padding-left: 22px; }
 .vz-ui-modal-body li { margin: 8px 0; }
-.vz-ui-modal-body kbd { padding: 2px 5px; border-radius: 4px; background: #475569; }
+.vz-ui-modal-body kbd { padding: 2px 5px; border-radius: 4px; background: #e6eaf2; }
 .vz-ui-modal-footer {
   display: flex; justify-content: flex-end; align-items: center;
-  gap: 10px; padding: 14px 20px; border-top: 1px solid #475569;
+  gap: 10px; padding: 14px 20px; border-top: 1px solid #e6eaf2;
 }
 .vz-ui-tooltip-anchor { display: inline-flex; position: relative; align-items: center; }
 .vz-ui-tooltip {
   position: absolute; pointer-events: none; z-index: 30;
   width: max-content; max-width: 240px; padding: 5px 9px;
-  border-radius: 6px; background: #0f172a; border: 1px solid #475569;
-  color: #f8fafc; font: 12px/1.5 system-ui, sans-serif;
+  border-radius: 6px; background: #161514; border: 1px solid #161514;
+  color: #fff; font: 14px/1.5 Inter, sans-serif;
   white-space: normal; box-shadow: 0 8px 20px #0006;
   opacity: 0; visibility: hidden;
 }

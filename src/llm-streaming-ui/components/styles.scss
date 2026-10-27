@@ -1,4 +1,7 @@
 .ai-chat-container {
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -842,21 +845,21 @@
 
 /* Native chat controls; no Bootstrap CSS or utility classes. */
 .ai-chat-container {
-  --vz-color-neutral-01: #292c34;
-  --vz-color-neutral-02: #383d48;
-  --vz-color-neutral-03: #aab4c3;
-  --vz-color-neutral-04: #f1f5f9;
-  --vz-color-primary-01: #2563eb;
-  --vz-color-primary-02: #1d4ed8;
+  --vz-color-neutral-01: #1f2022;
+  --vz-color-neutral-02: #202e46;
+  --vz-color-neutral-03: #576786;
+  --vz-color-neutral-04: #bdc7dc;
+  --vz-color-primary-01: #3866e9;
+  --vz-color-primary-02: #022a9f;
   .vz-chat-button-group { display: inline-flex; gap: 4px; }
   .vz-chat-button {
-    font: inherit; border: 1px solid #64748b; border-radius: 6px;
-    color: #e2e8f0; background: #383d48; padding: 5px 10px; cursor: pointer;
+    font: inherit; border: 1px solid #576786; border-radius: 6px;
+    color: #bdc7dc; background: #202e46; padding: 5px 10px; cursor: pointer;
   }
-  .vz-chat-button--primary { background: #2563eb; color: white; border-color: #2563eb; }
-  .vz-chat-button--danger { background: #b91c1c; color: white; border-color: #b91c1c; }
-  .vz-chat-button--outline-primary { border-color: #60a5fa; background: transparent; }
-  .vz-chat-button--outline-secondary { border-color: #94a3b8; background: transparent; }
+  .vz-chat-button--primary { background: #3866e9; color: white; border-color: #3866e9; }
+  .vz-chat-button--danger { background: #eb1c69; color: white; border-color: #eb1c69; }
+  .vz-chat-button--outline-primary { border-color: #3866e9; background: transparent; }
+  .vz-chat-button--outline-secondary { border-color: #e0e8ff; background: transparent; }
   .vz-chat-button:disabled { opacity: .5; cursor: not-allowed; }
-  .vz-chat-button:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
+  .vz-chat-button:focus-visible { outline: 2px solid #3866e9; outline-offset: 2px; }
 }

@@ -25,6 +25,50 @@ describe('framework-independent VZCode styles', () => {
     }
   });
 
+
+  it('preserves VizHub legacy color values and fonts without global CSS', () => {
+    const source = read('src/client/ui.scss');
+    // Original values from vizhub-ui/scss/_variables.scss.
+    const tokens: Record<string, string> = {
+      neutral_01: '#1f2022',
+      neutral_02: '#202e46',
+      neutral_03: '#576786',
+      neutral_04: '#bdc7dc',
+      action_01: '#3866e9',
+      action_02: '#022a9f',
+      action_03: '#e0e8ff',
+      warning_01: '#eb1c69',
+      caution_01: '#ffa800',
+      success_01: '#36bb4a',
+    };
+    for (const [name, hex] of Object.entries(tokens)) {
+      expect(source).toContain(
+        `--vz-color-${name.replace('_', '-')}: ${hex};`,
+      );
+    }
+    expect(source).toContain('--vz-font-body: Inter, sans-serif');
+    expect(source).toContain('--vz-font-heading: Poppins, sans-serif');
+    expect(read('src/client/App/style.scss')).toContain("'Roboto Mono'");
+    expect(source).not.toMatch(/:root\s*\{/);
+    expect(source).not.toMatch(/^\s*(?:html|body)\s*\{/m);
+    expect(source).toContain('.vz-ui-modal');
+  });
+
+  it('contains no Bootstrap-era component or utility class references', () => {
+    const offenders = walk('src/client')
+      .concat(walk('src/llm-streaming-ui'))
+      .filter((path) => /\.(tsx?|jsx?|s?css)$/.test(path))
+      .flatMap((path) => {
+        const lines = read(path).split('\n');
+        return lines.flatMap((line, i) =>
+          /\b(?:mb-3|pt-1|text-muted|form-control|form-label|form-select|btn-primary|btn-secondary|btn-group|user-select-none|icon-button-dark)\b/.test(line)
+            ? [`${path}:${i + 1}: ${line.trim()}`]
+            : [],
+        );
+      });
+    expect(offenders).toEqual([]);
+  });
+
   it('limits the layout and custom properties to the editor root', () => {
     const css = read('src/client/App/style.scss');
     expect(css).not.toMatch(/:root\s*\{/);

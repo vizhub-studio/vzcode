@@ -535,3 +535,20 @@ its own document.
 Hosts like VizHub AI Studio can continue importing
 `vzcode/src/client/App/style.scss` in their client editor chunk.
 The controls and dialogs are styled without requiring a host framework.
+
+#### Legacy appearance compatibility
+
+The Bootstrap-free editor keeps the original VizHub appearance. The scoped
+palette in `src/client/ui.scss` is derived from
+[`vizhub-ui/scss/_variables.scss`](https://github.com/vizhub-studio/vizhub-ui/blob/main/scss/_variables.scss)
+and the font roles from
+[`vizhub-ui/scss/_overrides.scss`](https://github.com/vizhub-studio/vizhub-ui/blob/main/scss/_overrides.scss):
+Inter for UI text, Poppins for headings, and Roboto Mono for code.
+It retains the original neutral navy scale (`#1f2022`, `#202e46`,
+`#576786`, `#bdc7dc`) and action blue (`#3866e9`).
+
+All tokens are VZCode-local; hosts must not load the retired `vizhub-ui`
+stylesheet. Native modal controls use the original light VizHub palette;
+file-search controls retain the dark editor theme. The
+`test/editorStyleIsolation.test.ts` checks token values and forbids
+Bootstrap-era utility classes in production code.

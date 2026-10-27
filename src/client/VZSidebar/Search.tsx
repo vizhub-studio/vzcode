@@ -311,7 +311,7 @@ export const Search = () => {
   return (
     <div>
       <Form.Group
-        className="sidebar-search-form mb-3"
+        className="sidebar-search-form"
         controlId="searchName"
       >
         <Form.Control

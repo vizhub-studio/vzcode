@@ -14,7 +14,7 @@ describe('framework-independent VZCode styles', () => {
   it('does not import Bootstrap, Bootstrap icons, or vizhub-ui', () => {
     const offenders = walk('src')
       .filter((path) => /\.(tsx?|jsx?|s?css)$/.test(path))
-      .filter((path) => /(?:react-bootstrap|bootstrap-icons|vizhub-ui\/dist|--vh-color)/.test(read(path)));
+      .filter((path) => /(?:react-bootstrap|bootstrap-icons|vizhub-ui\/dist|--vh-|--bs-|vh-spinner|user-select-none)/.test(read(path)));
     expect(offenders).toEqual([]);
   });
 

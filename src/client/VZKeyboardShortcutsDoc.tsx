@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Button, Modal, Form } from './bootstrap';
+import { Button, Modal, Form } from './ui';
 import { VZCodeContext } from './VZCodeContext';
 
 export const VZKeyboardShortcutsDoc = ({

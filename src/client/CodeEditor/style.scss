@@ -74,33 +74,33 @@
   .cm-panel.cm-search {
     padding: 5px;
     position: relative;
-    background-color: var(--vh-color-neutral-01);
+    background-color: var(--vz-color-neutral-01);
     border-radius: 6px;
-    color: var(--vh-color-neutral-04);
+    color: var(--vz-color-neutral-04);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   }
 
   .cm-panels {
     background-color: #333338;
-    color: var(--vh-color-neutral-04);
-    border: 2px solid var(--vh-color-neutral-02);
+    color: var(--vz-color-neutral-04);
+    border: 2px solid var(--vz-color-neutral-02);
     border-radius: 6px;
   }
 
   .cm-textfield {
-    background-color: var(--vh-color-neutral-01);
+    background-color: var(--vz-color-neutral-01);
     color: #efe7dc;
-    border: 1px solid var(--vh-color-neutral-04);
+    border: 1px solid var(--vz-color-neutral-04);
     padding: 8px;
     border-radius: 6px;
     font-size: 14px;
   }
 
   .cm-button {
-    background-color: var(--vh-color-neutral-01);
+    background-color: var(--vz-color-neutral-01);
     border: 1px solid #193350;
-    color: var(--vh-color-neutral-04);
-    border: 1px solid var(--vh-color-neutral-04);
+    color: var(--vz-color-neutral-04);
+    border: 1px solid var(--vz-color-neutral-04);
     border-radius: 5px;
     padding: 6px 12px;
     font-weight: bold;
@@ -133,8 +133,8 @@
     position: absolute;
     top: 0;
     right: 4px;
-    background-color: var(--vh-color-neutral-01);
-    color: var(--vh-color-neutral-04);
+    background-color: var(--vz-color-neutral-01);
+    color: var(--vz-color-neutral-04);
     border: none;
     font: inherit;
     padding: 4px 8px;
@@ -145,12 +145,12 @@
   }
 
   .cm-panel.cm-search [name='close']:hover {
-    background-color: var(--vh-color-caution-01);
+    background-color: var(--vz-color-caution-01);
     color: #ffffff;
   }
 
   .cm-panel.cm-search [name='close']:active {
-    background-color: var(--vh-color-caution-02);
+    background-color: var(--vz-color-caution-02);
     transform: scale(0.95);
   }
 }

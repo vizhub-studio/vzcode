@@ -262,7 +262,7 @@ test.describe('VZCode browser end-to-end', () => {
       .locator('.file-or-directory')
       .filter({ hasText: 'e2e-created.js' });
     await created.hover();
-    await created.locator('.utils i').first().click();
+    await created.locator('.utils button').first().click();
     // Once renaming, the item no longer matches by text (the name is an
     // input value), so target the rename input globally.
     const renameInput = page.locator('.rename-input');
@@ -285,7 +285,7 @@ test.describe('VZCode browser end-to-end', () => {
       .locator('.file-or-directory')
       .filter({ hasText: 'e2e-renamed.js' });
     await renamed.hover();
-    await renamed.locator('.utils i').last().click();
+    await renamed.locator('.utils button').last().click();
     await page
       .getByRole('button', { name: 'Delete', exact: true })
       .click();
@@ -299,5 +299,44 @@ test.describe('VZCode browser end-to-end', () => {
         timeout: 20_000,
       })
       .toBe(false);
+  });
+
+  test('uses AI Studio button and dialog styles', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await page.locator('#new-file-icon').click();
+    await page.locator('#fileName').fill('ui-consistency-test.js');
+    const create = page.getByRole('button', { name: 'Create File' });
+    await expect(create).toHaveCSS('background-color', 'rgb(3, 102, 214)');
+    await expect(create).toHaveCSS('border-radius', '6px');
+    await create.hover();
+    await expect(create).toHaveCSS('background-color', 'rgb(2, 86, 194)');
+    await expect(page.getByRole('dialog')).toHaveCSS('border-radius', '10px');
+    await page.keyboard.press('Escape');
+  });
+
+  test('sidebar icons support keyboard navigation and selected states', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    const files = page.getByRole('button', { name: 'Files', exact: true });
+    const search = page.getByRole('button', { name: 'Search', exact: true });
+    await expect(files).toHaveAttribute('aria-pressed', 'true');
+    await search.focus();
+    await search.press('Enter');
+    await expect(search).toHaveAttribute('aria-pressed', 'true');
+    await expect(files).toHaveAttribute('aria-pressed', 'false');
+    await files.press('Space');
+    await expect(files).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('file tabs expose a keyboard-operable close action', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await openFile(page, 'index.js');
+    const tab = page.getByRole('button', { name: 'index.js', exact: true });
+    await expect(tab).toBeVisible();
+    await expect(tab).toHaveAttribute('aria-current', 'page');
+    await page.getByRole('button', { name: 'Close index.js' }).click();
+    await expect(page.locator('.vz-tab-list .tab')).toHaveCount(0);
   });
 });

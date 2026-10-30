@@ -6,7 +6,9 @@
  */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap');
 
-:where(.app, .ai-chat-container, .vz-ui-modal) {
+/* The embedded VZSidebar is also mounted directly by VizHub Cloud,
+ * without VZCode's standalone .app wrapper. Scope tokens to that root too. */
+:where(.app, .vz-sidebar, .ai-chat-container, .vz-ui-modal) {
   --vz-color-neutral-01: #1f2022;
   --vz-color-neutral-02: #202e46;
   --vz-color-neutral-03: #576786;

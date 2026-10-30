@@ -680,7 +680,7 @@ export const VZSidebar = ({
               title="Delete all files"
             >
               <Trash2 size={14} aria-hidden="true" />
-              delete all
+              Delete all files
             </button>
           )}
         </div>

@@ -354,8 +354,10 @@ export const VZSidebar = ({
                 </Tooltip>
               }
             >
-              <i
+              <button type="button"
                 id="ai-chat-icon"
+              aria-label="AI chat"
+              aria-pressed={isAIChatOpen}
                 className="vz-icon-button"
                 onClick={() =>
                   handleAIChatButtonClick({
@@ -370,7 +372,7 @@ export const VZSidebar = ({
                 }
               >
                 <SparklesSVG />
-              </i>
+              </button>
             </OverlayTrigger>
           )}
 
@@ -382,8 +384,10 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="files-icon"
+              aria-label="Files"
+              aria-pressed={!isAIChatOpen && !isSearchOpen && !isVisualEditorOpen}
               className="vz-icon-button"
               onClick={() => {
                 setIsSearchOpen(false);
@@ -393,7 +397,7 @@ export const VZSidebar = ({
               }}
             >
               <FolderSVG />
-            </i>
+            </button>
           </OverlayTrigger>
 
           <OverlayTrigger
@@ -404,8 +408,10 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="search-icon"
+              aria-label="Search"
+              aria-pressed={isSearchOpen}
               className="vz-icon-button"
               onClick={() => {
                 setIsSearchOpen(true);
@@ -415,7 +421,7 @@ export const VZSidebar = ({
               }}
             >
               <SearchSVG />
-            </i>
+            </button>
           </OverlayTrigger>
 
           <OverlayTrigger
@@ -426,8 +432,10 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="visual-editor-icon"
+              aria-label="Visual editor"
+              aria-pressed={isVisualEditorOpen}
               className="vz-icon-button"
               onClick={() => {
                 setIsVisualEditorOpen(true);
@@ -437,7 +445,7 @@ export const VZSidebar = ({
               }}
             >
               <AdjustmentSVG />
-            </i>
+            </button>
           </OverlayTrigger>
 
           <OverlayTrigger
@@ -448,13 +456,14 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="shortcut-icon"
+              aria-label="Keyboard shortcuts"
               className="vz-icon-button"
               onClick={handleQuestionMarkClick}
             >
               <QuestionMarkSVG />
-            </i>
+            </button>
           </OverlayTrigger>
 
           <OverlayTrigger
@@ -467,12 +476,13 @@ export const VZSidebar = ({
           >
             <a
               href="https://github.com/vizhub-core/vzcode/issues/new"
+              aria-label="Report a bug"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <i id="bug-icon" className="vz-icon-button">
+              <span id="bug-icon" className="vz-icon-button">
                 <BugSVG />
-              </i>
+              </span>
             </a>
           </OverlayTrigger>
 
@@ -484,13 +494,14 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="settings-icon"
+              aria-label="Editor settings"
               className="vz-icon-button"
               onClick={handleSettingsClick}
             >
               <GearSVG />
-            </i>
+            </button>
           </OverlayTrigger>
 
           <OverlayTrigger
@@ -501,13 +512,14 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="new-file-icon"
+              aria-label="Create file"
               className="vz-icon-button"
               onClick={handleOpenCreateFileModal}
             >
               <NewSVG />
-            </i>
+            </button>
           </OverlayTrigger>
 
           {/*Directory Rename*/}
@@ -519,13 +531,14 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="new-directory-icon"
+              aria-label="Create directory"
               className="vz-icon-button"
               onClick={handleOpenCreateDirModal}
             >
               <FileSVG />
-            </i>
+            </button>
           </OverlayTrigger>
 
           {/*Toggle Follow*/}
@@ -539,8 +552,10 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
               id="auto-focus-icon"
+              aria-label="Follow collaborator cursor"
+              aria-pressed={enableAutoFollow}
               className={`vz-icon-button${
                 enableAutoFollow
                   ? ' vz-color-success-01'
@@ -548,9 +563,9 @@ export const VZSidebar = ({
               }`}
               onClick={toggleAutoFollow}
             >
-              <i></i>
+              
               <PinSVG />
-            </i>
+            </button>
           </OverlayTrigger>
           {/* Start Voice Chat */}
           {enableLiveKit && (
@@ -562,15 +577,16 @@ export const VZSidebar = ({
                 </Tooltip>
               }
             >
-              <i
+              <button type="button"
                 id="mic-icon"
+              aria-label="Voice chat"
                 className="vz-icon-button"
                 onClick={() => {
                   setVoiceChatModalOpen(true);
                 }}
               >
                 <MicSVG />
-              </i>
+              </button>
             </OverlayTrigger>
           )}
         </div>

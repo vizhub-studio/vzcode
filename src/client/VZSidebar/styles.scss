@@ -183,12 +183,12 @@
   .file-or-directory:hover,
   .settings:hover {
     // background-color: #47546b;
-    background-color: rgba(255, 255, 255, 0.075);
+    background-color: var(--vz-color-hover-dark);
   }
 
   .active-file,
   .active-file:hover {
-    background-color: #264399;
+    background-color: rgba(3, 102, 214, 0.36);
   }
 
   .name {
@@ -361,7 +361,7 @@
 
       &:focus-visible {
         outline: 2px solid
-          var(--vz-color-action-01, #3866e9);
+          var(--vz-color-action-01, #0366d6);
         outline-offset: 2px;
       }
 
@@ -376,9 +376,9 @@
         color: var(--vz-color-neutral-04, #bdc7dc);
 
         &:hover {
-          background: rgba(235, 28, 105, 0.12);
-          border-color: var(--vz-color-warning-01, #eb1c69);
-          color: var(--vz-color-warning-02, #ffeff2);
+          background: rgba(240, 53, 61, 0.13);
+          border-color: var(--vz-color-danger-03, #f0353d);
+          color: #ffd7da;
         }
       }
     }

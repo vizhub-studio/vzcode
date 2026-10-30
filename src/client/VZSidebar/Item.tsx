@@ -197,12 +197,13 @@ export const Item = ({
                 </Tooltip>
               }
             >
-              <i
+              <button type="button"
+                aria-label={renameFileTooltipText}
                 onClick={handleRenameIconClick}
                 className="vz-icon-button"
               >
                 <EditSVG />
-              </i>
+              </button>
             </OverlayTrigger>
           ) : null}
           <OverlayTrigger
@@ -213,12 +214,13 @@ export const Item = ({
               </Tooltip>
             }
           >
-            <i
+            <button type="button"
+              aria-label={deleteFileTooltipText}
               onClick={handleModalOpen}
               className="vz-icon-button"
             >
               <TrashSVG />
-            </i>
+            </button>
           </OverlayTrigger>
         </div>
       ) : null}

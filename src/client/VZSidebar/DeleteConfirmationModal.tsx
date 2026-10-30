@@ -67,7 +67,7 @@ export const DeleteConfirmationModal = ({
         >
           Cancel
         </Button>
-        <Button variant="primary" onClick={onConfirm}>
+        <Button variant="danger" onClick={onConfirm}>
           Delete
         </Button>
       </Modal.Footer>

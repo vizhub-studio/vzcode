@@ -300,7 +300,7 @@ export const OverlayTrigger = ({
     <span
       ref={anchor}
       className="vz-ui-tooltip-anchor"
-      tabIndex={0}
+      // Nested interactive elements own keyboard focus; avoid an extra tab stop.
       onPointerEnter={update}
       onPointerLeave={() => setPosition(null)}
       onFocus={update}

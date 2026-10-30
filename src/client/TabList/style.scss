@@ -1,6 +1,6 @@
 .vz-tab-list {
   display: flex;
-  background-color: #1f2022;
+  background-color: var(--vz-color-neutral-01);
   // When the tab list becomes too large, a horizontal scroll bar appears.
   overflow-x: auto;
 
@@ -14,8 +14,9 @@
     display: flex;
     gap: 6px;
     padding: 4px 4px 4px 14px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    transition: background-color 0.15s ease;
     margin-top: 6px;
     margin-left: 2px;
     margin-right: 2px;
@@ -31,12 +32,12 @@
     // on hover
     &:hover {
       // background-color: var(--vz-color-hover-dark);
-      background-color: rgba(255, 255, 255, 0.075);
+      background-color: var(--vz-color-hover-dark);
     }
   }
 
   .tab.active {
-    background-color: #202e46;
+    background-color: var(--vz-color-neutral-02);
   }
 
   .tab.transient {
@@ -49,4 +50,26 @@
   .vz-icon-button:hover {
     color: var(--vz-color-action-03);
   }
+}
+
+.vz-tab-list .tab-activate {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.vz-tab-list .tab-activate:focus-visible {
+  outline: 2px solid var(--vz-color-action-01);
+  outline-offset: 2px;
+}
+.vz-tab-list .tab.active:hover { background: var(--vz-color-neutral-02); }
+@media (prefers-reduced-motion: reduce) {
+  .vz-tab-list .tab { transition: none; }
 }

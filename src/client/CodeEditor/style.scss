@@ -101,22 +101,20 @@
     border: 1px solid #193350;
     color: var(--vz-color-neutral-04);
     border: 1px solid var(--vz-color-neutral-04);
-    border-radius: 5px;
+    border-radius: 6px;
     padding: 6px 12px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
 
   .cm-button:hover {
-    background-color: #50c878;
+    background-color: var(--vz-color-action-01);
     color: #ffffff;
-    transform: scale(1.1);
   }
 
   .cm-button:active {
-    background-color: #202e46;
-    transform: scale(0.95);
+    background-color: var(--vz-color-action-02);
   }
 
   .cm-searchMatch {
@@ -141,16 +139,21 @@
     margin: 4px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
 
   .cm-panel.cm-search [name='close']:hover {
-    background-color: var(--vz-color-caution-01);
-    color: #ffffff;
+    background-color: var(--vz-color-hover-dark);
+    color: var(--vz-color-neutral-04);
   }
 
   .cm-panel.cm-search [name='close']:active {
-    background-color: var(--vz-color-caution-02);
-    transform: scale(0.95);
+    background-color: var(--vz-color-active-dark);
   }
+}
+
+.cm-button:focus-visible,
+.cm-panel.cm-search [name='close']:focus-visible {
+  outline: 2px solid var(--vz-color-action-01);
+  outline-offset: 2px;
 }

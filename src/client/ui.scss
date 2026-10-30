@@ -18,8 +18,8 @@
   --vz-color-neutral-02: #202e46;
   --vz-color-neutral-03: #576786;
   --vz-color-neutral-04: #bdc7dc;
-  --vz-color-action-01: #3866e9;
-  --vz-color-action-02: #022a9f;
+  --vz-color-action-01: #0366d6;
+  --vz-color-action-02: #0256c2;
   --vz-color-action-03: #e0e8ff;
   --vz-color-warning-01: #eb1c69;
   --vz-color-warning-02: #ffeff2;
@@ -36,8 +36,8 @@
   --vz-color-primary-04: var(--vz-color-action-03);
   --vz-color-success-03: #36bb4a;
   --vz-color-success-04: #d7f6dc;
-  --vz-color-danger-03: #eb1c69;
-  --vz-color-danger-04: #ffeff2;
+  --vz-color-danger-03: #f0353d;
+  --vz-color-danger-04: #fff1f2;
   --vz-font-body: Inter, sans-serif;
   --vz-font-heading: Poppins, sans-serif;
 }
@@ -321,4 +321,97 @@
   display: block;
   opacity: 1;
   visibility: visible;
+}
+
+/* AI Studio design contract for VZCode controls.
+ * The code editor's dark surface and syntax highlighting remain unchanged.
+ * Dialogs are portaled to body, so modal selectors cannot rely on .app. */
+:is(.app, .vz-sidebar) .vz-icon-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vz-color-neutral-04);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+:is(.app, .vz-sidebar) .vz-icon-button:hover { background: var(--vz-color-hover-dark); }
+:is(.app, .vz-sidebar) .vz-icon-button:active { background: var(--vz-color-active-dark); }
+:is(.app, .vz-sidebar) .vz-icon-button[aria-pressed='true'] {
+  background: rgba(3, 102, 214, 0.30);
+  color: #fff;
+}
+:is(.app, .vz-sidebar) .vz-icon-button[aria-pressed='true']:hover {
+  background: rgba(3, 102, 214, 0.42);
+}
+:is(.app, .vz-sidebar) .vz-icon-button:focus-visible {
+  outline: 2px solid var(--vz-color-action-01);
+  outline-offset: 2px;
+}
+.vz-ui-button {
+  min-height: 36px;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #f5f5f5;
+  color: #262626;
+  font: 500 14px/1.25 Inter, sans-serif;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.vz-ui-button:hover:not(:disabled) { filter: none; background: #e5e5e5; }
+.vz-ui-button--primary { background: #0366d6; color: #fff; }
+.vz-ui-button--primary:hover:not(:disabled) { background: #0256c2; }
+.vz-ui-button--danger { background: #f0353d; color: #fff; }
+.vz-ui-button--danger:hover:not(:disabled) { background: #d62e35; }
+.vz-ui-button--outline-secondary {
+  background: #fff;
+  border-color: #e5e5e5;
+  color: #262626;
+}
+.vz-ui-button--outline-secondary:hover:not(:disabled) { background: #f5f5f5; }
+.vz-ui-button--outline-primary {
+  background: transparent;
+  border-color: #0366d6;
+  color: #0366d6;
+}
+.vz-ui-button--outline-primary:hover:not(:disabled) {
+  background: #e9f1fc;
+  color: #0256c2;
+}
+.vz-ui-button--sm { min-height: 32px; padding: 6px 12px; font-size: 12px; }
+.vz-ui-button:focus-visible,
+.vz-ui-control:focus-visible,
+.vz-ui-select:focus-visible,
+.vz-ui-close:focus-visible {
+  outline: 2px solid #0366d6;
+  outline-offset: 2px;
+}
+.vz-ui-modal { border-radius: 10px; }
+.vz-ui-close { border-radius: 6px; }
+.vz-ui-close:hover { background: #f5f5f5; color: #262626; }
+.vz-ui-control, .vz-ui-select {
+  border-radius: 6px;
+  background: #fff;
+  padding: 8px 12px;
+}
+.vz-ui-control:focus, .vz-ui-select:focus { border-color: #0366d6; }
+.vz-ui-label { font-size: 14px; }
+.vz-ui-control, .vz-ui-select { font-size: 14px; }
+@media (pointer: coarse) {
+  .vz-ui-control, .vz-ui-select { font-size: 16px; }
+}
+@media (pointer: coarse) {
+  :is(.app, .vz-sidebar) .vz-icon-button { min-width: 44px; min-height: 44px; }
+  .vz-ui-button { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.app, .vz-sidebar) .vz-icon-button, .vz-ui-button { transition: none; }
 }

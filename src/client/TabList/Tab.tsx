@@ -58,16 +58,24 @@ export const Tab = ({
       className={`tab ${
         isActive ? 'active' : ''
       } ${isTransient ? 'transient' : ''}`}
-      onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
     >
-      {tabName}
-      <i
+      <button
+        type="button"
+        className="tab-activate"
+        aria-current={isActive ? 'page' : undefined}
+        onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
+      >
+        {tabName}
+      </button>
+      <button
+        type="button"
         className="vz-icon-button"
+        aria-label={`Close ${tabName}`}
         onClick={handleCloseClick}
       >
         <CloseSVG />
-      </i>
+      </button>
     </div>
   );
 };

@@ -202,6 +202,11 @@
     .arrow-wrapper {
       opacity: 0.5;
     }
+    .file-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   .rename-input {

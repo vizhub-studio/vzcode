@@ -403,6 +403,11 @@
   padding: 8px 12px;
 }
 .vz-ui-control:focus, .vz-ui-select:focus { border-color: #0366d6; }
+.vz-ui-label { font-size: 14px; }
+.vz-ui-control, .vz-ui-select { font-size: 14px; }
+@media (pointer: coarse) {
+  .vz-ui-control, .vz-ui-select { font-size: 16px; }
+}
 @media (pointer: coarse) {
   :is(.app, .vz-sidebar) .vz-icon-button { min-width: 44px; min-height: 44px; }
   .vz-ui-button { min-height: 44px; }

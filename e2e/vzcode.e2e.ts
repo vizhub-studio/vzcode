@@ -336,7 +336,21 @@ test.describe('VZCode browser end-to-end', () => {
     const tab = page.getByRole('button', { name: 'index.js', exact: true });
     await expect(tab).toBeVisible();
     await expect(tab).toHaveAttribute('aria-current', 'page');
-    await page.getByRole('button', { name: 'Close index.js' }).click();
+    await page.getByRole('button', { name: 'Close index.js' }).press('Enter');
     await expect(page.locator('.vz-tab-list .tab')).toHaveCount(0);
+  });
+
+  test('destructive file confirmation uses the canonical red button', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await openFilesView(page);
+    const row = page.locator('.file-or-directory').filter({ hasText: 'index.js' }).first();
+    await row.hover();
+    await row.getByRole('button', { name: 'Delete File' }).click();
+    const remove = page.getByRole('button', { name: 'Delete', exact: true });
+    await expect(remove).toHaveCSS('background-color', 'rgb(240, 53, 61)');
+    await remove.hover();
+    await expect(remove).toHaveCSS('background-color', 'rgb(214, 46, 53)');
+    await page.getByRole('button', { name: 'Cancel' }).click();
   });
 });

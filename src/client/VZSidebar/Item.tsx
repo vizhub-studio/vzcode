@@ -197,7 +197,8 @@ export const Item = ({
                 </Tooltip>
               }
             >
-              <button type="button"
+              <button
+                type="button"
                 aria-label={renameFileTooltipText}
                 onClick={handleRenameIconClick}
                 className="vz-icon-button"
@@ -214,7 +215,8 @@ export const Item = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               aria-label={deleteFileTooltipText}
               onClick={handleModalOpen}
               className="vz-icon-button"

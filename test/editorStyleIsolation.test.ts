@@ -44,14 +44,15 @@ describe('framework-independent VZCode styles', () => {
 
   it('preserves VizHub legacy color values and fonts without global CSS', () => {
     const source = read('src/client/ui.scss');
-    // Original values from vizhub-ui/scss/_variables.scss.
+    // Original vizhub-ui/scss/_variables.scss values, except the
+    // action colors which were intentionally aligned with AI Studio.
     const tokens: Record<string, string> = {
       neutral_01: '#1f2022',
       neutral_02: '#202e46',
       neutral_03: '#576786',
       neutral_04: '#bdc7dc',
-      action_01: '#3866e9',
-      action_02: '#022a9f',
+      action_01: '#0366d6',
+      action_02: '#0256c2',
       action_03: '#e0e8ff',
       warning_01: '#eb1c69',
       caution_01: '#ffa800',

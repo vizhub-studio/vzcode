@@ -69,7 +69,11 @@
   outline: 2px solid var(--vz-color-action-01);
   outline-offset: 2px;
 }
-.vz-tab-list .tab.active:hover { background: var(--vz-color-neutral-02); }
+.vz-tab-list .tab.active:hover {
+  background: var(--vz-color-neutral-02);
+}
 @media (prefers-reduced-motion: reduce) {
-  .vz-tab-list .tab { transition: none; }
+  .vz-tab-list .tab {
+    transition: none;
+  }
 }

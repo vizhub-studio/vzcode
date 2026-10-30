@@ -354,10 +354,11 @@ export const VZSidebar = ({
                 </Tooltip>
               }
             >
-              <button type="button"
+              <button
+                type="button"
                 id="ai-chat-icon"
-              aria-label="AI chat"
-              aria-pressed={isAIChatOpen}
+                aria-label="AI chat"
+                aria-pressed={isAIChatOpen}
                 className="vz-icon-button"
                 onClick={() =>
                   handleAIChatButtonClick({
@@ -384,10 +385,15 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="files-icon"
               aria-label="Files"
-              aria-pressed={!isAIChatOpen && !isSearchOpen && !isVisualEditorOpen}
+              aria-pressed={
+                !isAIChatOpen &&
+                !isSearchOpen &&
+                !isVisualEditorOpen
+              }
               className="vz-icon-button"
               onClick={() => {
                 setIsSearchOpen(false);
@@ -408,7 +414,8 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="search-icon"
               aria-label="Search"
               aria-pressed={isSearchOpen}
@@ -432,7 +439,8 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="visual-editor-icon"
               aria-label="Visual editor"
               aria-pressed={isVisualEditorOpen}
@@ -456,7 +464,8 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="shortcut-icon"
               aria-label="Keyboard shortcuts"
               className="vz-icon-button"
@@ -480,7 +489,10 @@ export const VZSidebar = ({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span id="bug-icon" className="vz-icon-button">
+              <span
+                id="bug-icon"
+                className="vz-icon-button"
+              >
                 <BugSVG />
               </span>
             </a>
@@ -494,7 +506,8 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="settings-icon"
               aria-label="Editor settings"
               className="vz-icon-button"
@@ -512,7 +525,8 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="new-file-icon"
               aria-label="Create file"
               className="vz-icon-button"
@@ -531,7 +545,8 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="new-directory-icon"
               aria-label="Create directory"
               className="vz-icon-button"
@@ -552,7 +567,8 @@ export const VZSidebar = ({
               </Tooltip>
             }
           >
-            <button type="button"
+            <button
+              type="button"
               id="auto-focus-icon"
               aria-label="Follow collaborator cursor"
               aria-pressed={enableAutoFollow}
@@ -563,7 +579,6 @@ export const VZSidebar = ({
               }`}
               onClick={toggleAutoFollow}
             >
-              
               <PinSVG />
             </button>
           </OverlayTrigger>
@@ -577,9 +592,10 @@ export const VZSidebar = ({
                 </Tooltip>
               }
             >
-              <button type="button"
+              <button
+                type="button"
                 id="mic-icon"
-              aria-label="Voice chat"
+                aria-label="Voice chat"
                 className="vz-icon-button"
                 onClick={() => {
                   setVoiceChatModalOpen(true);

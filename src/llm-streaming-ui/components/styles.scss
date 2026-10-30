@@ -896,28 +896,44 @@
 .ai-chat-mode-toggle .vz-chat-button-group .vz-chat-button,
 .ai-chat-input-group .ai-chat-send-button {
   border-radius: 6px;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
-.ai-chat-mode-toggle .vz-chat-button-group .vz-chat-button:focus-visible,
+.ai-chat-mode-toggle
+  .vz-chat-button-group
+  .vz-chat-button:focus-visible,
 .ai-chat-input-group .ai-chat-send-button:focus-visible,
 .jump-to-latest-button:focus-visible {
   outline: 2px solid var(--vz-color-primary-01);
   outline-offset: 2px;
 }
-.ai-chat-mode-toggle .vz-chat-button-group .vz-chat-button:disabled,
-.ai-chat-input-group .ai-chat-send-button:disabled { opacity: 0.5; }
+.ai-chat-mode-toggle
+  .vz-chat-button-group
+  .vz-chat-button:disabled,
+.ai-chat-input-group .ai-chat-send-button:disabled {
+  opacity: 0.5;
+}
 .ai-chat-input-group textarea:focus {
   border-color: var(--vz-color-primary-01) !important;
-  box-shadow: 0 0 0 2px rgba(3, 102, 214, 0.30) !important;
+  box-shadow: 0 0 0 2px rgba(3, 102, 214, 0.3) !important;
 }
 .jump-to-latest-button {
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
-.jump-to-latest-button:hover, .jump-to-latest-button:active {
+.jump-to-latest-button:hover,
+.jump-to-latest-button:active {
   transform: translateX(-50%);
 }
 @media (prefers-reduced-motion: reduce) {
-  .ai-chat-mode-toggle .vz-chat-button-group .vz-chat-button,
+  .ai-chat-mode-toggle
+    .vz-chat-button-group
+    .vz-chat-button,
   .ai-chat-input-group .ai-chat-send-button,
-  .jump-to-latest-button { transition: none; }
+  .jump-to-latest-button {
+    transition: none;
+  }
 }

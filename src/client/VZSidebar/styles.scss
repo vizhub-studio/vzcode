@@ -313,7 +313,8 @@
     flex-direction: column;
     gap: 4px;
     padding: 8px;
-    border-top: 1px solid var(--vz-color-neutral-02, #202e46);
+    border-top: 1px solid
+      var(--vz-color-neutral-02, #202e46);
 
     .ai-button {
       appearance: none;
@@ -344,16 +345,23 @@
       }
 
       &:hover {
-        background: var(--vz-color-hover-dark, rgba(255, 255, 255, 0.1));
+        background: var(
+          --vz-color-hover-dark,
+          rgba(255, 255, 255, 0.1)
+        );
         border-color: var(--vz-color-neutral-03, #576786);
       }
 
       &:active {
-        background: var(--vz-color-active-dark, rgba(255, 255, 255, 0.2));
+        background: var(
+          --vz-color-active-dark,
+          rgba(255, 255, 255, 0.2)
+        );
       }
 
       &:focus-visible {
-        outline: 2px solid var(--vz-color-action-01, #3866e9);
+        outline: 2px solid
+          var(--vz-color-action-01, #3866e9);
         outline-offset: 2px;
       }
 

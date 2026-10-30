@@ -80,7 +80,9 @@ describe('framework-independent VZCode styles', () => {
 
   it('keeps sidebar actions compact, legible and keyboard accessible', () => {
     const css = read('src/client/VZSidebar/styles.scss');
-    const component = read('src/client/VZSidebar/index.tsx');
+    const component = read(
+      'src/client/VZSidebar/index.tsx',
+    );
     expect(css).toContain('min-height: 38px');
     expect(css).toContain('justify-content: flex-start');
     expect(css).toContain('gap: 10px');
@@ -88,7 +90,9 @@ describe('framework-independent VZCode styles', () => {
     expect(css).toContain('&.delete-all-button');
     expect(css).not.toContain('opacity: 0.7');
     expect(component).toContain('Delete all files');
-    expect(component).toContain('onClick={handleDeleteAllClick}');
+    expect(component).toContain(
+      'onClick={handleDeleteAllClick}',
+    );
   });
 
   it('contains no Bootstrap-era component or utility class references', () => {

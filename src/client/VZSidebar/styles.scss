@@ -8,7 +8,8 @@
 
   .full-box {
     width: 100%;
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -300,77 +301,71 @@
     }
   }
 
+  // File actions are a compact toolbar below the independently scrolling tree.
   .ai-buttons {
     display: flex;
+    flex: 0 0 auto;
     flex-direction: column;
-    gap: 8px;
-    padding: 10px 10px 0 10px;
-    border-top: 1px solid var(--vz-color-neutral-02);
+    gap: 4px;
+    padding: 8px;
+    border-top: 1px solid var(--vz-color-neutral-02, #202e46);
 
     .ai-button {
-      padding: 8px 12px;
-      border: 1px solid var(--vz-color-neutral-03);
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid transparent;
       border-radius: 6px;
-      background: var(--vz-color-neutral-01);
-      color: var(--vz-color-neutral-04);
-      font-size: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--vz-color-neutral-04, #bdc7dc);
+      font-family: var(--vz-font-body, Inter, sans-serif);
+      font-size: 13px;
       font-weight: 500;
-      font-family: var(--vzcode-font-family);
+      line-height: 1.2;
+      text-align: left;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
 
-      i {
-        margin-right: 8px;
+      svg {
+        flex: 0 0 auto;
       }
 
       &:hover {
-        background: var(--vz-color-hover-dark);
-        border-color: var(--vz-color-neutral-04);
+        background: var(--vz-color-hover-dark, rgba(255, 255, 255, 0.1));
+        border-color: var(--vz-color-neutral-03, #576786);
       }
 
       &:active {
-        background: var(--vz-color-neutral-03);
+        background: var(--vz-color-active-dark, rgba(255, 255, 255, 0.2));
       }
 
-      &.copy-button {
-        border-color: var(--vz-color-primary-03);
-
-        &:hover {
-          background: var(--vz-color-hover-dark);
-          border-color: var(--vz-color-primary-04);
-        }
+      &:focus-visible {
+        outline: 2px solid var(--vz-color-action-01, #3866e9);
+        outline-offset: 2px;
       }
 
-      &.export-button {
-        border-color: var(--vz-color-primary-03);
-
-        &:hover {
-          background: var(--vz-color-hover-dark);
-          border-color: var(--vz-color-neutral-04);
-        }
-      }
-
-      &.paste-button {
-        border-color: var(--vz-color-success-03);
-
-        &:hover {
-          background: var(--vz-color-hover-dark);
-          border-color: var(--vz-color-success-04);
-        }
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
 
       &.delete-all-button {
-        border-color: var(--vz-color-neutral-02);
-        color: var(--vz-color-neutral-03);
-        font-size: 11px;
-        font-weight: 400;
-        opacity: 0.7;
+        margin-top: 4px;
+        background: transparent;
+        color: var(--vz-color-neutral-04, #bdc7dc);
 
         &:hover {
-          background: var(--vz-color-hover-dark);
-          border-color: var(--vz-color-danger-03);
-          color: var(--vz-color-danger-04);
-          opacity: 1;
+          background: rgba(235, 28, 105, 0.12);
+          border-color: var(--vz-color-warning-01, #eb1c69);
+          color: var(--vz-color-warning-02, #ffeff2);
         }
       }
     }

@@ -27,6 +27,7 @@ import './style.scss';
 import { useShareDB } from './useShareDB';
 import { useESLint } from '../useESLint';
 import { enableLiveKit } from '../featureFlags';
+import { getInitialSidebarViewFromSearch } from './initialSidebarView';
 
 // Instantiate the Prettier worker.
 const prettierWorker = new PrettierWorker();
@@ -81,6 +82,11 @@ function App() {
   // Get the initial username from localStorage.
   const initialUsername: Username = useInitialUsername();
 
+  // Open the Files panel when the URL names a file.
+  const [initialSidebarView] = useState(() =>
+    getInitialSidebarViewFromSearch(window.location.search),
+  );
+
   //@ts-ignore
   const serverUrl = import.meta.env.VITE_LIVEKIT_URL; //Vite only parses VITE_ prefixed environment variables
 
@@ -133,6 +139,7 @@ function App() {
         docPresence={docPresence}
         prettierWorker={prettierWorker}
         initialUsername={initialUsername}
+        initialSidebarView={initialSidebarView}
         connected={connected}
         pending={pending}
         liveKitRoomName={liveKitRoomName}

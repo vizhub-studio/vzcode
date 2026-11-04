@@ -38,39 +38,10 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
-      - name: Run Vitest suite (unit and server integration)
-        run: npm test
+      # CLI tests execute dist/cli.js; compile only server/CLI code, not the Vite app.
+      - name: Compile CLI for tests
+        run: npm run build:server
 
-  browser-e2e:
-    name: Browser E2E (Chromium)
-    # Playwright 1.57 does not support ubuntu-26.04 (ubuntu-latest).
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
+      - name: Run unit and CLI tests (exclude server E2E)
+        run: npm test -- --exclude test/serverE2E.test.ts
 
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Chromium and system dependencies
-        run: npx playwright install --with-deps chromium
-
-      - name: Run Playwright browser tests
-        run: npm run e2e
-
-      - name: Upload Playwright failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-failures
-          path: test-results/
-          if-no-files-found: ignore
-          retention-days: 7

@@ -101,5 +101,7 @@ See `AIChatProps` in `props.ts` for the full contract.
 
 ## Theming
 
-The components currently use VZCode's theming system via SCSS variables.
-Future versions will provide CSS custom properties and theme presets.
+The components use scoped CSS custom properties with VZCode defaults, so they
+can render without a host UI framework. When embedding them, hosts can override
+the `--vz-color-*` properties on the chat container. The styles do not inject
+Bootstrap or VizHub UI CSS.

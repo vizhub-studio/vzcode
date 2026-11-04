@@ -9,34 +9,33 @@ VZCode offers a multiplayer code editing environment that caters to a real-time 
 - [Usage](#usage)
 - [Development](#development)
 - [Features](#features)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Use Cases](#use-cases)
+- [Optional integrations](#optional-integrations)
+- [Desktop application](#desktop-application)
+- [Embedding the Visual Editor in a host application](#embedding-the-visual-editor-in-a-host-application)
 - [Visual Editor](#visual-editor)
 - [Stack](#stack)
 - [Goals](#goals)
 - [Prior Work](#prior-work)
-- [Milestones](#milestones)
-- [Team](#team)
 - [Spaces](#spaces)
+- [Embedded editor styling](#embedded-editor-styling)
 
 ## Usage
 
-You can use VZCode as an editor for your current directory if you install it globally with:
+The `vzcode` command is currently a launcher for a built Tauri desktop
+application; installing the npm package alone does not include that application.
+The `--browser` option is not a browser-server launcher yet. To run the browser
+editor from a checkout, see [Development](#development).
 
-```
-npm install -g vzcode
-```
+VZCode loads and auto-saves files in the server's working directory. It does
+not watch for external filesystem changes; edits made by another program while
+VZCode is running can be overwritten by an auto-save.
 
-To open it, navigate to the directory of your choice in the terminal, then run
-
-```
-vzcode
-```
-
-A new browser window should automatically pop open with the files in that directory exposed for interactive multiplayer editing.
-
-**Note:** A known shortcoming of VZCode is that it does not (yet) watch for changes from the file system. VZCode assumes that no other programs are modifying the same files. If another program does modify the same files at the same time, each VZCode auto-save will clobber the changes made by the other program.
-
-To invite others to edit with you in real time, share your IP in your LAN with them to access. You can also expose your VZCode instance publicly using a tunneling service such as [NGrok](https://ngrok.com/). In fact, if you set your `NGROK_TOKEN` environment variable, VZCode will automatically connect and log the public URL when it starts.
+To collaborate, make the server reachable to the other editors on your network.
+For public access, configure a tunnel or reverse proxy yourself; VZCode does not
+start an ngrok tunnel or use `NGROK_TOKEN`. Only share access with people you
+trust.
 
 ## Development
 
@@ -50,33 +49,63 @@ npm install
 npm run test-interactive
 ```
 
-If you're on Windows, you'll also need to do this additional step:
-
-```
-npm install @rollup/rollup-win32-x64-msvc
-```
-
-For local development with hot reloading (for client-side changes only), _keep the server running, started by_ `npm run test-interactive`, and also in a separate terminal run this:
+This starts the editor server with the sample `playground` workspace on port
+3030 and opens it in a browser. For local client development with hot reloading,
+run the development command instead:
 
 ```bash
 npm run dev
 ```
 
-This will expose http://localhost:5173/ and proxy the requests for data to the server (running on port 3030).
+`npm run dev` starts both the backend and Vite. Vite serves the client at
+http://localhost:5173 and proxies requests to the backend on port 3030; do not
+start it alongside a separate `npm run test-interactive` server. On Windows,
+install the platform-specific Rollup package if npm reports that it is missing:
 
-You can also use [npm link](https://docs.npmjs.com/cli/v8/commands/npm-link) to set up the `vzcode` NPM package in another project to point to your clone of the repository. This can be useful when testing out how `vzcode` functions as a dependency.
+```bash
+npm install @rollup/rollup-win32-x64-msvc
+```
+
+You can use [npm link](https://docs.npmjs.com/cli/v8/commands/npm-link) to test
+the package from another project.
 
 ## Features
 
-- Browser-based editing environment
-- Sidebar with file listings (directories support pending)
-- Real-time collaboration via LAN or using services like [NGrok](https://ngrok.com/)
-- File management through tabs
-- Basic file operations: create, rename, delete
-- Syntax highlighting for web languages
-- Interactive widgets for editing numbers (Alt+drag on numbers)
-- Auto-save, debounced after code changes
-- Auto-save, throttled while using interactive widgets to support hot reloading environments
+- Browser-based editor with syntax highlighting, completion, diagnostics,
+  formatting, and common VS Code key bindings
+- Real-time collaborative editing with participant cursors and presence
+- File and nested-directory browsing, tabs, file search, and create, rename,
+  and delete operations
+- Text editing and image preview
+- Code execution in a preview pane; run actions format the active file and
+  refresh the preview
+- Interactive widgets for editing numbers (Alt+drag) and colors (Alt+click)
+- Debounced auto-save, with throttled saves while interacting with widgets
+- AI chat for code editing, streaming responses, and change diffs; AI requires
+  a configured provider
+- A Visual Editor panel for configurable widgets backed by `config.json`
+- Editor settings for theme, font, font size, and collaboration username; the
+  editor includes ten themes
+- Optional LiveKit voice chat and speech-to-text input (see
+  [Optional integrations](#optional-integrations))
+- A Tauri desktop application when built with the desktop toolchain
+
+## Keyboard Shortcuts
+
+- `Ctrl+S` or `Shift+Enter`: format the active file and run the code
+- `Ctrl+Shift+E`: open Files
+- `Ctrl+Shift+F`: open Search
+- `Ctrl+Shift+K`: open Keyboard Shortcuts
+- `Ctrl+Shift+S` or `Ctrl+,`: open Editor Settings
+- `Ctrl+Shift+N`: open the create-file dialog
+- `Ctrl+Shift+D`: open the create-directory dialog
+- `Ctrl+Shift+A`: toggle automatic following of another participant
+- `Alt+N`: open the create-file dialog
+- `Alt+W`: close the active tab
+- `Alt+PageUp` / `Alt+PageDown`: switch to the previous/next tab
+- `Ctrl+click` an identifier: jump to its closest definition
+
+The Keyboard Shortcuts panel in the editor lists additional shortcuts.
 
 ## Use Cases
 
@@ -99,7 +128,7 @@ You can also use [npm link](https://docs.npmjs.com/cli/v8/commands/npm-link) to 
       "edit": "vzcode"
     },
     "dependencies": {
-      "vzcode": "^0.1.0"
+      "vzcode": "^3.2.0"
     }
   }
   ```
@@ -108,18 +137,32 @@ You can also use [npm link](https://docs.npmjs.com/cli/v8/commands/npm-link) to 
 
   For example, as the editor of [Vite D3 Template](https://github.com/curran/vite-d3-template), which showcases the throttled auto-save behavior of VZCode while using the interactive widgets in the context of editing files served by the Vite dev server which supports hot reloading.
 
-- **Hosting with Ngrok**: Allow external collaborators to join your VZCode session.
-  - **With Ngrok Globally Installed**: (Requires authenticated Ngrok account)
-
-    ```bash
-    vzcode
-    ngrok http 3030
-    ```
-
-  - **Through VZCode**: Coming soon!
-
 - **Staging Site Editor (Experimental)**:
   Use VZCode on a persistent server, making code changes with multiplayer mode remotely, reflecting instantly on a staging site.
+
+## Optional integrations
+
+To configure AI chat, copy `.env.example` to `.env` and set
+`VZCODE_EDIT_WITH_AI_API_KEY`. The optional
+`VZCODE_EDIT_WITH_AI_MODEL_NAME` selects a model, and
+`VZCODE_EDIT_WITH_AI_BASE_URL` can point to an OpenAI-compatible endpoint.
+Prompts and project context are sent to the configured provider.
+
+Set these variables in the client build environment to enable optional voice
+features:
+
+- `VITE_ENABLE_LIVEKIT=true` enables LiveKit voice chat. Configure
+  `VITE_LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` for your
+  LiveKit deployment.
+- `VITE_ENABLE_VOICE_INPUT=true` enables speech-to-text in AI chat. Availability
+  depends on browser speech-recognition support and microphone permissions.
+
+## Desktop application
+
+The desktop wrapper uses Tauri. With Rust and the platform's Tauri prerequisites
+installed, run `npm run tauri:dev` for development or `npm run tauri:build` to
+build the desktop application. The `vzcode` launcher can open a built desktop
+binary; see [Usage](#usage) for its current limitations.
 
 ## Embedding the Visual Editor in a host application
 

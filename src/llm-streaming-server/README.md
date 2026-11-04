@@ -4,7 +4,7 @@ Server-side library for streaming LLM responses with ShareDB integration.
 
 ## Overview
 
-This module is being extracted from VZCode's AI chat functionality to become a standalone, reusable library. It provides server-side functionality for:
+This is an internal VZCode module that provides server-side functionality for:
 
 - **LLM Streaming**: Creating and managing streaming LLM functions with OpenAI/OpenRouter
 - **AI Code Editing**: Performing AI-assisted code transformations and edits
@@ -12,9 +12,10 @@ This module is being extracted from VZCode's AI chat functionality to become a s
 - **Request Validation**: Validating incoming AI chat requests
 - **Error Handling**: Handling errors gracefully in streaming contexts
 
-## Current Status
+## Status
 
-⚠️ **Work in Progress**: This is Phase 1 of the extraction plan. The files have been copied to this directory and imports have been updated, but the code is not yet decoupled from VZCode.
+The module is used by VZCode's AI chat handler. It still depends on VZCode
+types and utilities, and is not published as a standalone package.
 
 ## Files
 
@@ -34,19 +35,6 @@ Declared in `package.json`:
 - `llm-code-format` - Markdown parsing for code blocks
 - `editcodewithai` - Code editing utilities
 - VZCode utilities: `../types.js`, `../ot.js`, `../randomId.js`, etc.
-
-## Future Plans
-
-This module will eventually be:
-
-1. Decoupled from VZCode-specific types and utilities
-2. Published as `@vizhub/llm-streaming-server` on npm
-3. Made framework-agnostic (can work with Express, Fastify, etc.)
-4. Fully documented with usage examples
-
-This module is being extracted into a standalone package
-(`@vizhub/llm-streaming-server`). Follow the conventions in
-`../llm-streaming-ui/README.md` when contributing.
 
 ## Usage (Current)
 

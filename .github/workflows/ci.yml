@@ -16,7 +16,7 @@ concurrency:
 jobs:
   checks:
     name: Lint, types, and tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
@@ -43,7 +43,8 @@ jobs:
 
   browser-e2e:
     name: Browser E2E (Chromium)
-    runs-on: ubuntu-latest
+    # Playwright 1.57 does not support ubuntu-26.04 (ubuntu-latest).
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     steps:

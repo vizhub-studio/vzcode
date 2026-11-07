@@ -4,8 +4,16 @@ VZCode offers a multiplayer code editing environment that caters to a real-time 
 
 ![VZCode Interface](https://github.com/vizhub-core/vzcode/assets/68416/4eb1c037-6748-47be-a85f-db29b11c2223)
 
+## Documentation map
+
+- **Getting started:** [Usage](#usage) and [Development](#development) below. The `package.json` scripts provide `npm run dev`, `npm run test-interactive`, `npm test`, `npm run typecheck`, and `npm run lint`.
+- **Using the editor in other applications:** [Embedding the Visual Editor](#embedding-the-visual-editor-in-a-host-application).
+- **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md) and the [issue tracker](https://github.com/vizhub-studio/vzcode/issues).
+- **Status:** Browser development and desktop packaging have different requirements. The `vzcode` command does not automatically install the desktop application; consult [Usage](#usage).
+
 ## Table of Contents
 
+- [Documentation map](#documentation-map)
 - [Usage](#usage)
 - [Development](#development)
 - [Features](#features)
@@ -39,7 +47,7 @@ trust.
 
 ## Development
 
-- **Backlog & Issues**: Use our [Kanban Board](https://github.com/orgs/vizhub-core/projects/2/views/1) to track the backlog, [good first issues](https://github.com/orgs/vizhub-core/projects/2/views/1?filterQuery=label%3A%22good+first+issue%22), and [known bugs](https://github.com/orgs/vizhub-core/projects/2/views/1?filterQuery=label%3Abug).
+- **Backlog & Issues**: Use the [repository issue tracker](https://github.com/vizhub-studio/vzcode/issues) and [pull requests](https://github.com/vizhub-studio/vzcode/pulls). Historical organization project-board links are not the maintained onboarding entry point.
 
 - **Local Setup**:
 

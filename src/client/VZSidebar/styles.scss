@@ -1448,4 +1448,24 @@
     }
     &:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
   }
+
+  .visual-properties-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .visual-properties-field-footer {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 8px; min-width: 0;
+  }
+  .visual-properties-description {
+    flex: 1; color: var(--vz-color-neutral-04); opacity: .7;
+    font: 400 11px/1.45 var(--vzcode-font-family);
+  }
+  .visual-properties-reset {
+    flex: none; border: none; padding: 0; background: transparent;
+    font: 500 11px var(--vzcode-font-family);
+    color: var(--vz-color-neutral-04); text-decoration: underline;
+    text-underline-offset: 2px; cursor: pointer;
+    &:disabled { opacity: .35; cursor: default; text-decoration: none; }
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+  }
+  .slider-number-wrapper { display: flex; gap: 4px; align-items: center; }
+  .slider-number-unit { font-size: 11px; opacity: .7; }
 }

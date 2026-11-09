@@ -220,7 +220,13 @@ export type VisualEditorConfigEntry =
       label: string;
       options: string[];
     }
-  | { type: 'color'; property: string; label: string };
+  | { type: 'color'; property: string; label: string }
+  | {
+      type: 'segmented';
+      property: string;
+      label: string;
+      options: string[];
+    };
 
 // ============================================================================
 // AI Chat Streaming Types

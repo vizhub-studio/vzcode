@@ -243,6 +243,12 @@ describe('visual editor configuration', () => {
     }
   });
 
+  it('accepts a valid segmented control and rejects unknown choices', () => {
+    const widget = { type: 'segmented', label: 'Shape', property: 'shape', options: ['Circle', 'Square'] };
+    expect(getVisualEditorEmptyReason(configWithWidget({ shape: 'Circle' }, widget))).toBeNull();
+    expect(getVisualEditorEmptyReason(configWithWidget({ shape: 'Star' }, widget))).toBe('invalid-widgets');
+  });
+
   it('rejects unsupported widgets', () => {
     expect(
       getVisualEditorEmptyReason(

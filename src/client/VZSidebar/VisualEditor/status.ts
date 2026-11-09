@@ -74,6 +74,7 @@ export function getVisualEditorEmptyReason(
           return 'invalid-widgets';
         break;
       case 'dropdown':
+      case 'segmented':
         if (
           typeof value !== 'string' ||
           !Array.isArray(widget.options) ||

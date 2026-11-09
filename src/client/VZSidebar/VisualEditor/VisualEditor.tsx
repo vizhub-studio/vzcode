@@ -21,6 +21,7 @@ import { SliderWidget } from './SliderWidget';
 import { CheckboxWidget } from './CheckboxWidget';
 import { TextInputWidget } from './TextInputWidget';
 import { DropdownWidget } from './DropdownWidget';
+import { SegmentedWidget } from './SegmentedWidget';
 import { ColorWidget } from './ColorWidget';
 import { getNestedProperty } from './utils';
 import { PropertySection } from './PropertySection';
@@ -36,11 +37,6 @@ export const VisualEditor = () => {
   const [localValues, setLocalValues] = useState<{
     [key: string]: number | boolean | string;
   }>({});
-
-  // State to track which dropdown is open
-  const [openDropdown, setOpenDropdown] = useState<
-    string | null
-  >(null);
 
   let configFileId: VizFileId | null = null;
   if (files) {
@@ -125,47 +121,6 @@ export const VisualEditor = () => {
     (property: string, value: string) => setWidgetValue(property, value),
     [setWidgetValue],
   );
-
-  // Custom dropdown handlers
-  const handleDropdownToggle = useCallback(
-    (property: string) => {
-      setOpenDropdown((prev) =>
-        prev === property ? null : property,
-      );
-    },
-    [],
-  );
-
-  const handleDropdownOptionClick = useCallback(
-    (property: string, value: string) => {
-      onDropdownChange(property, value);
-      setOpenDropdown(null);
-    },
-    [onDropdownChange],
-  );
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (openDropdown) {
-        const target = event.target as Element;
-        if (!target.closest('.visual-editor-dropdown')) {
-          setOpenDropdown(null);
-        }
-      }
-    };
-
-    document.addEventListener(
-      'mousedown',
-      handleClickOutside,
-    );
-    return () => {
-      document.removeEventListener(
-        'mousedown',
-        handleClickOutside,
-      );
-    };
-  }, [openDropdown]);
 
   const onColorChange = useCallback(
     (property: string, lchComponent: 'l' | 'c' | 'h') =>
@@ -291,9 +246,8 @@ export const VisualEditor = () => {
               max={widgetConfig.max}
               step={widgetConfig.step}
               currentValue={currentValue}
-              onChange={onSliderChange(
-                widgetConfig.property,
-              )}
+              onChange={onSliderChange(widgetConfig.property)}
+              onNumberChange={(value) => setWidgetValue(widgetConfig.property, value)}
             />
           );
         } else if (widgetConfig.type === 'checkbox') {
@@ -354,9 +308,6 @@ export const VisualEditor = () => {
             ) ??
             widgetConfig.options?.[0] ??
             '';
-          const isOpen =
-            openDropdown === widgetConfig.property;
-
           return (
             <DropdownWidget
               key={widgetConfig.property}
@@ -364,16 +315,21 @@ export const VisualEditor = () => {
               label={widgetConfig.label}
               options={widgetConfig.options}
               currentValue={currentValue}
-              isOpen={isOpen}
-              onToggle={() =>
-                handleDropdownToggle(widgetConfig.property)
-              }
-              onOptionClick={(value) =>
-                handleDropdownOptionClick(
-                  widgetConfig.property,
-                  value,
-                )
-              }
+              onChange={(value) => onDropdownChange(widgetConfig.property, value)}
+            />
+          );
+        } else if (widgetConfig.type === 'segmented') {
+          const currentValue =
+            (localValues[widgetConfig.property] as string) ??
+            getNestedProperty<string>(configData, widgetConfig.property) ??
+            widgetConfig.options[0] ?? '';
+          return (
+            <SegmentedWidget
+              key={widgetConfig.property}
+              label={widgetConfig.label}
+              options={widgetConfig.options}
+              currentValue={currentValue}
+              onChange={(value) => onDropdownChange(widgetConfig.property, value)}
             />
           );
         } else if (widgetConfig.type === 'color') {

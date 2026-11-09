@@ -1402,4 +1402,50 @@
     cursor: pointer;
     &:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
   }
+
+  .visual-editor .slider-header { gap: 8px; }
+  .visual-editor .slider-number-input {
+    width: 70px; min-width: 0; padding: 5px 6px;
+    box-sizing: border-box; text-align: right;
+    font: 500 12px var(--vzcode-font-family);
+    color: var(--vz-color-neutral-04);
+    background: var(--vz-color-neutral-02);
+    border: 1px solid var(--vz-color-neutral-03); border-radius: 5px;
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+  }
+  .visual-editor .visual-editor-checkbox {
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+    min-height: 28px;
+  }
+  .visual-editor .checkbox-container { width: 42px; height: 22px; flex: none; }
+  .visual-editor .checkbox-input { height: 22px; }
+  .visual-editor .visual-properties-select {
+    width: 100%; min-width: 0; box-sizing: border-box;
+    padding: 9px 10px;
+    color: var(--vz-color-neutral-04);
+    background: var(--vz-color-neutral-02);
+    border: 1px solid var(--vz-color-neutral-03);
+    border-radius: 6px;
+    font: 500 12px var(--vzcode-font-family);
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+  }
+  .visual-editor-segmented { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .segmented-label { font: 500 12px var(--vzcode-font-family); }
+  .segmented-options {
+    display: flex; min-width: 0; padding: 3px; gap: 2px;
+    border: 1px solid var(--vz-color-neutral-03); border-radius: 7px;
+    background: var(--vz-color-neutral-02);
+  }
+  .segmented-option {
+    flex: 1; min-width: 0; padding: 7px 5px; border: 0; border-radius: 5px;
+    font: 500 11px var(--vzcode-font-family);
+    color: var(--vz-color-neutral-04); background: transparent; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    &[aria-pressed='true'] {
+      background: var(--vz-color-neutral-01);
+      box-shadow: 0 1px 3px rgba(0,0,0,.15);
+      font-weight: 650;
+    }
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+  }
 }

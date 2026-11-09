@@ -18,7 +18,18 @@
       "type": "color",
       "property": "markColor",
       "label": "Mark color"
+    },
+    {
+      "type": "segmented",
+      "label": "Mark shape",
+      "property": "markShape",
+      "options": [
+        "Circle",
+        "Square",
+        "Diamond"
+      ]
     }
   ],
-  "markColor": "#6366f1"
+  "markColor": "#6366f1",
+  "markShape": "Circle"
 }

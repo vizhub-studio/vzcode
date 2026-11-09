@@ -1449,6 +1449,7 @@
     &:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
   }
 
+  .visual-properties-section-body[hidden] { display: none; }
   .visual-properties-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
   .visual-properties-field-footer {
     display: flex; align-items: flex-start; justify-content: space-between;

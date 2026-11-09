@@ -233,6 +233,20 @@ test.describe('VZCode browser end-to-end', () => {
       .toContain('pointRadius');
   });
 
+  test('visual color picker writes a valid color to config', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await page.locator('#visual-editor-icon').click();
+    await page.getByRole('button', { name: 'Choose Mark color color' }).click();
+    const input = page.getByRole('textbox', { name: 'Mark color hexadecimal color' });
+    await input.fill('#123456');
+    await input.press('Enter');
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markColor;
+    }, { timeout: 20_000 }).toBe('#123456');
+  });
+
   test('creates, renames, and deletes a file', async ({
     page,
   }) => {

@@ -121,6 +121,11 @@ export const VisualEditor = () => {
     [setWidgetValue],
   );
 
+  const onHexColorChange = useCallback(
+    (property: string, value: string) => setWidgetValue(property, value),
+    [setWidgetValue],
+  );
+
   // Custom dropdown handlers
   const handleDropdownToggle = useCallback(
     (property: string) => {
@@ -407,6 +412,7 @@ export const VisualEditor = () => {
               currentC={currentC}
               currentL={currentL}
               onColorChange={onColorChange}
+              onHexChange={onHexColorChange}
             />
           );
         }

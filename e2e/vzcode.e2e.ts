@@ -247,6 +247,17 @@ test.describe('VZCode browser end-to-end', () => {
     }, { timeout: 20_000 }).toBe('#123456');
   });
 
+  test('segmented control changes configuration', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await page.locator('#visual-editor-icon').click();
+    await page.getByRole('group', { name: 'Mark shape' }).getByRole('button', { name: 'Square' }).click();
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markShape;
+    }, { timeout: 20_000 }).toBe('Square');
+  });
+
   test('creates, renames, and deletes a file', async ({
     page,
   }) => {

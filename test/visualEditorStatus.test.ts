@@ -249,6 +249,27 @@ describe('visual editor configuration', () => {
     expect(getVisualEditorEmptyReason(configWithWidget({ shape: 'Star' }, widget))).toBe('invalid-widgets');
   });
 
+  it('accepts optional property sections and reset metadata', () => {
+    const widget = {
+      ...slider('radius'), section: 'Marks', description: 'Size of each dot',
+      defaultValue: 5, unit: 'px',
+    };
+    expect(getVisualEditorEmptyReason(configWithWidget({ radius: 8 }, widget))).toBeNull();
+  });
+
+  it('rejects ill-typed or invalid reset defaults', () => {
+    for (const defaultValue of ['not a number', Infinity, -2, 99]) {
+      expect(getVisualEditorEmptyReason(configWithWidget(
+        { radius: 8 }, { ...slider('radius'), defaultValue },
+      ))).toBe('invalid-widgets');
+    }
+    expect(getVisualEditorEmptyReason(configWithWidget(
+      { axis: 'x' },
+      { type: 'segmented', label: 'Axis', property: 'axis',
+        options: ['x', 'y'], defaultValue: 'z' },
+    ))).toBe('invalid-widgets');
+  });
+
   it('rejects unsupported widgets', () => {
     expect(
       getVisualEditorEmptyReason(

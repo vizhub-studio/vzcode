@@ -7,17 +7,25 @@
       "label": "Point Radius",
       "property": "pointRadius",
       "min": 1,
-      "max": 30
+      "max": 30,
+      "section": "Marks",
+      "unit": "px",
+      "defaultValue": 10,
+      "description": "Size of points in the chart"
     },
     {
       "type": "textInput",
       "label": "Label",
-      "property": "label"
+      "property": "label",
+      "section": "Labels",
+      "defaultValue": "hello"
     },
     {
       "type": "color",
       "property": "markColor",
-      "label": "Mark color"
+      "label": "Mark color",
+      "section": "Colors",
+      "defaultValue": "#6366f1"
     },
     {
       "type": "segmented",
@@ -27,7 +35,9 @@
         "Circle",
         "Square",
         "Diamond"
-      ]
+      ],
+      "section": "Marks",
+      "defaultValue": "Circle"
     }
   ],
   "markColor": "#6366f1",

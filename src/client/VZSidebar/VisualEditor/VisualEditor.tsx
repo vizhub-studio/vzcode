@@ -59,7 +59,13 @@ export const VisualEditor = () => {
   const groups = useMemo(() => {
     const grouped = new Map<string, VisualEditorConfigEntry[]>();
     for (const widget of visualEditorWidgets) {
-      const section = widget.section?.trim() || 'Appearance';
+      // Validate at render time too: invalid config must show its empty state,
+      // never throw while preparing groups.
+      if (!widget || typeof widget !== 'object' ||
+        typeof widget.property !== 'string') continue;
+      const section = typeof widget.section === 'string' && widget.section.trim()
+        ? widget.section.trim()
+        : 'Appearance';
       const members = grouped.get(section) ?? [];
       members.push(widget);
       grouped.set(section, members);
@@ -146,6 +152,8 @@ export const VisualEditor = () => {
   useEffect(() => {
     const next: Record<string, WidgetValue> = {};
     for (const widget of visualEditorWidgets) {
+      if (!widget || typeof widget !== 'object' ||
+        typeof widget.property !== 'string') continue;
       const value = getNestedProperty<WidgetValue>(configData, widget.property);
       if (value === undefined) continue;
       next[widget.property] = value;

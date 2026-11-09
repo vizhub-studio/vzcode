@@ -71,7 +71,7 @@ export function getVisualEditorEmptyReason(
       if (
         widget.type === 'slider' &&
         (typeof initial !== 'number' ||
-          initial < widget.min || initial > widget.max)
+          initial < (widget.min as number) || initial > (widget.max as number))
       ) return 'invalid-widgets';
       if (
         (widget.type === 'dropdown' || widget.type === 'segmented') &&

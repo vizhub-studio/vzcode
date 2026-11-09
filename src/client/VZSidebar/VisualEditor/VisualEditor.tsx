@@ -23,6 +23,7 @@ import { TextInputWidget } from './TextInputWidget';
 import { DropdownWidget } from './DropdownWidget';
 import { ColorWidget } from './ColorWidget';
 import { getNestedProperty } from './utils';
+import { PropertySection } from './PropertySection';
 
 export const VisualEditor = () => {
   const {
@@ -258,6 +259,11 @@ export const VisualEditor = () => {
 
   return (
     <div className="visual-editor">
+      <header className="visual-properties-header">
+        <div className="visual-properties-title">Visual Properties</div>
+        <p className="visual-properties-hint">Changes appear in the preview automatically.</p>
+      </header>
+      <PropertySection title="Appearance">
       {visualEditorWidgets.map((widgetConfig, _index) => {
         if (widgetConfig.type === 'slider') {
           // Use local value if available, otherwise fall back to config value
@@ -405,6 +411,7 @@ export const VisualEditor = () => {
           );
         }
       })}
+      </PropertySection>
     </div>
   );
 };

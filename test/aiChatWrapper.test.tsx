@@ -73,12 +73,12 @@ describe('AIChatWrapper wiring', () => {
   });
 
   it('renders the host voice control through the VZCode context without a flag', () => {
-    let callbacks: Record<string, unknown> | null = null;
+    const callbacks: Array<Record<string, unknown>> = [];
     const html = render(
       makeContext({
         aiChatMessage: 'Keep this text',
         renderChatVoiceInput: (props: Record<string, unknown>) => {
-          callbacks = props;
+          callbacks.push(props);
           return <button type="button" aria-label="Host microphone">Mic</button>;
         },
       }),
@@ -86,10 +86,10 @@ describe('AIChatWrapper wiring', () => {
     expect(html).toContain('Host microphone');
     expect(html).toContain('Keep this text');
     expect(html).not.toContain('Start voice typing');
-    expect(callbacks).toMatchObject({ value: 'Keep this text' });
-    expect(typeof callbacks?.onChange).toBe('function');
-    expect(typeof callbacks?.onBusyChange).toBe('function');
-    expect(typeof callbacks?.onPreviewChange).toBe('function');
+    expect(callbacks[0]).toMatchObject({ value: 'Keep this text' });
+    expect(typeof callbacks[0].onChange).toBe('function');
+    expect(typeof callbacks[0].onBusyChange).toBe('function');
+    expect(typeof callbacks[0].onPreviewChange).toBe('function');
   });
 
   it('prefers the host control over the legacy microphone even if enabled', () => {

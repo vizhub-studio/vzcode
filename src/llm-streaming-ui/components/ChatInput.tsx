@@ -2,6 +2,7 @@ import {
   useRef,
   useEffect,
   useCallback,
+  useState,
   memo,
 } from 'react';
 import { useSpeechRecognition } from './useSpeechRecognition';
@@ -57,8 +58,32 @@ const ChatInputComponent = ({
   resetMessageHistoryNavigation,
   enableAskMode = false,
   enableVoiceInput = false,
+  renderChatVoiceInput,
 }: ChatInputProps) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [hostVoiceBusy, setHostVoiceBusy] = useState(false);
+  const [hostVoicePreview, setHostVoicePreview] = useState<string | null>(null);
+  const isHostVoiceBusy = !!renderChatVoiceInput && hostVoiceBusy;
+  const canSend = !isHostVoiceBusy && !!aiChatMessage.trim();
+  const displayValue =
+    isHostVoiceBusy && hostVoicePreview !== null
+      ? hostVoicePreview
+      : aiChatMessage;
+
+  const handleHostDraftChange = useCallback(
+    (value: string) => {
+      setAIChatMessage(value);
+      resetMessageHistoryNavigation();
+    },
+    [setAIChatMessage, resetMessageHistoryNavigation],
+  );
+  const handleHostBusyChange = useCallback((busy: boolean) => {
+    setHostVoiceBusy(busy);
+    if (!busy) setHostVoicePreview(null);
+  }, []);
+  const handleHostPreviewChange = useCallback((preview: string | null) => {
+    setHostVoicePreview(preview);
+  }, []);
 
   // Speech recognition is created lazily on first toggle, so simply
   // mounting this hook does not touch any browser media APIs.
@@ -79,7 +104,7 @@ const ChatInputComponent = ({
     (event: React.KeyboardEvent) => {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        onSendMessage();
+        if (canSend) onSendMessage();
       } else if (event.key === 'Enter' && event.shiftKey) {
         // Shift+Enter should add a newline, not trigger run code
         // We prevent the event from bubbling up to the global keyboard handler
@@ -119,26 +144,29 @@ const ChatInputComponent = ({
     },
     [
       onSendMessage,
+      canSend,
       navigateMessageHistoryUp,
       navigateMessageHistoryDown,
     ],
   );
 
   const handleSendClick = useCallback(() => {
+    if (!canSend) return;
     // If speech recognition is active, stop it
     if (isSpeaking) {
       stopSpeaking();
     }
     onSendMessage();
-  }, [onSendMessage, isSpeaking, stopSpeaking]);
+  }, [onSendMessage, isSpeaking, stopSpeaking, canSend]);
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      if (isHostVoiceBusy) return;
       setAIChatMessage(event.target.value);
       // Reset history navigation when user starts typing
       resetMessageHistoryNavigation();
     },
-    [setAIChatMessage, resetMessageHistoryNavigation],
+    [setAIChatMessage, resetMessageHistoryNavigation, isHostVoiceBusy],
   );
 
   return (
@@ -178,7 +206,8 @@ const ChatInputComponent = ({
       <div className="ai-chat-input-group">
         <textarea
           rows={10}
-          value={aiChatMessage}
+          value={displayValue}
+          readOnly={isHostVoiceBusy}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           ref={inputRef}
@@ -192,20 +221,27 @@ const ChatInputComponent = ({
         />
         <div className="ai-chat-input-footer">
           <span className="ai-chat-hint">
-            {aiChatMessage ? 'Press Enter to send' : ''}
+            {aiChatMessage && !isHostVoiceBusy ? 'Press Enter to send' : ''}
           </span>
           <div style={{ display: 'flex', gap: '8px' }}>
-            {enableVoiceInput && (
-              <VoiceInputButton
-                isSpeaking={isSpeaking}
-                onToggle={toggleSpeechRecognition}
-              />
-            )}
+            {renderChatVoiceInput
+              ? renderChatVoiceInput({
+                  value: aiChatMessage,
+                  onChange: handleHostDraftChange,
+                  onBusyChange: handleHostBusyChange,
+                  onPreviewChange: handleHostPreviewChange,
+                })
+              : enableVoiceInput && (
+                  <VoiceInputButton
+                    isSpeaking={isSpeaking}
+                    onToggle={toggleSpeechRecognition}
+                  />
+                )}
             <button
               type="button"
               onClick={handleSendClick}
-              disabled={!aiChatMessage.trim()}
-              className={`ai-chat-send-button vz-chat-button ${aiChatMessage.trim() ? 'vz-chat-button--primary' : 'vz-chat-button--outline-secondary'}`}
+              disabled={!canSend}
+              className={`ai-chat-send-button vz-chat-button ${canSend ? 'vz-chat-button--primary' : 'vz-chat-button--outline-secondary'}`}
               aria-label="Send message"
               title="Send message (Enter)"
             >

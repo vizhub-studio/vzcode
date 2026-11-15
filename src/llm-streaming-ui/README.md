@@ -99,6 +99,38 @@ See `AIChatProps` in `props.ts` for the full contract.
 - Add or update tests when changing behavior
 - Document new props and side effects
 
+## Host-owned microphone integration
+
+A host can pass `renderChatVoiceInput` to `VZCodeProvider`. VZCode renders its
+returned element in the chat composer footer, immediately before Send. The host
+owns the microphone implementation, recording state, speech-to-text, any cleanup,
+and cancellation. No VZCode speech-recognition code runs when the host control is
+used; `enableVoiceInput` remains an independent, legacy standalone option.
+
+```tsx
+<VZCodeProvider
+  // ...other provider props
+  renderChatVoiceInput={({ value, onChange, onBusyChange, onPreviewChange }) => (
+    <MyAppVoiceButton
+      value={value}
+      onCommitDraft={onChange}
+      onBusyChange={onBusyChange}
+      onPreviewChange={onPreviewChange}
+    />
+  )}
+/>
+```
+
+The renderer must return a component rather than directly calling hooks. Its
+`value` is the **complete committed draft**. Call `onChange(nextFullDraft)`
+only when dictation has finished; this must never submit the chat message.
+Call `onPreviewChange(fullDraftPreview)` to display optional interim text,
+and `onPreviewChange(null)` to clear it. Call `onBusyChange(true)` before
+starting microphone work, including permission and transcript processing; while
+busy, VZCode makes its textarea read-only and blocks Send and Enter. Always
+call `onBusyChange(false)` on completion, cancellation, errors, and teardown.
+Without a renderer, the existing chat composer behavior is preserved.
+
 ## Theming
 
 The components use scoped CSS custom properties with VZCode defaults, so they

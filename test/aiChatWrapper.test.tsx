@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { VZCodeContext } from '../src/client/VZCodeContext';
 import { AIChatWrapper } from '../src/client/VZSidebar/AIChatWrapper';
+import { ChatInput } from '../src/llm-streaming-ui/components/ChatInput';
 
 const noop = () => {};
 const asyncNoop = async () => {};
@@ -69,6 +70,49 @@ describe('AIChatWrapper wiring', () => {
       }),
     );
     expect(html).toContain('Hello from context');
+  });
+
+  it('renders the host voice control through the VZCode context without a flag', () => {
+    let callbacks: Record<string, unknown> | null = null;
+    const html = render(
+      makeContext({
+        aiChatMessage: 'Keep this text',
+        renderChatVoiceInput: (props: Record<string, unknown>) => {
+          callbacks = props;
+          return <button type="button" aria-label="Host microphone">Mic</button>;
+        },
+      }),
+    );
+    expect(html).toContain('Host microphone');
+    expect(html).toContain('Keep this text');
+    expect(html).not.toContain('Start voice typing');
+    expect(callbacks).toMatchObject({ value: 'Keep this text' });
+    expect(typeof callbacks?.onChange).toBe('function');
+    expect(typeof callbacks?.onBusyChange).toBe('function');
+    expect(typeof callbacks?.onPreviewChange).toBe('function');
+  });
+
+  it('prefers the host control over the legacy microphone even if enabled', () => {
+    const html = renderToString(
+      <ChatInput
+        aiChatMessage="Draft"
+        setAIChatMessage={noop}
+        onSendMessage={noop}
+        focused={false}
+        aiChatMode="edit"
+        setAIChatMode={noop}
+        navigateMessageHistoryUp={noop}
+        navigateMessageHistoryDown={noop}
+        resetMessageHistoryNavigation={noop}
+        enableVoiceInput
+        renderChatVoiceInput={() => (
+          <button type="button" aria-label="App microphone">Speak</button>
+        )}
+      />,
+    );
+    expect(html).toContain('App microphone');
+    expect(html).not.toContain('Start voice typing');
+    expect(html).toContain('Send');
   });
 
   it('renders AI errors supplied via context', () => {

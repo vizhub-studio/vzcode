@@ -104,8 +104,8 @@ See `AIChatProps` in `props.ts` for the full contract.
 A host can pass `renderChatVoiceInput` to `VZCodeProvider`. VZCode renders its
 returned element in the chat composer footer, immediately before Send. The host
 owns the microphone implementation, recording state, speech-to-text, any cleanup,
-and cancellation. No VZCode speech-recognition code runs when the host control is
-used; `enableVoiceInput` remains an independent, legacy standalone option.
+and cancellation. VZCode never starts its built-in speech-recognition engine
+from the host control; `enableVoiceInput` remains a separate legacy option.
 
 ```tsx
 <VZCodeProvider

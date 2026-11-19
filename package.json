@@ -30,7 +30,8 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "prepublishOnly": "npm run build-release",
-    "upgrade": "ncu -x react,react-dom,@types/react,@types/react-dom -u"
+    "upgrade": "ncu -x react,react-dom,@types/react,@types/react-dom -u",
+    "test:package": "node scripts/test-packaged-cli.mjs"
   },
   "repository": {
     "type": "git",

@@ -58,7 +58,7 @@ export interface VZCodeServer {
   /** Write changed files to disk (same routine used by auto-save). */
   save: () => void;
   /** Start listening; resolves with the actual bound port. */
-  listen: (port: number) => Promise<number>;
+  listen: (port: number, host?: string) => Promise<number>;
   /** Stop the HTTP/WebSocket servers and close ShareDB. */
   close: () => Promise<void>;
 }
@@ -373,11 +373,17 @@ export const createVZCodeServer = (
     res.send(await createToken(room, username));
   });
 
-  const listen = (port: number): Promise<number> =>
+  const listen = (
+    port: number,
+    host?: string,
+  ): Promise<number> =>
     new Promise((resolve, reject) => {
-      const onError = (error: Error) => reject(error);
+      const onError = (error: Error) => {
+        httpServer.removeListener('error', onError);
+        reject(error);
+      };
       httpServer.once('error', onError);
-      httpServer.listen(port, () => {
+      const onListening = () => {
         httpServer.removeListener('error', onError);
         const address = httpServer.address();
         const actualPort =
@@ -385,13 +391,22 @@ export const createVZCodeServer = (
             ? address.port
             : port;
         resolve(actualPort);
-      });
+      };
+      if (host) {
+        httpServer.listen(port, host, onListening);
+      } else {
+        httpServer.listen(port, onListening);
+      }
     });
 
   const close = (): Promise<void> =>
     new Promise((resolve, reject) => {
       clearTimeout(lastChangeTimeout);
       clearTimeout(debounceTimeout);
+      // An upgraded WebSocket otherwise prevents CLI shutdown.
+      for (const client of wss.clients) {
+        client.terminate();
+      }
       wss.close(() => {
         httpServer.close((error) => {
           if (error) return reject(error);

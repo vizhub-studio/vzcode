@@ -2,8 +2,6 @@ import { randomBytes, timingSafeEqual } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 import type { Express, Request, Response } from 'express';
 
-const COOKIE = 'vzcode_session';
-
 const constantTimeEqual = (a: string, b: string): boolean => {
   const left = Buffer.from(a);
   const right = Buffer.from(b);
@@ -33,13 +31,16 @@ export const isSameOrigin = (req: IncomingMessage) => {
   }
 };
 
-const sessionCookie = (req: IncomingMessage): string => {
+const sessionCookie = (
+  req: IncomingMessage,
+  name: string,
+): string => {
   const cookieHeader = req.headers.cookie || '';
   const pair = cookieHeader
     .split(';')
     .map((value) => value.trim())
-    .find((value) => value.startsWith(COOKIE + '='));
-  return pair ? pair.slice(COOKIE.length + 1) : '';
+    .find((value) => value.startsWith(name + '='));
+  return pair ? pair.slice(name.length + 1) : '';
 };
 
 export function createAccessControl(accessToken?: string) {
@@ -47,6 +48,10 @@ export function createAccessControl(accessToken?: string) {
   if (token.length < 32) {
     throw new Error('Access token must have at least 32 characters');
   }
+  // Cookies are host-scoped, not port-scoped. A random cookie name lets
+  // multiple local VZCode instances coexist on different ports.
+  const cookieName = 'vzcode_session_' +
+    randomBytes(8).toString('hex');
   const sessions = new Set<string>();
 
   const hasBearer = (req: IncomingMessage) => {
@@ -57,7 +62,7 @@ export function createAccessControl(accessToken?: string) {
     );
   };
   const authorized = (req: IncomingMessage) => {
-    const session = sessionCookie(req);
+    const session = sessionCookie(req, cookieName);
     return (
       isSameOrigin(req) &&
       (hasBearer(req) || (session !== '' && sessions.has(session)))
@@ -75,7 +80,7 @@ export function createAccessControl(accessToken?: string) {
       const secure = req.secure ? '; Secure' : '';
       res.setHeader(
         'Set-Cookie',
-        COOKIE + '=' + session +
+        cookieName + '=' + session +
           '; HttpOnly; SameSite=Strict; Path=/' + secure,
       );
       res.sendStatus(204);
@@ -88,7 +93,7 @@ export function createAccessControl(accessToken?: string) {
     });
 
     app.post('/auth/logout', (req: Request, res: Response) => {
-      const session = sessionCookie(req);
+      const session = sessionCookie(req, cookieName);
       if (!authorized(req)) {
         res.sendStatus(401);
         return;
@@ -96,7 +101,7 @@ export function createAccessControl(accessToken?: string) {
       sessions.delete(session);
       res.setHeader(
         'Set-Cookie',
-        COOKIE + '=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0',
+        cookieName + '=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0',
       );
       res.sendStatus(204);
     });

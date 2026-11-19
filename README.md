@@ -9,7 +9,7 @@ VZCode offers a multiplayer code editing environment that caters to a real-time 
 - **Getting started:** [Usage](#usage) and [Development](#development) below. The `package.json` scripts provide `npm run dev`, `npm run test-interactive`, `npm test`, `npm run typecheck`, and `npm run lint`.
 - **Using the editor in other applications:** [Embedding the Visual Editor](#embedding-the-visual-editor-in-a-host-application).
 - **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md) and the [issue tracker](https://github.com/vizhub-studio/vzcode/issues).
-- **Status:** Browser development and desktop packaging have different requirements. The `vzcode` command does not automatically install the desktop application; consult [Usage](#usage).
+- **Status:** The npm CLI runs the local browser editor by default. Tauri desktop builds are optional and experimental; see [Usage](#usage).
 
 ## Table of Contents
 
@@ -31,19 +31,49 @@ VZCode offers a multiplayer code editing environment that caters to a real-time 
 
 ## Usage
 
-The `vzcode` command is currently a launcher for a built Tauri desktop
-application; installing the npm package alone does not include that application.
-The `--browser` option is not a browser-server launcher yet. To run the browser
-editor from a checkout, see [Development](#development).
+Install the npm package and open an existing local project:
 
-VZCode loads and auto-saves files in the server's working directory. It does
-not watch for external filesystem changes; edits made by another program while
-VZCode is running can be overwritten by an auto-save.
+```bash
+npm install -g vzcode
+vzcode ./my-project
+```
 
-To collaborate, make the server reachable to the other editors on your network.
-For public access, configure a tunnel or reverse proxy yourself; VZCode does not
-start an ngrok tunnel or use `NGROK_TOKEN`. Only share access with people you
-trust.
+The browser editor starts at `http://127.0.0.1:3030` and edits files inside
+that directory. The server runs until you press `Ctrl+C`. No separately
+installed desktop application, account, or AI provider is required.
+
+CLI options:
+
+```bash
+vzcode . --port=4000      # Choose a local HTTP/WebSocket port
+vzcode . --no-open        # Start without opening a browser
+vzcode . --browser        # Explicit alias for the default mode
+vzcode . --desktop        # Optional, requires a locally built Tauri app
+vzcode --help
+```
+
+For a project-local installation, use `npm install --save-dev vzcode` and
+`npx vzcode .`. The CLI listens on `127.0.0.1` only; remote access is
+intentionally **not** enabled, because the standalone server does not yet
+authenticate editors or authorize their filesystem mutations. Do not
+publish this port through a proxy or tunnel.
+
+VZCode loads and auto-saves files in its workspace directory. It does **not**
+watch for external filesystem changes, so simultaneous edits from other
+applications may be overwritten. Use a separate working copy if necessary.
+
+To validate the distributable from a source checkout, build and smoke-test
+the exact packed npm artifact:
+
+```bash
+npm ci
+npm run build-release
+npm run test:package
+```
+
+The package smoke test installs the tarball into a temporary directory and
+checks HTTP assets, ShareDB/WebSocket editing, disk persistence, and
+shutdown. It requires npm registry access to install package dependencies.
 
 ## Development
 
@@ -167,10 +197,12 @@ features:
 
 ## Desktop application
 
-The desktop wrapper uses Tauri. With Rust and the platform's Tauri prerequisites
-installed, run `npm run tauri:dev` for development or `npm run tauri:build` to
-build the desktop application. The `vzcode` launcher can open a built desktop
-binary; see [Usage](#usage) for its current limitations.
+The desktop wrapper uses Tauri and is experimental. With Rust and the
+platform's Tauri prerequisites installed, run `npm run tauri:dev` for
+development or `npm run tauri:build` to build it. Use `vzcode --desktop`
+from the source checkout to launch a locally built binary. Desktop binaries
+are **not** included in the npm package; use the default browser mode for
+an npm installation.
 
 ## Embedding the Visual Editor in a host application
 

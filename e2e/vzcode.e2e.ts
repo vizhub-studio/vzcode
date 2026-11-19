@@ -76,6 +76,10 @@ const setRangeValue = async (
 };
 
 test.describe('VZCode browser end-to-end', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/#vzcode-token=development-only-e2e-token-please-change');
+    await expectConnected(page);
+  });
   test('loads the app and lists the workspace files', async ({
     page,
   }) => {

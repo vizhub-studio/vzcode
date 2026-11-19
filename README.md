@@ -53,10 +53,18 @@ vzcode --help
 ```
 
 For a project-local installation, use `npm install --save-dev vzcode` and
-`npx vzcode .`. The CLI listens on `127.0.0.1` only; remote access is
-intentionally **not** enabled, because the standalone server does not yet
-authenticate editors or authorize their filesystem mutations. Do not
-publish this port through a proxy or tunnel.
+`npx vzcode .`. The CLI listens on `127.0.0.1` only. On startup, VZCode
+prints and opens a **private editor URL** containing a per-process capability
+token in its fragment (`#vzcode-token=...`). The browser exchanges this for
+an HttpOnly session cookie; later reloads use the cookie. Use the exact
+link printed by the CLI when connecting another local browser tab.
+
+The token grants full editing access to every file in that workspace;
+do not share the link or expose it in screenshots or logs. Sessions are
+in-memory and end when the server process exits. Remote deployment remains
+unsupported: do **not** expose the port through a proxy or tunnel until
+TLS, host configuration, network access controls, and authorization have
+been reviewed. See [Security](docs/SECURITY.md).
 
 VZCode loads and auto-saves files in its workspace directory. It does **not**
 watch for external filesystem changes, so simultaneous edits from other

@@ -163,7 +163,9 @@ async function main(): Promise<void> {
 
   const url = 'http://' + HOST + ':' + actualPort;
   console.log('Workspace: ' + directory);
-  console.log('Editor is live at ' + url);
+  const accessUrl = url + '/#vzcode-token=' + server.accessToken;
+  console.log('Editor is live at ' + accessUrl);
+  console.log('Keep this private link secret; it grants workspace editing access.');
   console.log('Press Ctrl+C to stop VZCode.');
 
   let closing = false;
@@ -193,7 +195,7 @@ async function main(): Promise<void> {
     child.once('exit', () => void shutdown());
   } else if (options.openBrowser) {
     try {
-      await open(url);
+      await open(accessUrl);
     } catch (error) {
       console.warn(
         'Could not open a browser automatically. Visit ' + url,

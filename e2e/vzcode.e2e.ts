@@ -422,4 +422,26 @@ test.describe('VZCode browser end-to-end', () => {
       .getByRole('button', { name: 'Cancel' })
       .click();
   });
+
+  test('reflects external disk edits in the open code editor', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await openFile(page, 'index.js');
+    const target = path.join(workspaceDir, 'index.js');
+    const original = fs.readFileSync(target, 'utf8');
+    const marker = '// external filesystem refresh marker';
+    try {
+      fs.writeFileSync(target, original + '\n' + marker + '\n');
+      await expect(editor(page)).toContainText(marker, {
+        timeout: 20_000,
+      });
+    } finally {
+      fs.writeFileSync(target, original);
+    }
+    await expect(editor(page)).not.toContainText(marker, {
+      timeout: 20_000,
+    });
+  });
 });

@@ -37,8 +37,10 @@ process.
 race-free containment if another process can replace directory components
 with symlinks between validation and use. Run VZCode only against trusted
 local workspaces; avoid untrusted processes with write access to workspace
-directories. VZCode also does not reconcile external file edits, so a
-separate editor or formatter may cause conflicts or overwrites.
+directories. VZCode now detects external file edits and pauses autosave on simultaneous
+changes. The explicit conflict actions let an editor choose which version
+to retain. The periodic scan is not an operating-system filesystem sandbox;
+watcher events and other processes can still race with disk operations.
 
 ## Remote deployment
 

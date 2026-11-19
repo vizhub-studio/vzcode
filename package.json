@@ -31,7 +31,8 @@
     "tauri:build": "tauri build",
     "prepublishOnly": "npm run build-release",
     "upgrade": "ncu -x react,react-dom,@types/react,@types/react-dom -u",
-    "test:package": "node scripts/test-packaged-cli.mjs"
+    "test:package": "node scripts/test-packaged-cli.mjs",
+    "test:sync": "vitest run test/workspaceSync.test.ts test/workspaceSyncServer.test.ts"
   },
   "repository": {
     "type": "git",

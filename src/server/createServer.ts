@@ -4,6 +4,8 @@ import express from 'express';
 import fs from 'fs';
 import http from 'http';
 import path from 'path';
+import { createAccessControl } from './accessControl.js';
+import { createWorkspacePathResolver } from './workspaceSecurity.js';
 import ShareDB from 'sharedb';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
@@ -45,6 +47,8 @@ export interface CreateVZCodeServerOptions {
    * `true`. Tests can disable this and call `save()` directly.
    */
   autoSave?: boolean;
+  /** Optional fixed capability token (otherwise generated per server). */
+  accessToken?: string;
 }
 
 export interface VZCodeServer {
@@ -53,6 +57,8 @@ export interface VZCodeServer {
   shareDBBackend: ShareDB;
   /** The server-side ShareDB document for the workspace. */
   shareDBDoc: any;
+  /** Random per-server token used to mint scoped browser sessions. */
+  accessToken: string;
   /** Resolves once the initial ShareDB document has been created. */
   ready: Promise<void>;
   /** Write changed files to disk (same routine used by auto-save). */
@@ -75,12 +81,13 @@ export const createVZCodeServer = (
 ): VZCodeServer => {
   const cwd = options.cwd ?? process.cwd();
   const autoSave = options.autoSave ?? true;
+  const workspace = createWorkspacePathResolver(cwd);
+  const access = createAccessControl(options.accessToken);
 
   // Resolve file names from the ShareDB document against the workspace
   // root, so the server can operate on a directory other than the
   // process's current working directory.
-  const resolvePath = (name: string): string =>
-    path.resolve(cwd, name);
+  const resolvePath = workspace.resolve;
 
   const serveStaticDir =
     options.serveStaticDir === undefined
@@ -93,14 +100,16 @@ export const createVZCodeServer = (
       : options.serveStaticDir;
 
   const initialDocument = computeInitialDocument({
-    fullPath: cwd,
+    fullPath: workspace.root,
   });
+  workspace.validateFiles(initialDocument.files);
 
   // Register our custom OT type,
   // because it does not ship with ShareDB.
   ShareDB.types.register(json1Presence.type);
 
   const app = express();
+  access.install(app);
 
   // Use ShareDB over WebSocket
   const shareDBBackend = new ShareDB({
@@ -108,8 +117,39 @@ export const createVZCodeServer = (
     presence: true,
     doNotForwardSendPresenceErrorsToClient: true,
   });
+  // Validate the committed post-operation snapshot, not merely the
+  // operation payload. A rejected submission must never reach autosave.
+  shareDBBackend.use('commit', (context: any, next) => {
+    try {
+      if (context.collection !== 'documents' ||
+          context.id !== '1') {
+        throw new Error('Unauthorized ShareDB document');
+      }
+      workspace.validateFiles(context.snapshot?.data?.files);
+      next();
+    } catch (error: any) {
+      next(error);
+    }
+  });
   const httpServer = http.createServer(app);
-  const wss = new WebSocketServer({ server: httpServer });
+  // Authentication is enforced before ShareDB attaches to the socket.
+  const wss = new WebSocketServer({ noServer: true });
+  httpServer.on('upgrade', (req, socket, head) => {
+    const pathname = (req.url || '').split('?')[0];
+    if (pathname !== '/ws') {
+      socket.write('HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+    if (!access.authorized(req)) {
+      socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit('connection', ws, req);
+    });
+  });
   wss.on('connection', (ws) => {
     const clientStream = new WebSocketJSONStream(ws);
     shareDBBackend.listen(clientStream);
@@ -149,6 +189,10 @@ export const createVZCodeServer = (
   // Saves the files that changed.
   const save = () => {
     const currentDocument = shareDBDoc.data;
+    // Fail closed before the first write in this batch. Repeat checks
+    // at each filesystem call to reject newly created symlinks.
+    workspace.validateFiles(previousDocument.files);
+    workspace.validateFiles(currentDocument.files);
 
     // Take a look at each file (key) previously and currently.
     const allKeys = Object.keys({
@@ -172,16 +216,10 @@ export const createVZCodeServer = (
               current.text,
               'base64',
             );
-            fs.writeFileSync(
-              resolvePath(current.name),
-              buffer,
-            );
+            workspace.writeFile(current.name, buffer);
           } else {
             // Write non-image files as text
-            fs.writeFileSync(
-              resolvePath(current.name),
-              current.text,
-            );
+            workspace.writeFile(current.name, current.text);
           }
         }
 
@@ -197,8 +235,10 @@ export const createVZCodeServer = (
             const newDir = path.dirname(current.name);
 
             // Check if the new directory exists, if not, create it
-            if (!fs.existsSync(resolvePath(newDir))) {
-              fs.mkdirSync(resolvePath(newDir), {
+            const destinationDir =
+              newDir === '.' ? workspace.root : resolvePath(newDir);
+            if (!fs.existsSync(destinationDir)) {
+              fs.mkdirSync(destinationDir, {
                 recursive: true,
               });
             }
@@ -222,17 +262,9 @@ export const createVZCodeServer = (
           fs.unlinkSync(resolvePath(previous.name));
         } else {
           //Performs directory deletion.
-          fs.rm(
-            resolvePath(previous.name),
-            {
-              recursive: true, //Makes sure that all files in directory are deleted.
-            },
-            (error) => {
-              if (error) {
-                console.log(error);
-              }
-            },
-          );
+          fs.rmSync(resolvePath(previous.name), {
+            recursive: true,
+          });
         }
       }
 
@@ -246,16 +278,10 @@ export const createVZCodeServer = (
               current.text,
               'base64',
             );
-            fs.writeFileSync(
-              resolvePath(current.name),
-              buffer,
-            );
+            workspace.writeFile(current.name, buffer);
           } else {
             // Write non-image files as text
-            fs.writeFileSync(
-              resolvePath(current.name),
-              current.text,
-            );
+            workspace.writeFile(current.name, current.text);
           }
         } else {
           fs.mkdirSync(resolvePath(current.name), {
@@ -268,20 +294,20 @@ export const createVZCodeServer = (
 
     for (const dir of directoriesToDelete) {
       //Performs directory deletion.
-      fs.rm(
-        resolvePath(dir),
-        {
-          recursive: true, //Makes sure that all files in directory are deleted.
-        },
-        (error) => {
-          if (error) {
-            console.log(error);
-          }
-        },
-      );
+      fs.rmSync(resolvePath(dir), { recursive: true });
     }
 
     previousDocument = currentDocument;
+  };
+
+  // Invalid paths or external filesystem changes must not crash the
+  // process from a delayed timer. Expose errors in logs for operators.
+  const autoSaveSafely = () => {
+    try {
+      save();
+    } catch (error) {
+      console.error('VZCode autosave refused:', error);
+    }
   };
 
   let lastExecutedTime = Date.now();
@@ -293,13 +319,13 @@ export const createVZCodeServer = (
     const timeSinceLastExecution = now - lastExecutedTime;
 
     if (timeSinceLastExecution > throttleTimeMS) {
-      save();
+      autoSaveSafely();
       lastExecutedTime = now;
     } else {
       // Clear the previous timeout and set a new one to save the last change
       clearTimeout(lastChangeTimeout);
       lastChangeTimeout = setTimeout(() => {
-        save();
+        autoSaveSafely();
         lastExecutedTime = now;
       }, throttleTimeMS - timeSinceLastExecution);
     }
@@ -310,7 +336,7 @@ export const createVZCodeServer = (
   function debounceSave() {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(
-      save,
+      autoSaveSafely,
       autoSaveDebounceTimeMS,
     );
   }
@@ -346,6 +372,7 @@ export const createVZCodeServer = (
   // Handle AI Assist requests.
   app.post(
     '/ai-assist',
+    access.requireAuth,
     bodyParser.json(),
     handleAIAssist(shareDBDoc),
   );
@@ -353,6 +380,7 @@ export const createVZCodeServer = (
   // Handle AI Copilot requests.
   app.post(
     '/ai-copilot',
+    access.requireAuth,
     bodyParser.json(),
     handleAICopilot(),
   );
@@ -360,6 +388,7 @@ export const createVZCodeServer = (
   // Handle AI Chat Message requests.
   app.post(
     '/ai-chat-message',
+    access.requireAuth,
     bodyParser.json(),
     handleAIChatMessage({
       shareDBDoc,
@@ -368,7 +397,7 @@ export const createVZCodeServer = (
   );
 
   // Livekit Token Generator
-  app.get('/livekit-token', async (req, res) => {
+  app.get('/livekit-token', access.requireAuth, async (req, res) => {
     const { room, username } = req.query;
     res.send(await createToken(room, username));
   });
@@ -403,6 +432,7 @@ export const createVZCodeServer = (
     new Promise((resolve, reject) => {
       clearTimeout(lastChangeTimeout);
       clearTimeout(debounceTimeout);
+      access.close();
       // An upgraded WebSocket otherwise prevents CLI shutdown.
       for (const client of wss.clients) {
         client.terminate();
@@ -420,6 +450,7 @@ export const createVZCodeServer = (
     httpServer,
     shareDBBackend,
     shareDBDoc,
+    accessToken: access.token,
     ready,
     save,
     listen,

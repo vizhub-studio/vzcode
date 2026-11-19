@@ -68,13 +68,13 @@ function waitForServer(child) {
     const onData = (chunk) => {
       output += chunk.toString();
       const match = output.match(
-        /Editor is live at http:\/\/127\.0\.0\.1:(\d+)/,
+        /Editor is live at http:\/\/127\.0\.0\.1:(\d+)\/#vzcode-token=([a-f0-9]{64})/,
       );
       if (match) {
         clearTimeout(timeout);
         child.stdout.off('data', onData);
         child.stderr.off('data', onData);
-        resolve(Number(match[1]));
+        resolve({ port: Number(match[1]), token: match[2] });
       }
     };
     child.stdout.on('data', onData);
@@ -105,10 +105,11 @@ async function waitForSaved(file, expected) {
   throw new Error('Edited workspace file was not saved');
 }
 
-async function checkCollaboration(port) {
+async function checkCollaboration(port, token) {
   ShareDBClient.types.register(json1Presence.type);
   const socket = new WebSocket(
     'ws://127.0.0.1:' + port + '/ws',
+    { headers: { Authorization: 'Bearer ' + token } },
   );
   const connection = new ShareDBClient.Connection(socket);
   try {
@@ -204,7 +205,7 @@ try {
   );
 
   cli = startCLI(cliPath);
-  const port = await waitForServer(cli);
+  const { port, token } = await waitForServer(cli);
   const response = await fetch('http://127.0.0.1:' + port);
   assert.equal(response.status, 200);
   const html = await response.text();
@@ -215,7 +216,7 @@ try {
     'http://127.0.0.1:' + port + asset[1],
   );
   assert.equal(assetResponse.status, 200);
-  await checkCollaboration(port);
+  await checkCollaboration(port, token);
   await stopCLI(cli);
   console.log('Packaged CLI smoke test passed.');
 } finally {

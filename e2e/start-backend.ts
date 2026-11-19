@@ -26,6 +26,7 @@ const server = createVZCodeServer({
   // The client is served by Vite in dev, so the backend serves no static files.
   serveStaticDir: null,
   autoSave: true,
+  accessToken: 'development-only-e2e-token-please-change',
 });
 
 // A readiness endpoint for Playwright's `webServer.url`.

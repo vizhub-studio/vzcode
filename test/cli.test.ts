@@ -23,7 +23,7 @@ function invoke(...args: string[]) {
 }
 
 function waitForServer(child: ReturnType<typeof spawn>) {
-  return new Promise<number>((resolve, reject) => {
+  return new Promise<{ port: number; token: string }>((resolve, reject) => {
     let output = '';
     const timeout = setTimeout(() => {
       reject(new Error('CLI did not start: ' + output));
@@ -31,13 +31,13 @@ function waitForServer(child: ReturnType<typeof spawn>) {
     const onData = (chunk: Buffer) => {
       output += chunk.toString();
       const match = output.match(
-        /Editor is live at http:\/\/127\.0\.0\.1:(\d+)/,
+        /Editor is live at http:\/\/127\.0\.0\.1:(\d+)\/#vzcode-token=([a-f0-9]{64})/,
       );
       if (match) {
         clearTimeout(timeout);
         child.stdout?.off('data', onData);
         child.stderr?.off('data', onData);
-        resolve(Number(match[1]));
+        resolve({ port: Number(match[1]), token: match[2] });
       }
     };
     child.stdout?.on('data', onData);
@@ -108,7 +108,7 @@ describe('VZCode CLI', () => {
 
     let connection: any;
     try {
-      const port = await waitForServer(child);
+      const { port, token } = await waitForServer(child);
       const response = await fetch(
         'http://127.0.0.1:' + port + '/not-a-route',
       );
@@ -117,6 +117,7 @@ describe('VZCode CLI', () => {
       ShareDBClient.types.register(json1Presence.type);
       const socket = new WebSocket(
         'ws://127.0.0.1:' + port + '/ws',
+        { headers: { Authorization: 'Bearer ' + token } },
       );
       connection = new ShareDBClient.Connection(socket);
       const doc = connection.get('documents', '1');

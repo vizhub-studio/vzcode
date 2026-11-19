@@ -78,7 +78,12 @@ describe('VZCode server end-to-end', () => {
   }> =>
     new Promise((resolve, reject) => {
       const socket = new WebSocket(
-        `ws://127.0.0.1:${port}`,
+        `ws://127.0.0.1:${port}/ws`,
+        {
+          headers: {
+            Authorization: `Bearer ${server.accessToken}`,
+          },
+        },
       );
       const connection = new ShareDBClient.Connection(
         socket,

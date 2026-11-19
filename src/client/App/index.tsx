@@ -19,6 +19,7 @@ import { VZLeft } from '../VZLeft';
 import { VZMiddle } from '../VZMiddle';
 import { VZResizer } from '../VZResizer';
 import { VZRight } from '../VZRight';
+import { WorkspaceConflictBanner } from '../WorkspaceConflictBanner';
 import {
   useInitialUsername,
   usePersistUsername,
@@ -111,6 +112,7 @@ function App() {
   // only mounted when explicitly enabled.
   const appContent = (
     <>
+      <WorkspaceConflictBanner />
       <div className="app">
         <VZLeft />
         <VZMiddle

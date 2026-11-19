@@ -283,6 +283,7 @@ describe('standalone filesystem synchronization', () => {
     }));
     fs.unlinkSync(filePath('index.js'));
     await server.syncFromDisk();
+    await waitFor(() => (doc.data.workspaceConflicts || []).includes('index.js'));
     expect(doc.data.files[id].text).toBe('editor');
     expect(doc.data.workspaceConflicts).toContain('index.js');
     await server.resolveConflict('index.js', 'editor');

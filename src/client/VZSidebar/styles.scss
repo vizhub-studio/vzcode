@@ -1212,4 +1212,138 @@
       font-weight: 400;
     }
   }
+
+  // Shared Visual Properties panel. All widgets inherit a single, theme-aware
+  // layout rather than drawing separate cards with hard-coded neon accents.
+  .visual-editor {
+    padding: 0;
+    gap: 0;
+    min-width: 0;
+    font-family: var(--vzcode-font-family);
+    color: var(--vz-color-neutral-04);
+  }
+
+  .visual-properties-header {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--vz-color-neutral-02);
+  }
+
+  .visual-properties-title {
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .visual-properties-hint {
+    margin: 4px 0 0;
+    font-size: 11px;
+    line-height: 1.45;
+    opacity: .7;
+  }
+
+  .visual-properties-section {
+    min-width: 0;
+    border-bottom: 1px solid var(--vz-color-neutral-02);
+  }
+
+  .visual-properties-section-toggle {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: 600 12px var(--vzcode-font-family);
+    letter-spacing: .015em;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover { background: var(--vz-color-neutral-02); }
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+  }
+
+  .visual-properties-chevron {
+    display: inline-block;
+    opacity: .65;
+    transition: transform 160ms ease;
+
+    &.collapsed { transform: rotate(-90deg); }
+  }
+
+  .visual-properties-section-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 2px 16px 18px;
+    min-width: 0;
+  }
+
+  .visual-editor {
+    .visual-editor-slider,
+    .visual-editor-checkbox,
+    .visual-editor-dropdown,
+    .visual-editor-text-input,
+    .visual-editor-color {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      gap: 7px;
+      transition: none;
+
+      &:hover { background: transparent; border-color: transparent; }
+    }
+
+    .slider-header, .checkbox-header, .dropdown-header,
+    .text-input-header, .color-header { margin: 0; }
+
+    .slider-label, .checkbox-label, .dropdown-label,
+    .text-input-label, .color-label {
+      font: 500 12px var(--vzcode-font-family);
+      color: var(--vz-color-neutral-04);
+    }
+
+    .slider-value, .checkbox-value, .color-value {
+      background: var(--vz-color-neutral-02);
+      color: var(--vz-color-neutral-04);
+      font: 500 12px var(--vzcode-font-family);
+      border-radius: 5px;
+    }
+
+    .slider-track-fill { background: var(--vz-color-neutral-04); opacity: .55; }
+    .slider-input {
+      &::-webkit-slider-thumb {
+        background: var(--vz-color-neutral-04);
+        border-color: var(--vz-color-neutral-01);
+        box-shadow: 0 0 0 1px var(--vz-color-neutral-03);
+      }
+      &::-moz-range-thumb {
+        background: var(--vz-color-neutral-04);
+        border-color: var(--vz-color-neutral-01);
+        box-shadow: 0 0 0 1px var(--vz-color-neutral-03);
+      }
+      &:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+    }
+    .dropdown-button:focus-visible, .text-input-field:focus-visible {
+      border-color: var(--vz-color-neutral-04);
+      box-shadow: 0 0 0 2px var(--vz-color-neutral-03);
+    }
+    .dropdown-option.selected {
+      background: var(--vz-color-neutral-04);
+      color: var(--vz-color-neutral-01);
+    }
+    .checkbox-indicator.checked {
+      background: var(--vz-color-neutral-04);
+      box-shadow: none;
+    }
+    .checkbox-input:checked + .checkbox-visual {
+      border-color: var(--vz-color-neutral-04);
+      background: var(--vz-color-neutral-02);
+    }
+  }
+
 }

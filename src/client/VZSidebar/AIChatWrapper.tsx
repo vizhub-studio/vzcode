@@ -35,6 +35,7 @@ export const AIChatWrapper = () => {
     resetMessageHistoryNavigation,
     enableMinimalEditFlow,
     additionalWidgets,
+    renderChatVoiceInput,
     openTab,
     setIsAIChatOpen,
   } = useContext(VZCodeContext);
@@ -79,6 +80,7 @@ export const AIChatWrapper = () => {
       enableDiffView={enableDiffView}
       enableAskMode={enableAskMode}
       enableVoiceInput={enableVoiceInput}
+      renderChatVoiceInput={renderChatVoiceInput}
       enableMinimalEditFlow={enableMinimalEditFlow}
     />
   );

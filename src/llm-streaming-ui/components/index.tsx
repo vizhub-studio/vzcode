@@ -64,6 +64,7 @@ export const AIChat = ({
   enableDiffView = true,
   enableAskMode = false,
   enableVoiceInput = false,
+  renderChatVoiceInput,
   onOpenFile,
 }: AIChatProps) => {
   // Use the new simplified auto-scroll hook
@@ -376,6 +377,7 @@ export const AIChat = ({
           setAIChatMode={setAIChatMode}
           enableAskMode={enableAskMode}
           enableVoiceInput={enableVoiceInput}
+          renderChatVoiceInput={renderChatVoiceInput}
           navigateMessageHistoryUp={
             navigateMessageHistoryUp
           }

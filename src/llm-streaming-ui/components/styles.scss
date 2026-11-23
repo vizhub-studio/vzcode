@@ -1,4 +1,7 @@
 .ai-chat-container {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   font-family: Inter, sans-serif;
   font-size: 16px;
   line-height: 1.5;
@@ -9,6 +12,7 @@
 }
 
 .ai-chat-content {
+  min-width: 0;
   flex: 1;
   overflow: hidden;
   display: flex;
@@ -17,6 +21,7 @@
 }
 
 .ai-chat-messages-container {
+  min-width: 0;
   flex: 1;
   overflow-y: auto;
   padding: 10px;
@@ -41,6 +46,8 @@
 }
 
 .ai-chat-input-fixed {
+  min-width: 0;
+  box-sizing: border-box;
   flex-shrink: 0;
   padding: 10px;
   padding-top: 0;
@@ -492,6 +499,8 @@
     }
 
     .ai-chat-error-message {
+      min-width: 0;
+      overflow-wrap: anywhere;
       flex: 1;
       font-size: 14px;
       color: #dc3545;
@@ -529,6 +538,7 @@
 }
 
 .ai-chat-input-container {
+  min-width: 0;
   border-top: 1px solid var(--vz-color-neutral-02);
   padding-top: 10px;
   background: var(--vz-color-neutral-01);
@@ -583,12 +593,16 @@
 }
 
 .ai-chat-input-group {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 0;
 
   textarea {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
     flex: 1;
     background: var(--vz-color-neutral-02) !important;
     border: 1px solid var(--vz-color-neutral-03) !important;

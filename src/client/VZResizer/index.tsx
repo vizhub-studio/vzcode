@@ -39,6 +39,7 @@ export const VZResizer = ({
     isDraggingRight,
     isDraggingLeft,
     setIsDragging,
+    setContainerWidth,
   } = useContext(SplitPaneResizeContext);
 
   // If there is no active file, don't render the resizer
@@ -49,6 +50,26 @@ export const VZResizer = ({
     side === 'left' || activePane.activeFileId;
 
   const previousClientX = useRef<number>(0);
+  const resizerRef = useRef<HTMLDivElement>(null);
+
+  // Observe the workspace, not the browser viewport: embedded VZCode
+  // instances may occupy only a portion of the page.
+  useEffect(() => {
+    if (side !== 'left') return;
+    const workspace = resizerRef.current?.parentElement;
+    if (!workspace) return;
+    const measure = () => {
+      setContainerWidth(workspace.getBoundingClientRect().width);
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(workspace);
+    return () => observer.disconnect();
+  }, [side, setContainerWidth]);
 
   const onMouseDown = useCallback(
     (event: React.MouseEvent) => {
@@ -109,6 +130,7 @@ export const VZResizer = ({
 
   return shouldRenderResizer ? (
     <div
+      ref={resizerRef}
       className="vz-resizer"
       onMouseDown={onMouseDown}
       style={{

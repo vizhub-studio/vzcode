@@ -77,7 +77,9 @@ const setRangeValue = async (
 
 test.describe('VZCode browser end-to-end', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/#vzcode-token=development-only-e2e-token-please-change');
+    await page.goto(
+      '/#vzcode-token=development-only-e2e-token-please-change',
+    );
     await expectConnected(page);
   });
   test('loads the app and lists the workspace files', async ({
@@ -237,46 +239,97 @@ test.describe('VZCode browser end-to-end', () => {
       .toContain('pointRadius');
   });
 
-  test('visual color picker writes a valid color to config', async ({ page }) => {
+  test('visual color picker writes a valid color to config', async ({
+    page,
+  }) => {
     await page.goto('/');
     await expectConnected(page);
     await page.locator('#visual-editor-icon').click();
-    await page.getByRole('button', { name: 'Choose Mark color color' }).click();
-    const input = page.getByRole('textbox', { name: 'Mark color hexadecimal color' });
+    await page
+      .getByRole('button', {
+        name: 'Choose Mark color color',
+      })
+      .click();
+    const input = page.getByRole('textbox', {
+      name: 'Mark color hexadecimal color',
+    });
     await input.fill('#123456');
     await input.press('Enter');
-    await expect.poll(async () => {
-      const config = JSON.parse(await readWorkspaceFile('config.json'));
-      return config.markColor;
-    }, { timeout: 20_000 }).toBe('#123456');
+    await expect
+      .poll(
+        async () => {
+          const config = JSON.parse(
+            await readWorkspaceFile('config.json'),
+          );
+          return config.markColor;
+        },
+        { timeout: 20_000 },
+      )
+      .toBe('#123456');
   });
 
-  test('segmented control changes configuration', async ({ page }) => {
+  test('segmented control changes configuration', async ({
+    page,
+  }) => {
     await page.goto('/');
     await expectConnected(page);
     await page.locator('#visual-editor-icon').click();
-    await page.getByRole('group', { name: 'Mark shape' }).getByRole('button', { name: 'Square' }).click();
-    await expect.poll(async () => {
-      const config = JSON.parse(await readWorkspaceFile('config.json'));
-      return config.markShape;
-    }, { timeout: 20_000 }).toBe('Square');
+    await page
+      .getByRole('group', { name: 'Mark shape' })
+      .getByRole('button', { name: 'Square' })
+      .click();
+    await expect
+      .poll(
+        async () => {
+          const config = JSON.parse(
+            await readWorkspaceFile('config.json'),
+          );
+          return config.markShape;
+        },
+        { timeout: 20_000 },
+      )
+      .toBe('Square');
   });
 
-  test('grouped visual properties can reset an edited value', async ({ page }) => {
+  test('grouped visual properties can reset an edited value', async ({
+    page,
+  }) => {
     await page.goto('/');
     await expectConnected(page);
     await page.locator('#visual-editor-icon').click();
-    const shape = page.getByRole('group', { name: 'Mark shape' });
-    await shape.getByRole('button', { name: 'Square' }).click();
-    await expect.poll(async () => {
-      const config = JSON.parse(await readWorkspaceFile('config.json'));
-      return config.markShape;
-    }, { timeout: 20_000 }).toBe('Square');
-    await page.getByRole('button', { name: 'Reset Mark shape to default' }).click();
-    await expect.poll(async () => {
-      const config = JSON.parse(await readWorkspaceFile('config.json'));
-      return config.markShape;
-    }, { timeout: 20_000 }).toBe('Circle');
+    const shape = page.getByRole('group', {
+      name: 'Mark shape',
+    });
+    await shape
+      .getByRole('button', { name: 'Square' })
+      .click();
+    await expect
+      .poll(
+        async () => {
+          const config = JSON.parse(
+            await readWorkspaceFile('config.json'),
+          );
+          return config.markShape;
+        },
+        { timeout: 20_000 },
+      )
+      .toBe('Square');
+    await page
+      .getByRole('button', {
+        name: 'Reset Mark shape to default',
+      })
+      .click();
+    await expect
+      .poll(
+        async () => {
+          const config = JSON.parse(
+            await readWorkspaceFile('config.json'),
+          );
+          return config.markShape;
+        },
+        { timeout: 20_000 },
+      )
+      .toBe('Circle');
   });
 
   test('creates, renames, and deletes a file', async ({
@@ -475,7 +528,10 @@ test.describe('VZCode browser end-to-end', () => {
     const original = fs.readFileSync(target, 'utf8');
     const marker = '// external filesystem refresh marker';
     try {
-      fs.writeFileSync(target, original + '\n' + marker + '\n');
+      fs.writeFileSync(
+        target,
+        original + '\n' + marker + '\n',
+      );
       await expect(editor(page)).toContainText(marker, {
         timeout: 20_000,
       });

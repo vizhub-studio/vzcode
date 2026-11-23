@@ -6,7 +6,11 @@ import { PropertySection } from '../src/client/VZSidebar/VisualEditor/PropertySe
 describe('PropertySection', () => {
   it('renders an accessible expanded section by default', () => {
     const html = renderToStaticMarkup(
-      createElement(PropertySection, { title: 'Appearance' }, 'Content'),
+      createElement(
+        PropertySection,
+        { title: 'Appearance' },
+        'Content',
+      ),
     );
     expect(html).toContain('aria-expanded="true"');
     expect(html).toContain('Appearance');
@@ -16,7 +20,11 @@ describe('PropertySection', () => {
 
   it('hides collapsed content', () => {
     const html = renderToStaticMarkup(
-      createElement(PropertySection, { title: 'Marks', initiallyOpen: false }, 'Secret'),
+      createElement(
+        PropertySection,
+        { title: 'Marks', initiallyOpen: false },
+        'Secret',
+      ),
     );
     expect(html).toContain('aria-expanded="false"');
     expect(html).not.toContain('Secret');

@@ -16,7 +16,8 @@ const tmp = fs.mkdtempSync(
 );
 const installDir = path.join(tmp, 'install');
 const workspace = path.join(tmp, 'workspace');
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const npm =
+  process.platform === 'win32' ? 'npm.cmd' : 'npm';
 fs.mkdirSync(workspace, { recursive: true });
 fs.writeFileSync(
   path.join(workspace, 'index.js'),
@@ -62,7 +63,10 @@ function waitForServer(child) {
   return new Promise((resolve, reject) => {
     let output = '';
     const timeout = setTimeout(
-      () => reject(new Error('CLI startup timed out: ' + output)),
+      () =>
+        reject(
+          new Error('CLI startup timed out: ' + output),
+        ),
       15000,
     );
     const onData = (chunk) => {
@@ -74,7 +78,10 @@ function waitForServer(child) {
         clearTimeout(timeout);
         child.stdout.off('data', onData);
         child.stderr.off('data', onData);
-        resolve({ port: Number(match[1]), token: match[2] });
+        resolve({
+          port: Number(match[1]),
+          token: match[2],
+        });
       }
     };
     child.stdout.on('data', onData);
@@ -86,7 +93,12 @@ function waitForServer(child) {
     child.once('exit', (code) => {
       clearTimeout(timeout);
       reject(
-        new Error('CLI exited before ready (' + code + '): ' + output),
+        new Error(
+          'CLI exited before ready (' +
+            code +
+            '): ' +
+            output,
+        ),
       );
     });
   });
@@ -176,10 +188,13 @@ try {
     'Missing dist/cli.js; run npm run build-release first',
   );
 
-  const output = await run(
-    npm,
-    ['pack', '--ignore-scripts', '--json', '--pack-destination', tmp],
-  );
+  const output = await run(npm, [
+    'pack',
+    '--ignore-scripts',
+    '--json',
+    '--pack-destination',
+    tmp,
+  ]);
   const packed = JSON.parse(output)[0];
   const tarball = path.join(tmp, packed.filename);
   await run(npm, [
@@ -200,7 +215,9 @@ try {
   );
   const cliPath = path.join(installed, 'dist', 'cli.js');
   assert.ok(
-    fs.existsSync(path.join(installed, 'dist', 'index.html')),
+    fs.existsSync(
+      path.join(installed, 'dist', 'index.html'),
+    ),
     'Published tarball must include the client build',
   );
 

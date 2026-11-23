@@ -9,16 +9,35 @@ interface SliderWidgetProps {
   step?: number;
   currentValue: number;
   unit?: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => void;
   onNumberChange: (value: number) => void;
 }
 
 export const SliderWidget: React.FC<SliderWidgetProps> = ({
-  property, label, min, max, step = 1, currentValue, unit, onChange, onNumberChange,
+  property,
+  label,
+  min,
+  max,
+  step = 1,
+  currentValue,
+  unit,
+  onChange,
+  onNumberChange,
 }) => {
   const [draft, setDraft] = useState(String(currentValue));
-  useEffect(() => setDraft(String(currentValue)), [currentValue]);
-  const percent = Math.max(0, Math.min(100, calculatePercentage(currentValue, min, max)));
+  useEffect(
+    () => setDraft(String(currentValue)),
+    [currentValue],
+  );
+  const percent = Math.max(
+    0,
+    Math.min(
+      100,
+      calculatePercentage(currentValue, min, max),
+    ),
+  );
 
   const commitNumber = () => {
     const parsed = Number(draft);
@@ -34,24 +53,36 @@ export const SliderWidget: React.FC<SliderWidgetProps> = ({
   return (
     <div className="visual-editor-slider">
       <div className="slider-header">
-        <label htmlFor={property} className="slider-label">{label}</label>
+        <label htmlFor={property} className="slider-label">
+          {label}
+        </label>
         <div className="slider-number-wrapper">
-        <input
-          type="number"
-          className="slider-number-input"
-          aria-label={`${label} value`}
-          min={min}
-          max={max}
-          step={step}
-          value={draft}
-          onChange={(event) => setDraft(event.currentTarget.value)}
-          onBlur={commitNumber}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') { commitNumber(); event.currentTarget.blur(); }
-            if (event.key === 'Escape') setDraft(String(currentValue));
-          }}
-        />
-        {unit && <span className="slider-number-unit">{unit}</span>}
+          <input
+            type="number"
+            className="slider-number-input"
+            aria-label={`${label} value`}
+            min={min}
+            max={max}
+            step={step}
+            value={draft}
+            onChange={(event) =>
+              setDraft(event.currentTarget.value)
+            }
+            onBlur={commitNumber}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                commitNumber();
+                event.currentTarget.blur();
+              }
+              if (event.key === 'Escape')
+                setDraft(String(currentValue));
+            }}
+          />
+          {unit && (
+            <span className="slider-number-unit">
+              {unit}
+            </span>
+          )}
         </div>
       </div>
       <div className="slider-container">
@@ -60,11 +91,16 @@ export const SliderWidget: React.FC<SliderWidgetProps> = ({
           id={property}
           aria-label={label}
           className="slider-input"
-          min={min} max={max} step={step}
+          min={min}
+          max={max}
+          step={step}
           value={currentValue}
           onChange={onChange}
         />
-        <div className="slider-track-fill" style={{ width: `${percent}%` }} />
+        <div
+          className="slider-track-fill"
+          style={{ width: `${percent}%` }}
+        />
       </div>
       <div className="slider-bounds">
         <span className="min-value">{min}</span>

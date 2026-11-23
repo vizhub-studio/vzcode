@@ -131,9 +131,10 @@ export const computeInitialDocument = ({ fullPath }) => {
       })
       // Reject symlinks and special files during the initial scan.
       // readFileSync would otherwise follow links outside the root.
-      .filter((dirent) =>
-        dirent.isFile() ||
-        (enableDirectories && dirent.isDirectory()),
+      .filter(
+        (dirent) =>
+          dirent.isFile() ||
+          (enableDirectories && dirent.isDirectory()),
       );
     // find .ignore or .gitignore files in the current directory
     const ignoreFiles = dirEntries

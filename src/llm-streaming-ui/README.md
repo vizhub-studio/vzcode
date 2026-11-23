@@ -110,7 +110,12 @@ from the host control; `enableVoiceInput` remains a separate legacy option.
 ```tsx
 <VZCodeProvider
   // ...other provider props
-  renderChatVoiceInput={({ value, onChange, onBusyChange, onPreviewChange }) => (
+  renderChatVoiceInput={({
+    value,
+    onChange,
+    onBusyChange,
+    onPreviewChange,
+  }) => (
     <MyAppVoiceButton
       value={value}
       onCommitDraft={onChange}

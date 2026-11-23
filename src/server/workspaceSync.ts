@@ -20,10 +20,7 @@ export const sameFile = (
   b: WorkspaceFile | undefined,
 ): boolean =>
   (!a && !b) ||
-  (!!a &&
-    !!b &&
-    a.name === b.name &&
-    a.text === b.text);
+  (!!a && !!b && a.name === b.name && a.text === b.text);
 
 export const copyFiles = (
   files: WorkspaceFiles,
@@ -131,16 +128,20 @@ export const reconcileDisk = ({
     let observed = disk.get(saved.name);
     // Only recognize a rename by an unambiguous filesystem identity.
     if (!observed && identities[id]) {
-      const matches = (byIdentity.get(identities[id]) ?? [])
-        .filter((file) => unclaimed.has(file.name));
+      const matches = (
+        byIdentity.get(identities[id]) ?? []
+      ).filter((file) => unclaimed.has(file.name));
       if (matches.length === 1) observed = matches[0];
     }
     if (observed) unclaimed.delete(observed.name);
     const remoteChanged = !sameFile(saved, observed);
     const localChanged = !sameFile(saved, current[id]);
 
-    if (remoteChanged && localChanged &&
-        !sameFile(current[id], observed)) {
+    if (
+      remoteChanged &&
+      localChanged &&
+      !sameFile(current[id], observed)
+    ) {
       conflicts.add(saved.name);
       continue;
     }
@@ -168,10 +169,7 @@ export const reconcileDisk = ({
     );
     if (editorEntry) {
       const [id, editorFile] = editorEntry;
-      if (
-        !baseline[id] &&
-        sameFile(editorFile, observed)
-      ) {
+      if (!baseline[id] && sameFile(editorFile, observed)) {
         nextBaseline[id] = diskFile(observed);
         nextIdentities[id] = observed.identity;
       } else {
@@ -188,8 +186,9 @@ export const reconcileDisk = ({
     nextIdentities[id] = observed.identity;
   }
 
-  const changed = Object.keys(files).length !==
-    Object.keys(current).length ||
+  const changed =
+    Object.keys(files).length !==
+      Object.keys(current).length ||
     Object.entries(files).some(
       ([id, file]) => !sameFile(file, current[id]),
     );

@@ -212,14 +212,21 @@ export type VisualEditorWidgetMetadata = {
   defaultValue?: string | number | boolean;
 };
 
-export type VisualEditorConfigEntry = VisualEditorWidgetMetadata & (
-  | { type: 'slider'; min: number; max: number; step?: number }
-  | { type: 'checkbox' }
-  | { type: 'textInput' }
-  | { type: 'dropdown'; options: string[] }
-  | { type: 'color' }
-  | { type: 'segmented'; options: string[] }
-);
+export type VisualEditorConfigEntry =
+  VisualEditorWidgetMetadata &
+    (
+      | {
+          type: 'slider';
+          min: number;
+          max: number;
+          step?: number;
+        }
+      | { type: 'checkbox' }
+      | { type: 'textInput' }
+      | { type: 'dropdown'; options: string[] }
+      | { type: 'color' }
+      | { type: 'segmented'; options: string[] }
+    );
 
 // ============================================================================
 // AI Chat Streaming Types

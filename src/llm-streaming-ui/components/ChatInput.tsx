@@ -62,9 +62,13 @@ const ChatInputComponent = ({
 }: ChatInputProps) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [hostVoiceBusy, setHostVoiceBusy] = useState(false);
-  const [hostVoicePreview, setHostVoicePreview] = useState<string | null>(null);
-  const isHostVoiceBusy = !!renderChatVoiceInput && hostVoiceBusy;
-  const canSend = !isHostVoiceBusy && !!aiChatMessage.trim();
+  const [hostVoicePreview, setHostVoicePreview] = useState<
+    string | null
+  >(null);
+  const isHostVoiceBusy =
+    !!renderChatVoiceInput && hostVoiceBusy;
+  const canSend =
+    !isHostVoiceBusy && !!aiChatMessage.trim();
   const displayValue =
     isHostVoiceBusy && hostVoicePreview !== null
       ? hostVoicePreview
@@ -77,13 +81,19 @@ const ChatInputComponent = ({
     },
     [setAIChatMessage, resetMessageHistoryNavigation],
   );
-  const handleHostBusyChange = useCallback((busy: boolean) => {
-    setHostVoiceBusy(busy);
-    if (!busy) setHostVoicePreview(null);
-  }, []);
-  const handleHostPreviewChange = useCallback((preview: string | null) => {
-    setHostVoicePreview(preview);
-  }, []);
+  const handleHostBusyChange = useCallback(
+    (busy: boolean) => {
+      setHostVoiceBusy(busy);
+      if (!busy) setHostVoicePreview(null);
+    },
+    [],
+  );
+  const handleHostPreviewChange = useCallback(
+    (preview: string | null) => {
+      setHostVoicePreview(preview);
+    },
+    [],
+  );
 
   // Speech recognition is created lazily on first toggle, so simply
   // mounting this hook does not touch any browser media APIs.
@@ -166,7 +176,11 @@ const ChatInputComponent = ({
       // Reset history navigation when user starts typing
       resetMessageHistoryNavigation();
     },
-    [setAIChatMessage, resetMessageHistoryNavigation, isHostVoiceBusy],
+    [
+      setAIChatMessage,
+      resetMessageHistoryNavigation,
+      isHostVoiceBusy,
+    ],
   );
 
   return (
@@ -221,7 +235,9 @@ const ChatInputComponent = ({
         />
         <div className="ai-chat-input-footer">
           <span className="ai-chat-hint">
-            {aiChatMessage && !isHostVoiceBusy ? 'Press Enter to send' : ''}
+            {aiChatMessage && !isHostVoiceBusy
+              ? 'Press Enter to send'
+              : ''}
           </span>
           <div style={{ display: 'flex', gap: '8px' }}>
             {renderChatVoiceInput

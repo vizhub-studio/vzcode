@@ -2,7 +2,10 @@ import { randomBytes, timingSafeEqual } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 import type { Express, Request, Response } from 'express';
 
-const constantTimeEqual = (a: string, b: string): boolean => {
+const constantTimeEqual = (
+  a: string,
+  b: string,
+): boolean => {
   const left = Buffer.from(a);
   const right = Buffer.from(b);
   return (
@@ -23,8 +26,10 @@ export const isSameOrigin = (req: IncomingMessage) => {
   try {
     const parsed = new URL(origin);
     return (
-      parsed.protocol === ((req.socket as any).encrypted ? 'https:' : 'http:') &&
-      parsed.host === req.headers.host
+      parsed.protocol ===
+        ((req.socket as any).encrypted
+          ? 'https:'
+          : 'http:') && parsed.host === req.headers.host
     );
   } catch {
     return false;
@@ -44,14 +49,17 @@ const sessionCookie = (
 };
 
 export function createAccessControl(accessToken?: string) {
-  const token = accessToken ?? randomBytes(32).toString('hex');
+  const token =
+    accessToken ?? randomBytes(32).toString('hex');
   if (token.length < 32) {
-    throw new Error('Access token must have at least 32 characters');
+    throw new Error(
+      'Access token must have at least 32 characters',
+    );
   }
   // Cookies are host-scoped, not port-scoped. A random cookie name lets
   // multiple local VZCode instances coexist on different ports.
-  const cookieName = 'vzcode_session_' +
-    randomBytes(8).toString('hex');
+  const cookieName =
+    'vzcode_session_' + randomBytes(8).toString('hex');
   const sessions = new Set<string>();
 
   const hasBearer = (req: IncomingMessage) => {
@@ -65,49 +73,67 @@ export function createAccessControl(accessToken?: string) {
     const session = sessionCookie(req, cookieName);
     return (
       isSameOrigin(req) &&
-      (hasBearer(req) || (session !== '' && sessions.has(session)))
+      (hasBearer(req) ||
+        (session !== '' && sessions.has(session)))
     );
   };
 
   const install = (app: Express) => {
-    app.post('/auth/session', (req: Request, res: Response) => {
-      if (!isSameOrigin(req) || !hasBearer(req)) {
-        res.sendStatus(401);
-        return;
-      }
-      const session = randomBytes(32).toString('hex');
-      sessions.add(session);
-      const secure = req.secure ? '; Secure' : '';
-      res.setHeader(
-        'Set-Cookie',
-        cookieName + '=' + session +
-          '; HttpOnly; SameSite=Strict; Path=/' + secure,
-      );
-      res.sendStatus(204);
-    });
+    app.post(
+      '/auth/session',
+      (req: Request, res: Response) => {
+        if (!isSameOrigin(req) || !hasBearer(req)) {
+          res.sendStatus(401);
+          return;
+        }
+        const session = randomBytes(32).toString('hex');
+        sessions.add(session);
+        const secure = req.secure ? '; Secure' : '';
+        res.setHeader(
+          'Set-Cookie',
+          cookieName +
+            '=' +
+            session +
+            '; HttpOnly; SameSite=Strict; Path=/' +
+            secure,
+        );
+        res.sendStatus(204);
+      },
+    );
 
-    app.get('/auth/status', (req: Request, res: Response) => {
-      res.status(authorized(req) ? 200 : 401).json({
-        authenticated: authorized(req),
-      });
-    });
+    app.get(
+      '/auth/status',
+      (req: Request, res: Response) => {
+        res.status(authorized(req) ? 200 : 401).json({
+          authenticated: authorized(req),
+        });
+      },
+    );
 
-    app.post('/auth/logout', (req: Request, res: Response) => {
-      const session = sessionCookie(req, cookieName);
-      if (!authorized(req)) {
-        res.sendStatus(401);
-        return;
-      }
-      sessions.delete(session);
-      res.setHeader(
-        'Set-Cookie',
-        cookieName + '=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0',
-      );
-      res.sendStatus(204);
-    });
+    app.post(
+      '/auth/logout',
+      (req: Request, res: Response) => {
+        const session = sessionCookie(req, cookieName);
+        if (!authorized(req)) {
+          res.sendStatus(401);
+          return;
+        }
+        sessions.delete(session);
+        res.setHeader(
+          'Set-Cookie',
+          cookieName +
+            '=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0',
+        );
+        res.sendStatus(204);
+      },
+    );
   };
 
-  const requireAuth = (req: Request, res: Response, next: () => void) => {
+  const requireAuth = (
+    req: Request,
+    res: Response,
+    next: () => void,
+  ) => {
     if (!authorized(req)) {
       res.sendStatus(401);
       return;

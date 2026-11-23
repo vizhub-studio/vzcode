@@ -77,19 +77,34 @@ describe('AIChatWrapper wiring', () => {
     const html = render(
       makeContext({
         aiChatMessage: 'Keep this text',
-        renderChatVoiceInput: (props: Record<string, unknown>) => {
+        renderChatVoiceInput: (
+          props: Record<string, unknown>,
+        ) => {
           callbacks.push(props);
-          return <button type="button" aria-label="Host microphone">Mic</button>;
+          return (
+            <button
+              type="button"
+              aria-label="Host microphone"
+            >
+              Mic
+            </button>
+          );
         },
       }),
     );
     expect(html).toContain('Host microphone');
     expect(html).toContain('Keep this text');
     expect(html).not.toContain('Start voice typing');
-    expect(callbacks[0]).toMatchObject({ value: 'Keep this text' });
+    expect(callbacks[0]).toMatchObject({
+      value: 'Keep this text',
+    });
     expect(typeof callbacks[0].onChange).toBe('function');
-    expect(typeof callbacks[0].onBusyChange).toBe('function');
-    expect(typeof callbacks[0].onPreviewChange).toBe('function');
+    expect(typeof callbacks[0].onBusyChange).toBe(
+      'function',
+    );
+    expect(typeof callbacks[0].onPreviewChange).toBe(
+      'function',
+    );
   });
 
   it('prefers the host control over the legacy microphone even if enabled', () => {
@@ -106,7 +121,9 @@ describe('AIChatWrapper wiring', () => {
         resetMessageHistoryNavigation={noop}
         enableVoiceInput
         renderChatVoiceInput={() => (
-          <button type="button" aria-label="App microphone">Speak</button>
+          <button type="button" aria-label="App microphone">
+            Speak
+          </button>
         )}
       />,
     );

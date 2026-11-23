@@ -34,8 +34,14 @@ describe('standalone server security', () => {
     root = path.join(parent, 'workspace');
     fs.mkdirSync(root);
     fs.mkdirSync(path.join(parent, 'outside'));
-    fs.writeFileSync(path.join(root, 'index.js'), 'original');
-    fs.writeFileSync(path.join(parent, 'outside', 'secret.js'), 'secret');
+    fs.writeFileSync(
+      path.join(root, 'index.js'),
+      'original',
+    );
+    fs.writeFileSync(
+      path.join(parent, 'outside', 'secret.js'),
+      'secret',
+    );
     fs.symlinkSync(
       path.join(parent, 'outside'),
       path.join(root, 'linked'),
@@ -84,21 +90,27 @@ describe('standalone server security', () => {
 
   const submitFiles = async (
     doc: any,
-    update: (files: Record<string, any>) => Record<string, any>,
+    update: (
+      files: Record<string, any>,
+    ) => Record<string, any>,
   ) => {
     const next = {
       ...doc.data,
       files: update({ ...doc.data.files }),
     };
     await new Promise<void>((resolve, reject) =>
-      doc.submitOp(diff(doc.data, next), (error: Error | null) =>
-        error ? reject(error) : resolve(),
+      doc.submitOp(
+        diff(doc.data, next),
+        (error: Error | null) =>
+          error ? reject(error) : resolve(),
       ),
     );
   };
 
   it('denies anonymous and cross-origin HTTP requests', async () => {
-    expect((await fetch(base() + '/auth/status')).status).toBe(401);
+    expect(
+      (await fetch(base() + '/auth/status')).status,
+    ).toBe(401);
     expect(
       (
         await fetch(base() + '/auth/session', {
@@ -115,9 +127,7 @@ describe('standalone server security', () => {
       ).status,
     ).toBe(401);
     expect(
-      (
-        await fetch(base() + '/livekit-token')
-      ).status,
+      (await fetch(base() + '/livekit-token')).status,
     ).toBe(401);
 
     const cookie = await session();
@@ -183,7 +193,9 @@ describe('standalone server security', () => {
         const socket = new WebSocket(wsUrl(), { headers });
         socket.once('open', () => {
           socket.terminate();
-          reject(new Error('Unauthorized socket was accepted'));
+          reject(
+            new Error('Unauthorized socket was accepted'),
+          );
         });
         socket.once('error', (error) => {
           if (/401/.test(error.message)) resolve();
@@ -257,7 +269,9 @@ describe('standalone server security', () => {
             attack: { name, text: 'overwritten' },
           })),
         ).rejects.toThrow();
-        expect(server.shareDBDoc.data.files.attack).toBeUndefined();
+        expect(
+          server.shareDBDoc.data.files.attack,
+        ).toBeUndefined();
       }
       expect(
         fs.readFileSync(
@@ -270,7 +284,9 @@ describe('standalone server security', () => {
         ...files,
         safeFile: { name: 'safe.js', text: 'safe' },
       }));
-      expect(server.shareDBDoc.data.files.safeFile.name).toBe('safe.js');
+      expect(
+        server.shareDBDoc.data.files.safeFile.name,
+      ).toBe('safe.js');
       server.save();
       expect(
         fs.readFileSync(path.join(root, 'safe.js'), 'utf8'),

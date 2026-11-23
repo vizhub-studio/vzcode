@@ -113,11 +113,9 @@ describe('three-way filesystem reconciliation', () => {
 
   it('conflicts on local deletion and external modification', () => {
     const baseline = { a: file('index.js', 'one') };
-    const result = reconcile(
-      baseline,
-      {},
-      [file('index.js', 'disk')],
-    );
+    const result = reconcile(baseline, {}, [
+      file('index.js', 'disk'),
+    ]);
     expect(result.files.a).toBeUndefined();
     expect(result.baseline.a.text).toBe('one');
     expect(result.conflicts).toEqual(['index.js']);
@@ -129,7 +127,9 @@ describe('three-way filesystem reconciliation', () => {
       file('index.js', 'one'),
       file('lib/helper.js', 'created'),
     ]);
-    expect(result.files.new1).toEqual(file('lib/helper.js', 'created'));
+    expect(result.files.new1).toEqual(
+      file('lib/helper.js', 'created'),
+    );
     expect(result.baseline.new1).toEqual(result.files.new1);
     expect(result.conflicts).toEqual([]);
   });
@@ -140,9 +140,11 @@ describe('three-way filesystem reconciliation', () => {
       file('src/code.ts', 'code'),
       file('empty/', null),
     ]);
-    expect(Object.values(result.files).map((x) => x.name).sort()).toEqual(
-      ['empty/', 'src/', 'src/code.ts'],
-    );
+    expect(
+      Object.values(result.files)
+        .map((x) => x.name)
+        .sort(),
+    ).toEqual(['empty/', 'src/', 'src/code.ts']);
     expect(result.conflicts).toEqual([]);
   });
 
@@ -190,7 +192,11 @@ describe('three-way filesystem reconciliation', () => {
       baseline,
       [
         { name: 'new/', text: null, identity: '1:1' },
-        { name: 'new/child.js', text: 'hello', identity: '1:2' },
+        {
+          name: 'new/child.js',
+          text: 'hello',
+          identity: '1:2',
+        },
       ],
       { parent: '1:1', child: '1:2' },
     );
@@ -206,7 +212,11 @@ describe('three-way filesystem reconciliation', () => {
       baseline,
       [
         { name: 'first.js', text: 'one', identity: '1:42' },
-        { name: 'second.js', text: 'one', identity: '1:42' },
+        {
+          name: 'second.js',
+          text: 'one',
+          identity: '1:42',
+        },
       ],
       { a: '1:42' },
     );
@@ -220,16 +230,22 @@ describe('three-way filesystem reconciliation', () => {
       image: file('data/pixel.png', 'AAAA'),
     };
     expect(
-      diskMatchesBaseline(baseline, disk(
-        file('data/', null),
-        file('data/pixel.png', 'AAAA'),
-      )),
+      diskMatchesBaseline(
+        baseline,
+        disk(
+          file('data/', null),
+          file('data/pixel.png', 'AAAA'),
+        ),
+      ),
     ).toBe(true);
     expect(
-      diskMatchesBaseline(baseline, disk(
-        file('data/', null),
-        file('data/pixel.png', 'AAAB'),
-      )),
+      diskMatchesBaseline(
+        baseline,
+        disk(
+          file('data/', null),
+          file('data/pixel.png', 'AAAB'),
+        ),
+      ),
     ).toBe(false);
   });
 
@@ -240,16 +256,28 @@ describe('three-way filesystem reconciliation', () => {
     try {
       fs.mkdirSync(path.join(root, 'sub'));
       fs.mkdirSync(path.join(root, 'node_modules'));
-      fs.writeFileSync(path.join(root, 'sub', 'index.js'), 'hello');
-      fs.writeFileSync(path.join(root, 'node_modules', 'hidden.js'), 'no');
+      fs.writeFileSync(
+        path.join(root, 'sub', 'index.js'),
+        'hello',
+      );
+      fs.writeFileSync(
+        path.join(root, 'node_modules', 'hidden.js'),
+        'no',
+      );
       fs.writeFileSync(
         path.join(root, 'sub', 'pixel.png'),
         Buffer.from([0, 1, 2, 255]),
       );
       const scanned = readWorkspaceDisk(root);
-      expect(scanned.get('sub/index.js')?.text).toBe('hello');
-      expect(scanned.get('sub/pixel.png')?.text).toBe('AAEC/w==');
-      expect(scanned.has('node_modules/hidden.js')).toBe(false);
+      expect(scanned.get('sub/index.js')?.text).toBe(
+        'hello',
+      );
+      expect(scanned.get('sub/pixel.png')?.text).toBe(
+        'AAEC/w==',
+      );
+      expect(scanned.has('node_modules/hidden.js')).toBe(
+        false,
+      );
       expect(scanned.has('sub/')).toBe(true);
     } finally {
       fs.rmSync(root, { recursive: true, force: true });

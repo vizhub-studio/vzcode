@@ -31,11 +31,7 @@
       "type": "segmented",
       "label": "Mark shape",
       "property": "markShape",
-      "options": [
-        "Circle",
-        "Square",
-        "Diamond"
-      ],
+      "options": ["Circle", "Square", "Diamond"],
       "section": "Marks",
       "defaultValue": "Circle"
     }

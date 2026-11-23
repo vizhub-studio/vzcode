@@ -9,7 +9,9 @@ import { createVZCodeServer } from './server/createServer.js';
 
 const DEFAULT_PORT = 3030;
 const HOST = '127.0.0.1';
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(
+  fileURLToPath(import.meta.url),
+);
 
 type CLIOptions = {
   directory: string;
@@ -49,7 +51,9 @@ function parsePort(value: string): number {
   }
   const port = Number(value);
   if (!Number.isSafeInteger(port) || port > 65535) {
-    throw new Error('Port must be between 0 and 65535: ' + value);
+    throw new Error(
+      'Port must be between 0 and 65535: ' + value,
+    );
   }
   return port;
 }
@@ -97,7 +101,9 @@ function parseOptions(args: string[]): CLIOptions {
       throw new Error('Unknown option: ' + arg);
     }
     if (hasDirectory) {
-      throw new Error('Provide at most one workspace directory');
+      throw new Error(
+        'Provide at most one workspace directory',
+      );
     }
     options.directory = arg;
     hasDirectory = true;
@@ -137,7 +143,9 @@ async function main(): Promise<void> {
     !fs.existsSync(directory) ||
     !fs.statSync(directory).isDirectory()
   ) {
-    throw new Error('Workspace is not a directory: ' + directory);
+    throw new Error(
+      'Workspace is not a directory: ' + directory,
+    );
   }
 
   const desktopBinary = options.desktop
@@ -163,9 +171,12 @@ async function main(): Promise<void> {
 
   const url = 'http://' + HOST + ':' + actualPort;
   console.log('Workspace: ' + directory);
-  const accessUrl = url + '/#vzcode-token=' + server.accessToken;
+  const accessUrl =
+    url + '/#vzcode-token=' + server.accessToken;
   console.log('Editor is live at ' + accessUrl);
-  console.log('Keep this private link secret; it grants workspace editing access.');
+  console.log(
+    'Keep this private link secret; it grants workspace editing access.',
+  );
   console.log('Press Ctrl+C to stop VZCode.');
 
   let closing = false;
@@ -188,7 +199,10 @@ async function main(): Promise<void> {
       stdio: 'inherit',
     });
     child.once('error', (error) => {
-      console.error('Unable to launch the desktop app:', error);
+      console.error(
+        'Unable to launch the desktop app:',
+        error,
+      );
       process.exitCode = 1;
       void shutdown();
     });
@@ -198,7 +212,8 @@ async function main(): Promise<void> {
       await open(accessUrl);
     } catch (error) {
       console.warn(
-        'Could not open a browser automatically. Visit ' + url,
+        'Could not open a browser automatically. Visit ' +
+          url,
         error,
       );
     }

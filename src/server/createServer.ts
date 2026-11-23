@@ -145,11 +145,15 @@ export const createVZCodeServer = (
   // operation payload. A rejected submission must never reach autosave.
   shareDBBackend.use('commit', (context: any, next) => {
     try {
-      if (context.collection !== 'documents' ||
-          context.id !== '1') {
+      if (
+        context.collection !== 'documents' ||
+        context.id !== '1'
+      ) {
         throw new Error('Unauthorized ShareDB document');
       }
-      workspace.validateFiles(context.snapshot?.data?.files);
+      workspace.validateFiles(
+        context.snapshot?.data?.files,
+      );
       next();
     } catch (error: any) {
       next(error);
@@ -161,12 +165,16 @@ export const createVZCodeServer = (
   httpServer.on('upgrade', (req, socket, head) => {
     const pathname = (req.url || '').split('?')[0];
     if (pathname !== '/ws') {
-      socket.write('HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n');
+      socket.write(
+        'HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n',
+      );
       socket.destroy();
       return;
     }
     if (!access.authorized(req)) {
-      socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+      socket.write(
+        'HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n',
+      );
       socket.destroy();
       return;
     }
@@ -208,13 +216,15 @@ export const createVZCodeServer = (
   );
 
   // The state of the document when files were last auto-saved.
-  let previousDocument = {
+  let previousDocument: { files: WorkspaceFiles } = {
     ...initialDocument,
     files: copyFiles(initialDocument.files),
   };
   let identities: Record<string, string | undefined> = {};
   const initialDisk = readWorkspaceDisk(workspace.root);
-  for (const [id, file] of Object.entries(previousDocument.files)) {
+  for (const [id, file] of Object.entries(
+    previousDocument.files,
+  )) {
     identities[id] = initialDisk.get(file.name)?.identity;
   }
   let conflictNames: string[] = [];
@@ -222,11 +232,14 @@ export const createVZCodeServer = (
   let closing = false;
   let watcher: fs.FSWatcher | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
-  let changeTimer: ReturnType<typeof setTimeout> | undefined;
+  let changeTimer:
+    | ReturnType<typeof setTimeout>
+    | undefined;
 
   // Saves the files that changed.
   const save = () => {
-    const currentDocument = shareDBDoc.data;
+    const currentDocument: { files: WorkspaceFiles } =
+      shareDBDoc.data;
     if (conflictNames.length) {
       throw new Error(
         'Workspace conflicts require resolution: ' +
@@ -243,9 +256,14 @@ export const createVZCodeServer = (
       )
     ) {
       void syncFromDisk().catch((error) =>
-        console.error('VZCode disk reconciliation failed:', error),
+        console.error(
+          'VZCode disk reconciliation failed:',
+          error,
+        ),
       );
-      throw new Error('External filesystem change detected; save deferred');
+      throw new Error(
+        'External filesystem change detected; save deferred',
+      );
     }
     // Fail closed before the first write in this batch. Repeat checks
     // at each filesystem call to reject newly created symlinks.
@@ -268,15 +286,20 @@ export const createVZCodeServer = (
     // Create destination directories first, including renamed folders.
     for (const [, file] of newEntries
       .filter(([, file]) => isDirectory(file.name))
-      .sort((a, b) => depth(a[1].name) - depth(b[1].name))) {
+      .sort(
+        (a, b) => depth(a[1].name) - depth(b[1].name),
+      )) {
       if (!fs.existsSync(resolvePath(file.name))) {
-        fs.mkdirSync(resolvePath(file.name), { recursive: true });
+        fs.mkdirSync(resolvePath(file.name), {
+          recursive: true,
+        });
       }
     }
 
     // Delete removed files before moving another file into their path.
-    for (const [, file] of removed
-      .filter(([, file]) => !isDirectory(file.name))) {
+    for (const [, file] of removed.filter(
+      ([, file]) => !isDirectory(file.name),
+    )) {
       fs.unlinkSync(resolvePath(file.name));
     }
 
@@ -305,10 +328,7 @@ export const createVZCodeServer = (
     // Apply edited contents and new files, including binary images.
     for (const [id, current] of [...changed, ...created]) {
       if (isDirectory(current.name)) continue;
-      if (
-        !before[id] ||
-        before[id].text !== current.text
-      ) {
+      if (!before[id] || before[id].text !== current.text) {
         const parent = path.dirname(current.name);
         if (parent !== '.') {
           fs.mkdirSync(resolvePath(parent), {
@@ -367,7 +387,10 @@ export const createVZCodeServer = (
       workspaceConflicts: conflicts,
     };
     const operation = diff(current, next);
-    if (!operation || (Array.isArray(operation) && !operation.length)) {
+    if (
+      !operation ||
+      (Array.isArray(operation) && !operation.length)
+    ) {
       return Promise.resolve();
     }
     return new Promise<void>((resolve, reject) => {
@@ -394,7 +417,10 @@ export const createVZCodeServer = (
       ) {
         identities = Object.fromEntries(
           Object.entries(previousDocument.files).map(
-            ([id, file]) => [id, disk.get(file.name)?.identity],
+            ([id, file]) => [
+              id,
+              disk.get(file.name)?.identity,
+            ],
           ),
         );
         return;
@@ -415,8 +441,11 @@ export const createVZCodeServer = (
 
       // A local edit may have been pending while an unrelated external
       // change was imported. Resume its save after the OT is committed.
-      if (autoSave && !conflictNames.length &&
-          !diskMatchesBaseline(plan.files, disk)) {
+      if (
+        autoSave &&
+        !conflictNames.length &&
+        !diskMatchesBaseline(plan.files, disk)
+      ) {
         debounceSave();
       }
     };
@@ -432,16 +461,20 @@ export const createVZCodeServer = (
   ): Promise<void> => {
     await syncFromDisk();
     if (!conflictNames.includes(name)) {
-      throw new Error('Unknown or already resolved conflict');
+      throw new Error(
+        'Unknown or already resolved conflict',
+      );
     }
     const disk = readWorkspaceDisk(workspace.root);
     const nextFiles = copyFiles(shareDBDoc.data.files);
     const nextBaseline = copyFiles(previousDocument.files);
-    const id = Object.keys(nextBaseline).find(
-      (key) => nextBaseline[key].name === name,
-    ) ?? Object.keys(nextFiles).find(
-      (key) => nextFiles[key].name === name,
-    );
+    const id =
+      Object.keys(nextBaseline).find(
+        (key) => nextBaseline[key].name === name,
+      ) ??
+      Object.keys(nextFiles).find(
+        (key) => nextFiles[key].name === name,
+      );
     if (!id) throw new Error('Conflict entry disappeared');
 
     let observed = disk.get(name);
@@ -478,9 +511,14 @@ export const createVZCodeServer = (
     );
     // All other tracked files must still match disk before allowing an
     // editor-wins write. A new disk change requires another reconciliation.
-    if (choice === 'editor' && !remaining.length &&
-        !diskMatchesBaseline(nextBaseline, disk)) {
-      throw new Error('Disk changed again; retry after reconciling');
+    if (
+      choice === 'editor' &&
+      !remaining.length &&
+      !diskMatchesBaseline(nextBaseline, disk)
+    ) {
+      throw new Error(
+        'Disk changed again; retry after reconciling',
+      );
     }
     await publishDiskUpdate(nextFiles, remaining);
     previousDocument = {
@@ -571,9 +609,15 @@ export const createVZCodeServer = (
             // Root watcher gives low-latency notifications. The periodic
             // recursive scan handles nested files and lost/coalesced events.
             try {
-              watcher = fs.watch(workspace.root, scheduleSync);
+              watcher = fs.watch(
+                workspace.root,
+                scheduleSync,
+              );
               watcher.on('error', (error) => {
-                console.error('VZCode watcher error:', error);
+                console.error(
+                  'VZCode watcher error:',
+                  error,
+                );
               });
             } catch (error) {
               // Some filesystems do not offer watch notifications.
@@ -582,7 +626,10 @@ export const createVZCodeServer = (
                 error,
               );
             }
-            interval = setInterval(scheduleSync, scanIntervalMS);
+            interval = setInterval(
+              scheduleSync,
+              scanIntervalMS,
+            );
             interval.unref();
           }
           resolve();
@@ -598,9 +645,13 @@ export const createVZCodeServer = (
     bodyParser.json(),
     async (req, res) => {
       const { name, choice } = req.body || {};
-      if (typeof name !== 'string' ||
-          (choice !== 'disk' && choice !== 'editor')) {
-        res.status(400).json({ error: 'Invalid conflict resolution' });
+      if (
+        typeof name !== 'string' ||
+        (choice !== 'disk' && choice !== 'editor')
+      ) {
+        res
+          .status(400)
+          .json({ error: 'Invalid conflict resolution' });
         return;
       }
       try {
@@ -640,10 +691,14 @@ export const createVZCodeServer = (
   );
 
   // Livekit Token Generator
-  app.get('/livekit-token', access.requireAuth, async (req, res) => {
-    const { room, username } = req.query;
-    res.send(await createToken(room, username));
-  });
+  app.get(
+    '/livekit-token',
+    access.requireAuth,
+    async (req, res) => {
+      const { room, username } = req.query;
+      res.send(await createToken(room, username));
+    },
+  );
 
   const listen = (
     port: number,

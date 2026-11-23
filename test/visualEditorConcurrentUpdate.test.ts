@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { updateVisualEditorProperty } from '../src/client/VZSidebar/VisualEditor/updateConfig';
+import { updateVisualEditorProperty, updateVisualEditorProperties } from '../src/client/VZSidebar/VisualEditor/updateConfig';
 
 describe('visual editor ShareDB updates', () => {
   const doc = {
@@ -35,6 +35,27 @@ describe('visual editor ShareDB updates', () => {
     });
     expect(next.files.code.text).toBe('renderChart()');
   });
+  it('batches multiple property edits while retaining the latest siblings', () => {
+    const next = updateVisualEditorProperties(doc, 'config', {
+      pointRadius: 7,
+      'margin.left': 25,
+    });
+    expect(JSON.parse(next.files.config.text)).toEqual({
+      pointRadius: 7, margin: { left: 25, right: 40 },
+    });
+    expect(next.files.code).toEqual(doc.files.code);
+    expect(updateVisualEditorProperties(next, 'config', {
+      pointRadius: 7,
+    })).toBe(next);
+  });
+
+  it('ignores stale type changes rather than corrupting config', () => {
+    expect(updateVisualEditorProperties(doc, 'config', {
+      pointRadius: 'bad',
+      'margin.missing': 50,
+    })).toBe(doc);
+  });
+
   it('ignores vanished, stale, unsafe or malformed config documents', () => {
     expect(
       updateVisualEditorProperty(

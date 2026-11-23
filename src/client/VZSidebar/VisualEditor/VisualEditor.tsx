@@ -1,8 +1,8 @@
-/** Live ShareDB adapter around the reusable VZCode visual controls. */
-import React, { useContext } from 'react';
+/** Live ShareDB adapter around the reusable visual properties controls. */
+import React, { useCallback, useContext } from 'react';
 import { VZCodeContext } from '../../VZCodeContext';
 import { CONFIG_FILE_NAME } from './constants';
-import { updateVisualEditorProperty } from './updateConfig';
+import { updateVisualEditorProperties, type WidgetValue } from './updateConfig';
 import { VisualEditorControls } from './VisualEditorControls';
 
 export const VisualEditor = () => {
@@ -11,13 +11,15 @@ export const VisualEditor = () => {
     ? Object.keys(files).find(id => files[id].name === CONFIG_FILE_NAME) ?? null
     : null;
   const configText = configId && files ? files[configId]?.text ?? null : null;
+  const onChangeBatch = useCallback((changes: Record<string, WidgetValue>) => {
+    submitOperation(document =>
+      updateVisualEditorProperties(document, configId, changes)
+    );
+  }, [configId, submitOperation]);
   return <VisualEditorControls
     configText={configText}
     renderEmptyState={renderVisualEditorEmptyState}
-    onChange={(property, value) => {
-      submitOperation(document =>
-        updateVisualEditorProperty(document, configId, property, value)
-      );
-    }}
+    onChange={(property, value) => onChangeBatch({ [property]: value })}
+    onChangeBatch={onChangeBatch}
   />;
 };

@@ -237,6 +237,48 @@ test.describe('VZCode browser end-to-end', () => {
       .toContain('pointRadius');
   });
 
+  test('visual color picker writes a valid color to config', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await page.locator('#visual-editor-icon').click();
+    await page.getByRole('button', { name: 'Choose Mark color color' }).click();
+    const input = page.getByRole('textbox', { name: 'Mark color hexadecimal color' });
+    await input.fill('#123456');
+    await input.press('Enter');
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markColor;
+    }, { timeout: 20_000 }).toBe('#123456');
+  });
+
+  test('segmented control changes configuration', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await page.locator('#visual-editor-icon').click();
+    await page.getByRole('group', { name: 'Mark shape' }).getByRole('button', { name: 'Square' }).click();
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markShape;
+    }, { timeout: 20_000 }).toBe('Square');
+  });
+
+  test('grouped visual properties can reset an edited value', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await page.locator('#visual-editor-icon').click();
+    const shape = page.getByRole('group', { name: 'Mark shape' });
+    await shape.getByRole('button', { name: 'Square' }).click();
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markShape;
+    }, { timeout: 20_000 }).toBe('Square');
+    await page.getByRole('button', { name: 'Reset Mark shape to default' }).click();
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markShape;
+    }, { timeout: 20_000 }).toBe('Circle');
+  });
+
   test('creates, renames, and deletes a file', async ({
     page,
   }) => {

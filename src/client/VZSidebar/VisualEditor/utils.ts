@@ -144,7 +144,7 @@ export const getEditablePropertyValue = (
 
 // Read widget values using exactly the same safe path semantics as writes.
 export const getNestedProperty = <T = unknown>(
-  obj: Record<string, unknown>,
+  obj: unknown,
   path: string,
 ): T | undefined => {
   const { found, value } = getEditablePropertyValue(

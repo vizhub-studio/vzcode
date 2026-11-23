@@ -25,7 +25,9 @@ const waitFor = async (
   const deadline = Date.now() + timeoutMS;
   while (!predicate()) {
     if (Date.now() >= deadline) {
-      throw new Error('Timed out waiting for filesystem synchronization');
+      throw new Error(
+        'Timed out waiting for filesystem synchronization',
+      );
     }
     await new Promise((resolve) => setTimeout(resolve, 25));
   }
@@ -47,14 +49,17 @@ describe('standalone filesystem synchronization', () => {
     );
   const serverId = (name: string): string | undefined =>
     Object.keys(server.shareDBDoc.data.files).find(
-      (id) => server.shareDBDoc.data.files[id].name === name,
+      (id) =>
+        server.shareDBDoc.data.files[id].name === name,
     );
 
-  const start = async (opts: {
-    autoSave?: boolean;
-    watchFiles?: boolean;
-    scanIntervalMS?: number;
-  } = {}) => {
+  const start = async (
+    opts: {
+      autoSave?: boolean;
+      watchFiles?: boolean;
+      scanIntervalMS?: number;
+    } = {},
+  ) => {
     server = createVZCodeServer({
       cwd: root,
       autoSave: opts.autoSave ?? false,
@@ -82,7 +87,9 @@ describe('standalone filesystem synchronization', () => {
   };
 
   const edit = async (
-    mutate: (files: Record<string, any>) => Record<string, any>,
+    mutate: (
+      files: Record<string, any>,
+    ) => Record<string, any>,
   ) => {
     const before = doc.data;
     const next = {
@@ -90,8 +97,10 @@ describe('standalone filesystem synchronization', () => {
       files: mutate({ ...before.files }),
     };
     await new Promise<void>((resolve, reject) =>
-      doc.submitOp(diff(before, next), (error: Error | null) =>
-        error ? reject(error) : resolve(),
+      doc.submitOp(
+        diff(before, next),
+        (error: Error | null) =>
+          error ? reject(error) : resolve(),
       ),
     );
   };
@@ -119,7 +128,9 @@ describe('standalone filesystem synchronization', () => {
     const id = idByName('index.js');
     fs.writeFileSync(filePath('index.js'), 'external');
     await server.syncFromDisk();
-    await waitFor(() => doc.data.files[id!]?.text === 'external');
+    await waitFor(
+      () => doc.data.files[id!]?.text === 'external',
+    );
     expect(idByName('index.js')).toBe(id);
     expect(read('index.js')).toBe('external');
     server.save();
@@ -165,7 +176,9 @@ describe('standalone filesystem synchronization', () => {
       doc.data.files[idByName('pixel.png')!].text,
     ).toBe(bytes.toString('base64'));
     server.save();
-    expect(fs.readFileSync(filePath('pixel.png'))).toEqual(bytes);
+    expect(fs.readFileSync(filePath('pixel.png'))).toEqual(
+      bytes,
+    );
   });
 
   it('does not follow symlinks or import ignored directories', async () => {
@@ -174,16 +187,24 @@ describe('standalone filesystem synchronization', () => {
       path.join(os.tmpdir(), 'vzcode-sync-outside-'),
     );
     try {
-      fs.writeFileSync(path.join(outside, 'secret.js'), 'secret');
+      fs.writeFileSync(
+        path.join(outside, 'secret.js'),
+        'secret',
+      );
       fs.symlinkSync(
         path.join(outside, 'secret.js'),
         filePath('secret-link.js'),
       );
       fs.mkdirSync(filePath('node_modules'));
-      fs.writeFileSync(filePath('node_modules/hidden.js'), 'hidden');
+      fs.writeFileSync(
+        filePath('node_modules/hidden.js'),
+        'hidden',
+      );
       await server.syncFromDisk();
       expect(idByName('secret-link.js')).toBeUndefined();
-      expect(idByName('node_modules/hidden.js')).toBeUndefined();
+      expect(
+        idByName('node_modules/hidden.js'),
+      ).toBeUndefined();
     } finally {
       fs.rmSync(outside, { recursive: true, force: true });
     }
@@ -197,10 +218,14 @@ describe('standalone filesystem synchronization', () => {
       [id]: { ...files[id], text: 'editor' },
     }));
     fs.writeFileSync(filePath('index.js'), 'external');
-    expect(() => server.save()).toThrow(/External filesystem change/);
+    expect(() => server.save()).toThrow(
+      /External filesystem change/,
+    );
     await server.syncFromDisk();
-    await waitFor(
-      () => (doc.data.workspaceConflicts || []).includes('index.js'),
+    await waitFor(() =>
+      (doc.data.workspaceConflicts || []).includes(
+        'index.js',
+      ),
     );
     expect(read('index.js')).toBe('external');
     expect(doc.data.files[id].text).toBe('editor');
@@ -217,8 +242,13 @@ describe('standalone filesystem synchronization', () => {
     fs.writeFileSync(filePath('index.js'), 'external');
     await server.syncFromDisk();
     await server.resolveConflict('index.js', 'disk');
-    await waitFor(() => doc.data.files[id].text === 'external');
-    await waitFor(() => (doc.data.workspaceConflicts || []).length === 0);
+    await waitFor(
+      () => doc.data.files[id].text === 'external',
+    );
+    await waitFor(
+      () =>
+        (doc.data.workspaceConflicts || []).length === 0,
+    );
     expect(doc.data.workspaceConflicts).toEqual([]);
     server.save();
     expect(read('index.js')).toBe('external');
@@ -248,7 +278,9 @@ describe('standalone filesystem synchronization', () => {
       [id]: { ...files[id], text: 'editor' },
     }));
     fs.writeFileSync(filePath('other.css'), 'external css');
-    expect(() => server.save()).toThrow(/External filesystem change/);
+    expect(() => server.save()).toThrow(
+      /External filesystem change/,
+    );
     await server.syncFromDisk();
     await waitFor(
       () => doc.data.files[other].text === 'external css',
@@ -283,9 +315,15 @@ describe('standalone filesystem synchronization', () => {
     }));
     fs.unlinkSync(filePath('index.js'));
     await server.syncFromDisk();
-    await waitFor(() => (doc.data.workspaceConflicts || []).includes('index.js'));
+    await waitFor(() =>
+      (doc.data.workspaceConflicts || []).includes(
+        'index.js',
+      ),
+    );
     expect(doc.data.files[id].text).toBe('editor');
-    expect(doc.data.workspaceConflicts).toContain('index.js');
+    expect(doc.data.workspaceConflicts).toContain(
+      'index.js',
+    );
     await server.resolveConflict('index.js', 'editor');
     server.save();
     expect(read('index.js')).toBe('editor');
@@ -309,7 +347,9 @@ describe('standalone filesystem synchronization', () => {
   it('exposes conflict resolution only to authenticated callers', async () => {
     await start();
     const response = await fetch(
-      'http://127.0.0.1:' + port + '/workspace-conflicts/resolve',
+      'http://127.0.0.1:' +
+        port +
+        '/workspace-conflicts/resolve',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -329,46 +369,65 @@ describe('standalone filesystem synchronization', () => {
       ...files,
       [id]: { ...files[id], text: 'editor' },
     }));
-    fs.writeFileSync(filePath('index.js'), 'from another editor');
+    fs.writeFileSync(
+      filePath('index.js'),
+      'from another editor',
+    );
     await server.syncFromDisk();
 
     const unauthorized = await fetch(
-      'http://127.0.0.1:' + port + '/workspace-conflicts/resolve',
+      'http://127.0.0.1:' +
+        port +
+        '/workspace-conflicts/resolve',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'index.js', choice: 'disk' }),
+        body: JSON.stringify({
+          name: 'index.js',
+          choice: 'disk',
+        }),
       },
     );
     expect(unauthorized.status).toBe(401);
 
     const invalid = await fetch(
-      'http://127.0.0.1:' + port + '/workspace-conflicts/resolve',
+      'http://127.0.0.1:' +
+        port +
+        '/workspace-conflicts/resolve',
       {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + server.accessToken,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: 'index.js', choice: 'invalid' }),
+        body: JSON.stringify({
+          name: 'index.js',
+          choice: 'invalid',
+        }),
       },
     );
     expect(invalid.status).toBe(400);
 
     const authorized = await fetch(
-      'http://127.0.0.1:' + port + '/workspace-conflicts/resolve',
+      'http://127.0.0.1:' +
+        port +
+        '/workspace-conflicts/resolve',
       {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + server.accessToken,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: 'index.js', choice: 'disk' }),
+        body: JSON.stringify({
+          name: 'index.js',
+          choice: 'disk',
+        }),
       },
     );
     expect(authorized.status).toBe(204);
     await waitFor(
-      () => doc.data.files[id].text === 'from another editor',
+      () =>
+        doc.data.files[id].text === 'from another editor',
     );
     expect(doc.data.workspaceConflicts).toEqual([]);
     expect(read('index.js')).toBe('from another editor');
@@ -386,7 +445,10 @@ describe('standalone filesystem synchronization', () => {
     fs.writeFileSync(filePath('index.js'), 'disk JS');
     fs.writeFileSync(filePath('other.css'), 'disk CSS');
     await server.syncFromDisk();
-    await waitFor(() => (doc.data.workspaceConflicts || []).length === 2);
+    await waitFor(
+      () =>
+        (doc.data.workspaceConflicts || []).length === 2,
+    );
     expect(doc.data.workspaceConflicts).toEqual([
       'index.js',
       'other.css',
@@ -403,9 +465,14 @@ describe('standalone filesystem synchronization', () => {
 
   it('periodically detects changes in nested directories', async () => {
     await start({ watchFiles: true, scanIntervalMS: 80 });
-    fs.writeFileSync(filePath('src/nested.js'), 'from disk');
+    fs.writeFileSync(
+      filePath('src/nested.js'),
+      'from disk',
+    );
     const id = idByName('src/nested.js')!;
-    await waitFor(() => doc.data.files[id]?.text === 'from disk');
+    await waitFor(
+      () => doc.data.files[id]?.text === 'from disk',
+    );
     expect(read('src/nested.js')).toBe('from disk');
   });
 
@@ -420,9 +487,13 @@ describe('standalone filesystem synchronization', () => {
       ...files,
       [id]: { ...files[id], text: 'editor saved' },
     }));
-    await waitFor(() => read('index.js') === 'editor saved');
+    await waitFor(
+      () => read('index.js') === 'editor saved',
+    );
     await server.syncFromDisk();
-    await new Promise((resolve) => setTimeout(resolve, 350));
+    await new Promise((resolve) =>
+      setTimeout(resolve, 350),
+    );
     expect(read('index.js')).toBe('editor saved');
     expect(doc.data.files[id].text).toBe('editor saved');
     expect(doc.data.workspaceConflicts).toEqual([]);

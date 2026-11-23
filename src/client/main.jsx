@@ -11,12 +11,17 @@ window.addEventListener('error', (event) => {
       'Trying to find position for a DOM position outside of the document',
     )
   ) {
-    console.log('Suppressed CodeMirror DOM position error:', event.error);
+    console.log(
+      'Suppressed CodeMirror DOM position error:',
+      event.error,
+    );
     return true;
   }
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(
+  document.getElementById('root'),
+);
 
 async function start() {
   // The capability token is in the URL fragment, never sent in HTTP

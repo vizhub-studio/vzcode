@@ -17,6 +17,25 @@ const walk = (folder: string): string[] =>
       : [path];
   });
 
+// Extracts a single SCSS rule block (including nested rules) so
+// assertions are scoped to the intended selector.
+const ruleAt = (
+  source: string,
+  selector: string,
+): string => {
+  const start = source.indexOf(selector);
+  if (start === -1) return '';
+  let depth = 0;
+  for (let i = start; i < source.length; i++) {
+    if (source[i] === '{') depth++;
+    else if (source[i] === '}') {
+      depth--;
+      if (depth === 0) return source.slice(start, i + 1);
+    }
+  }
+  return source.slice(start);
+};
+
 describe('framework-independent VZCode styles', () => {
   it('does not import Bootstrap, Bootstrap icons, or vizhub-ui', () => {
     const offenders = walk('src')
@@ -89,7 +108,9 @@ describe('framework-independent VZCode styles', () => {
     expect(css).toContain('gap: 10px');
     expect(css).toContain('&:focus-visible');
     expect(css).toContain('&.delete-all-button');
-    expect(css).not.toContain('opacity: 0.7');
+    expect(
+      ruleAt(css, '&.delete-all-button'),
+    ).not.toContain('opacity');
     expect(component).toContain('Delete all files');
     expect(component).toContain(
       'onClick={handleDeleteAllClick}',

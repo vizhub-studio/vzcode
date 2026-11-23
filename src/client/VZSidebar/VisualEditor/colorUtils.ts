@@ -41,7 +41,9 @@ export function hclChannelsToHex(
 /** Normalize any opaque d3-supported CSS color to a hex string.
  * Reject invalid/transparent values rather than writing an unusable config.
  */
-export function normalizeOpaqueColorToHex(value: string): string | null {
+export function normalizeOpaqueColorToHex(
+  value: string,
+): string | null {
   const parsed = color(value);
   return parsed && parsed.opacity === 1
     ? parsed.formatHex().toLowerCase()

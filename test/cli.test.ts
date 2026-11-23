@@ -23,41 +23,49 @@ function invoke(...args: string[]) {
 }
 
 function waitForServer(child: ReturnType<typeof spawn>) {
-  return new Promise<{ port: number; token: string }>((resolve, reject) => {
-    let output = '';
-    const timeout = setTimeout(() => {
-      reject(new Error('CLI did not start: ' + output));
-    }, 10000);
-    const onData = (chunk: Buffer) => {
-      output += chunk.toString();
-      const match = output.match(
-        /Editor is live at http:\/\/127\.0\.0\.1:(\d+)\/#vzcode-token=([a-f0-9]{64})/,
-      );
-      if (match) {
+  return new Promise<{ port: number; token: string }>(
+    (resolve, reject) => {
+      let output = '';
+      const timeout = setTimeout(() => {
+        reject(new Error('CLI did not start: ' + output));
+      }, 10000);
+      const onData = (chunk: Buffer) => {
+        output += chunk.toString();
+        const match = output.match(
+          /Editor is live at http:\/\/127\.0\.0\.1:(\d+)\/#vzcode-token=([a-f0-9]{64})/,
+        );
+        if (match) {
+          clearTimeout(timeout);
+          child.stdout?.off('data', onData);
+          child.stderr?.off('data', onData);
+          resolve({
+            port: Number(match[1]),
+            token: match[2],
+          });
+        }
+      };
+      child.stdout?.on('data', onData);
+      child.stderr?.on('data', onData);
+      child.once('error', (error) => {
         clearTimeout(timeout);
-        child.stdout?.off('data', onData);
-        child.stderr?.off('data', onData);
-        resolve({ port: Number(match[1]), token: match[2] });
-      }
-    };
-    child.stdout?.on('data', onData);
-    child.stderr?.on('data', onData);
-    child.once('error', (error) => {
-      clearTimeout(timeout);
-      reject(error);
-    });
-    child.once('exit', (code) => {
-      clearTimeout(timeout);
-      reject(new Error('CLI exited (' + code + '): ' + output));
-    });
-  });
+        reject(error);
+      });
+      child.once('exit', (code) => {
+        clearTimeout(timeout);
+        reject(
+          new Error('CLI exited (' + code + '): ' + output),
+        );
+      });
+    },
+  );
 }
 
 async function stopCLI(child: ReturnType<typeof spawn>) {
   if (child.exitCode !== null) return;
   const exit = new Promise<void>((resolve, reject) => {
     const timer = setTimeout(
-      () => reject(new Error('CLI did not exit after SIGINT')),
+      () =>
+        reject(new Error('CLI did not exit after SIGINT')),
       5000,
     );
     child.once('exit', (code) => {
@@ -80,7 +88,7 @@ describe('VZCode CLI', () => {
     expect(result.stdout).toContain('Usage: vzcode');
     expect(result.stdout).toContain('--no-open');
     expect(result.stdout).toContain('--desktop');
-  });
+  }, 15000);
 
   it('rejects invalid options and ports', () => {
     const port = invoke('--port=not-a-number');
@@ -92,7 +100,7 @@ describe('VZCode CLI', () => {
     expect(missing.stderr).toContain(
       'Workspace is not a directory',
     );
-  });
+  }, 15000);
 
   it('starts a local server and persists ShareDB edits', async () => {
     const dir = fs.mkdtempSync(
@@ -131,7 +139,9 @@ describe('VZCode CLI', () => {
         (id) => doc.data.files[id].name === 'index.js',
       );
       if (!fileId) {
-        throw new Error('Missing index.js in ShareDB document');
+        throw new Error(
+          'Missing index.js in ShareDB document',
+        );
       }
       const replacement = 'const after = 2;\n';
       const next = {

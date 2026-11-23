@@ -1,5 +1,11 @@
-import type { VizContent, VizFileId } from '@vizhub/viz-types';
-import { setNestedProperty, getEditablePropertyValue } from './utils';
+import type {
+  VizContent,
+  VizFileId,
+} from '@vizhub/viz-types';
+import {
+  setNestedProperty,
+  getEditablePropertyValue,
+} from './utils';
 
 export type WidgetValue = string | number | boolean;
 
@@ -17,16 +23,36 @@ export function updateVisualEditorProperties(
   const original = document.files[configFileId];
   if (!original) return document;
   let data: unknown;
-  try { data = JSON.parse(original.text); } catch { return document; }
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return document;
+  try {
+    data = JSON.parse(original.text);
+  } catch {
+    return document;
+  }
+  if (
+    !data ||
+    typeof data !== 'object' ||
+    Array.isArray(data)
+  )
+    return document;
 
   let next = data as Record<string, unknown>;
   let changed = false;
   for (const [property, value] of Object.entries(changes)) {
-    if (typeof value === 'number' && !Number.isFinite(value)) continue;
-    const existing = getEditablePropertyValue(next, property);
-    if (!existing.found || typeof existing.value !== typeof value ||
-      Object.is(existing.value, value)) continue;
+    if (
+      typeof value === 'number' &&
+      !Number.isFinite(value)
+    )
+      continue;
+    const existing = getEditablePropertyValue(
+      next,
+      property,
+    );
+    if (
+      !existing.found ||
+      typeof existing.value !== typeof value ||
+      Object.is(existing.value, value)
+    )
+      continue;
     try {
       next = setNestedProperty(next, property, value);
       changed = true;
@@ -54,5 +80,9 @@ export function updateVisualEditorProperty(
   property: string,
   value: WidgetValue,
 ): VizContent {
-  return updateVisualEditorProperties(document, configFileId, { [property]: value });
+  return updateVisualEditorProperties(
+    document,
+    configFileId,
+    { [property]: value },
+  );
 }

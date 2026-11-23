@@ -8,7 +8,9 @@ export class UnsafeWorkspacePathError extends Error {
   }
 }
 
-export const createWorkspacePathResolver = (root: string) => {
+export const createWorkspacePathResolver = (
+  root: string,
+) => {
   // A symlink in the initial workspace argument is acceptable; all names
   // are validated against the resolved real root thereafter.
   const realRoot = fs.realpathSync(root);
@@ -70,28 +72,53 @@ export const createWorkspacePathResolver = (root: string) => {
   };
 
   const validateFiles = (files: unknown) => {
-    if (!files || typeof files !== 'object' ||
-        Array.isArray(files)) {
-      throw new UnsafeWorkspacePathError('invalid file collection');
+    if (
+      !files ||
+      typeof files !== 'object' ||
+      Array.isArray(files)
+    ) {
+      throw new UnsafeWorkspacePathError(
+        'invalid file collection',
+      );
     }
     const names = new Set<string>();
     for (const [id, file] of Object.entries(files)) {
-      if (['__proto__', 'prototype', 'constructor'].includes(id)) {
-        throw new UnsafeWorkspacePathError('unsafe file identifier');
+      if (
+        ['__proto__', 'prototype', 'constructor'].includes(
+          id,
+        )
+      ) {
+        throw new UnsafeWorkspacePathError(
+          'unsafe file identifier',
+        );
       }
-      if (!file || typeof file !== 'object' ||
-          Array.isArray(file)) {
-        throw new UnsafeWorkspacePathError('invalid file entry');
+      if (
+        !file ||
+        typeof file !== 'object' ||
+        Array.isArray(file)
+      ) {
+        throw new UnsafeWorkspacePathError(
+          'invalid file entry',
+        );
       }
-      const entry = file as { name?: unknown; text?: unknown };
-      if (typeof entry.name !== 'string' ||
-          (entry.text !== null && typeof entry.text !== 'string')) {
-        throw new UnsafeWorkspacePathError('invalid file entry');
+      const entry = file as {
+        name?: unknown;
+        text?: unknown;
+      };
+      if (
+        typeof entry.name !== 'string' ||
+        (entry.text !== null &&
+          typeof entry.text !== 'string')
+      ) {
+        throw new UnsafeWorkspacePathError(
+          'invalid file entry',
+        );
       }
       resolve(entry.name);
       if (
         (entry.name.endsWith('/') && entry.text !== null) ||
-        (!entry.name.endsWith('/') && typeof entry.text !== 'string')
+        (!entry.name.endsWith('/') &&
+          typeof entry.text !== 'string')
       ) {
         throw new UnsafeWorkspacePathError(entry.name);
       }
@@ -106,7 +133,10 @@ export const createWorkspacePathResolver = (root: string) => {
   // O_NOFOLLOW protects against replacing the leaf with a symlink
   // between validation and opening the file. Parent-directory swaps
   // still require OS-level sandboxing for race-free protection.
-  const writeFile = (name: string, content: string | Buffer) => {
+  const writeFile = (
+    name: string,
+    content: string | Buffer,
+  ) => {
     const destination = resolve(name);
     const flags =
       fs.constants.O_WRONLY |
@@ -121,5 +151,10 @@ export const createWorkspacePathResolver = (root: string) => {
     }
   };
 
-  return { root: realRoot, resolve, validateFiles, writeFile };
+  return {
+    root: realRoot,
+    resolve,
+    validateFiles,
+    writeFile,
+  };
 };

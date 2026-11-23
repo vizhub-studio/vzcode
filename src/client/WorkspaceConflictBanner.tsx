@@ -7,11 +7,12 @@ import { VZCodeContext } from './VZCodeContext';
  */
 export const WorkspaceConflictBanner = () => {
   const { content } = useContext(VZCodeContext);
-  const conflicts: string[] = (
-    content as unknown as {
-      workspaceConflicts?: string[];
-    } | null
-  )?.workspaceConflicts ?? [];
+  const conflicts: string[] =
+    (
+      content as unknown as {
+        workspaceConflicts?: string[];
+      } | null
+    )?.workspaceConflicts ?? [];
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +26,8 @@ export const WorkspaceConflictBanner = () => {
       choice === 'editor' &&
       !window.confirm(
         'Overwrite the external disk changes for "' +
-          name + '" with the editor version?',
+          name +
+          '" with the editor version?',
       )
     ) {
       return;
@@ -45,9 +47,9 @@ export const WorkspaceConflictBanner = () => {
         },
       );
       if (!response.ok) {
-        const body = await response.json().catch(
-          () => ({}),
-        );
+        const body = await response
+          .json()
+          .catch(() => ({}));
         throw new Error(
           body.error || 'Unable to resolve conflict',
         );
@@ -82,9 +84,9 @@ export const WorkspaceConflictBanner = () => {
     >
       <strong>External filesystem conflict</strong>
       <p>
-        Changes were made to these files outside VZCode while
-        there were unsaved editor changes. Autosave is paused
-        to prevent data loss.
+        Changes were made to these files outside VZCode
+        while there were unsaved editor changes. Autosave is
+        paused to prevent data loss.
       </p>
       {conflicts.map((name) => (
         <div

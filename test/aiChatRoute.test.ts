@@ -105,12 +105,20 @@ describe('POST /ai-chat-message', () => {
     await server.ready;
     port = await server.listen(0);
     const origin = `http://127.0.0.1:${port}`;
-    const session = await fetch(origin + "/auth/session", {
-      method: "POST",
-      headers: { Authorization: "Bearer " + server.accessToken, Origin: origin },
+    const session = await fetch(origin + '/auth/session', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + server.accessToken,
+        Origin: origin,
+      },
     });
-    if (session.status !== 204) throw new Error("Could not authenticate AI test client");
-    cookie = session.headers.get("set-cookie")?.split(";")[0] ?? "";
+    if (session.status !== 204)
+      throw new Error(
+        'Could not authenticate AI test client',
+      );
+    cookie =
+      session.headers.get('set-cookie')?.split(';')[0] ??
+      '';
   });
 
   afterAll(async () => {
@@ -129,17 +137,25 @@ describe('POST /ai-chat-message', () => {
   });
 
   it('rejects a request without a string content', async () => {
-    const { status, body } = await postJson(url(), {
-      chatId: 'chat-1',
-    }, cookie);
+    const { status, body } = await postJson(
+      url(),
+      {
+        chatId: 'chat-1',
+      },
+      cookie,
+    );
     expect(status).toBe(400);
     expect(body).toContain('content is required');
   });
 
   it('rejects a request without a string chatId', async () => {
-    const { status, body } = await postJson(url(), {
-      content: 'hello',
-    }, cookie);
+    const { status, body } = await postJson(
+      url(),
+      {
+        content: 'hello',
+      },
+      cookie,
+    );
     expect(status).toBe(400);
     expect(body).toContain('chatId is required');
   });
@@ -153,10 +169,14 @@ describe('POST /ai-chat-message', () => {
       .spyOn(console, 'warn')
       .mockImplementation(() => {});
     try {
-      const { status, body } = await postJson(url(), {
-        content: 'Hello AI',
-        chatId: 'chat-valid',
-      }, cookie);
+      const { status, body } = await postJson(
+        url(),
+        {
+          content: 'Hello AI',
+          chatId: 'chat-valid',
+        },
+        cookie,
+      );
       expect(status).toBe(200);
       expect(JSON.parse(body)).toBe('success');
 

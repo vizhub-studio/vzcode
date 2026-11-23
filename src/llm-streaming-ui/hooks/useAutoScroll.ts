@@ -108,7 +108,7 @@ export const useAutoScroll = (
     useState<AutoScrollState>('AUTO_SCROLL_ON');
   const [showJumpButton, setShowJumpButton] =
     useState(false);
-  const rafIdRef = useRef<number>();
+  const rafIdRef = useRef<number | undefined>(undefined);
   const isProgrammaticScrollRef = useRef(false);
 
   /**

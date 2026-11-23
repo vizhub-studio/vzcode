@@ -46,9 +46,7 @@ export type SearchMatch = Array<{
   text: string;
 }>;
 export type SearchFileVisibility =
-  | 'open'
-  | 'flattened'
-  | 'closed';
+  'open' | 'flattened' | 'closed';
 export type SearchResult = { [id: string]: SearchFile };
 
 export interface SearchFile {
@@ -212,14 +210,21 @@ export type VisualEditorWidgetMetadata = {
   defaultValue?: string | number | boolean;
 };
 
-export type VisualEditorConfigEntry = VisualEditorWidgetMetadata & (
-  | { type: 'slider'; min: number; max: number; step?: number }
-  | { type: 'checkbox' }
-  | { type: 'textInput' }
-  | { type: 'dropdown'; options: string[] }
-  | { type: 'color' }
-  | { type: 'segmented'; options: string[] }
-);
+export type VisualEditorConfigEntry =
+  VisualEditorWidgetMetadata &
+    (
+      | {
+          type: 'slider';
+          min: number;
+          max: number;
+          step?: number;
+        }
+      | { type: 'checkbox' }
+      | { type: 'textInput' }
+      | { type: 'dropdown'; options: string[] }
+      | { type: 'color' }
+      | { type: 'segmented'; options: string[] }
+    );
 
 // ============================================================================
 // AI Chat Streaming Types
@@ -307,9 +312,7 @@ export interface StreamingChatMessage {
 
 /** Embedding hosts can choose which sidebar VZCode opens initially. */
 export type VZInitialSidebarView =
-  | 'ai-chat'
-  | 'files'
-  | 'visual';
+  'ai-chat' | 'files' | 'visual';
 
 /** Reason a visualization cannot yet render visual-editor controls. */
 export type VisualEditorEmptyReason =

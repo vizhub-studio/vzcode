@@ -317,14 +317,32 @@ Existing `config.json` widgets work without changes. To opt into named sections 
   "markColor": "#6366f1",
   "markShape": "Circle",
   "visualEditorWidgets": [
-    { "type": "slider", "property": "pointRadius", "label": "Point radius",
-      "min": 1, "max": 30, "step": 1, "unit": "px",
-      "section": "Marks", "defaultValue": 8 },
-    { "type": "color", "property": "markColor", "label": "Mark color",
-      "section": "Colors", "defaultValue": "#6366f1" },
-    { "type": "segmented", "property": "markShape", "label": "Shape",
-      "options": ["Circle", "Square", "Diamond"], "section": "Marks",
-      "defaultValue": "Circle" }
+    {
+      "type": "slider",
+      "property": "pointRadius",
+      "label": "Point radius",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "section": "Marks",
+      "defaultValue": 8
+    },
+    {
+      "type": "color",
+      "property": "markColor",
+      "label": "Mark color",
+      "section": "Colors",
+      "defaultValue": "#6366f1"
+    },
+    {
+      "type": "segmented",
+      "property": "markShape",
+      "label": "Shape",
+      "options": ["Circle", "Square", "Diamond"],
+      "section": "Marks",
+      "defaultValue": "Circle"
+    }
   ]
 }
 ```

@@ -59,12 +59,15 @@ export const VZResizer = ({
     const workspace = resizerRef.current?.parentElement;
     if (!workspace) return;
     const measure = () => {
-      setContainerWidth(workspace.getBoundingClientRect().width);
+      setContainerWidth(
+        workspace.getBoundingClientRect().width,
+      );
     };
     measure();
     if (typeof ResizeObserver === 'undefined') {
       window.addEventListener('resize', measure);
-      return () => window.removeEventListener('resize', measure);
+      return () =>
+        window.removeEventListener('resize', measure);
     }
     const observer = new ResizeObserver(measure);
     observer.observe(workspace);

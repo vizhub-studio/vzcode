@@ -67,9 +67,7 @@ describe('responsive split pane widths', () => {
       containerWidth: 320,
     });
     expect(panes.sidebarWidth).toBeGreaterThanOrEqual(0);
-    expect(panes.codeEditorWidth).toBeGreaterThanOrEqual(
-      0,
-    );
+    expect(panes.codeEditorWidth).toBeGreaterThanOrEqual(0);
     expect(
       panes.sidebarWidth + panes.codeEditorWidth,
     ).toBeLessThanOrEqual(320);

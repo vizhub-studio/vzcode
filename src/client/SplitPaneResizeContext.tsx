@@ -80,7 +80,10 @@ export const getConstrainedPaneWidths = (
 
   const availableWidth = Math.max(0, containerWidth);
   const previewWidth = Math.min(
-    Math.max(minPreviewWidth, availableWidth * previewShare),
+    Math.max(
+      minPreviewWidth,
+      availableWidth * previewShare,
+    ),
     availableWidth * 0.45,
   );
   const sidebarMinimum = Math.min(
@@ -89,7 +92,10 @@ export const getConstrainedPaneWidths = (
   );
   const codeMinimum = Math.min(
     minCodeEditorWidth,
-    Math.max(0, availableWidth - previewWidth - sidebarMinimum),
+    Math.max(
+      0,
+      availableWidth - previewWidth - sidebarMinimum,
+    ),
   );
   const sidebarMaximum = Math.max(
     sidebarMinimum,
@@ -101,7 +107,12 @@ export const getConstrainedPaneWidths = (
   );
   const constrainedCodeEditorWidth = Math.min(
     Math.max(0, codeEditorWidth),
-    Math.max(0, availableWidth - constrainedSidebarWidth - previewWidth),
+    Math.max(
+      0,
+      availableWidth -
+        constrainedSidebarWidth -
+        previewWidth,
+    ),
   );
   return {
     sidebarWidth: constrainedSidebarWidth,

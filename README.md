@@ -247,15 +247,46 @@ The `visualEditorWidgets` array defines the interactive controls that will be av
   - `"checkbox"` - A checkbox for boolean values
   - `"textInput"` - A text input field for string values
   - `"dropdown"` - A dropdown selector with predefined options
-  - `"color"` - A color picker with HCL (Hue, Chroma, Lightness) sliders
+  - `"color"` - A swatch, native color selector, HEX input, presets and optional advanced HCL sliders
+  - `"segmented"` - A compact button group for string options
 - **label**: Human-readable label displayed in the UI
 - **property**: The configuration property to modify (supports nested properties using dot notation like `"margin.left"`)
 - **min**: Minimum value (required for `slider` widgets)
 - **max**: Maximum value (required for `slider` widgets)
 - **step**: Step increment for `slider` widgets (optional, defaults to 1 if not specified)
-- **options**: Array of string options (required for `dropdown` widgets)
+- **options**: Array of string options (required for `dropdown` and `segmented` widgets)
+- **section**: Optional collapsible property group (defaults to `"Appearance"`)
+- **description**: Optional short help below the control
+- **unit**: Optional numeric unit suffix such as `"px"` or `"%"`
+- **defaultValue**: Optional value of the same type as the config property; shows a per-control Reset action
 
 Every widget's `property` must resolve to an **existing** value in `config.json` (dot-separated paths such as `margin.left` are supported, but arrays and prototype keys are not editable). Match the value to the widget: finite number for `slider`, boolean for `checkbox`, string for `textInput`, one of `options` for `dropdown`, and a valid, opaque CSS color for `color`. Invalid widget values or paths show the host-configurable `invalid-widgets` empty state rather than rendering broken controls.
+
+### Grouped Visual Properties example
+
+Existing `config.json` widgets work without changes. To opt into named sections and reset controls:
+
+```json
+{
+  "pointRadius": 8,
+  "markColor": "#6366f1",
+  "markShape": "Circle",
+  "visualEditorWidgets": [
+    { "type": "slider", "property": "pointRadius", "label": "Point radius",
+      "min": 1, "max": 30, "step": 1, "unit": "px",
+      "section": "Marks", "defaultValue": 8 },
+    { "type": "color", "property": "markColor", "label": "Mark color",
+      "section": "Colors", "defaultValue": "#6366f1" },
+    { "type": "segmented", "property": "markShape", "label": "Shape",
+      "options": ["Circle", "Square", "Diamond"], "section": "Marks",
+      "defaultValue": "Circle" }
+  ]
+}
+```
+
+Rapid slider, color and text edits are coalesced at a short interval before
+writing `config.json` via ShareDB. The live preview continues to receive
+configuration patches without rebuilding its iframe.
 
 ### Setting Up Your Visualization
 

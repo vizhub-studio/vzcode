@@ -1,5 +1,11 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { renderSliderBackground } from './utils';
+import { normalizeOpaqueColorToHex } from './colorUtils';
+
+const PRESETS = [
+  '#6366f1', '#0891b2', '#16a34a', '#e11d48',
+  '#f59e0b', '#111827', '#ffffff', '#000000',
+];
 
 interface ColorWidgetProps {
   property: string;
@@ -12,162 +18,151 @@ interface ColorWidgetProps {
     property: string,
     lchComponent: 'l' | 'c' | 'h',
   ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onHexChange: (property: string, hex: string) => void;
 }
 
 export const ColorWidget: React.FC<ColorWidgetProps> = ({
-  property,
-  label,
-  currentHex,
-  currentH,
-  currentC,
-  currentL,
-  onColorChange,
+  property, label, currentHex, currentH, currentC, currentL,
+  onColorChange, onHexChange,
 }) => {
-  // Refs for canvas elements (for color slider backgrounds)
-  const canvasRefs = useRef<{
-    [key: string]: HTMLCanvasElement | null;
-  }>({});
+  const [open, setOpen] = useState(false);
+  const [advanced, setAdvanced] = useState(false);
+  const [draft, setDraft] = useState(currentHex);
+  const root = useRef<HTMLDivElement>(null);
+  const canvasRefs = useRef<Record<string, HTMLCanvasElement | null>>({});
 
-  // Update color slider backgrounds when values change
+  const normalizedHex = normalizeOpaqueColorToHex(currentHex) ?? '#000000';
+
+  useEffect(() => { setDraft(currentHex); }, [currentHex]);
   useEffect(() => {
-    const values = {
-      h: currentH,
-      c: currentC,
-      l: currentL,
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
     };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
 
-    // Render backgrounds for each slider
-    renderSliderBackground(
-      canvasRefs.current[`${property}_l_bg`],
-      'l',
-      values,
-    );
-    renderSliderBackground(
-      canvasRefs.current[`${property}_c_bg`],
-      'c',
-      values,
-    );
-    renderSliderBackground(
-      canvasRefs.current[`${property}_h_bg`],
-      'h',
-      values,
-    );
-  }, [property, currentH, currentC, currentL]);
+  useEffect(() => {
+    if (!open || !advanced) return;
+    const channels = { h: currentH, c: currentC, l: currentL };
+    for (const component of ['h', 'c', 'l'] as const) {
+      renderSliderBackground(canvasRefs.current[component], component, channels);
+    }
+  }, [open, advanced, currentH, currentC, currentL]);
+
+  const commitDraft = () => {
+    const next = normalizeOpaqueColorToHex(draft);
+    if (next) onHexChange(property, next);
+    else setDraft(currentHex);
+  };
 
   return (
-    <div className="visual-editor-color">
+    <div className="visual-editor-color" ref={root}>
       <div className="color-header">
         <label className="color-label">{label}</label>
-        <span className="color-value">{currentHex}</span>
+        <button
+          type="button"
+          className="color-picker-trigger"
+          aria-label={`Choose ${label} color`}
+          aria-expanded={open}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span className="color-picker-swatch" style={{ backgroundColor: normalizedHex }} />
+          <span className="color-picker-hex">{normalizedHex.toUpperCase()}</span>
+          <span aria-hidden="true">▾</span>
+        </button>
       </div>
-
-      <div
-        className="color-preview"
-        style={{ backgroundColor: currentHex }}
-      />
-
-      <div className="lch-sliders">
-        {/* Lightness Slider */}
-        <div className="lch-slider">
-          <div className="slider-header">
-            <label className="slider-label">
-              Lightness
-            </label>
-            <span className="slider-value">
-              {Math.round(currentL)}
-            </span>
-          </div>
-          <div className="slider-container">
-            <canvas
-              ref={(canvas) => {
-                canvasRefs.current[`${property}_l_bg`] =
-                  canvas;
-              }}
-              className="slider-bg-canvas"
-              width={200}
-            />
+      {open && (
+        <div className="color-picker-popover" role="group" aria-label={`${label} color picker`}>
+          <label className="color-picker-field">
+            <span>Pick a color</span>
             <input
-              type="range"
-              className="slider-input"
-              min={0}
-              max={100}
-              step={1}
-              value={currentL}
-              onChange={onColorChange(property, 'l')}
+              type="color"
+              className="color-picker-native"
+              value={normalizedHex}
+              onChange={(event) => onHexChange(property, event.currentTarget.value)}
             />
-          </div>
-          <div className="slider-bounds">
-            <span className="min-value">0</span>
-            <span className="max-value">100</span>
-          </div>
-        </div>
-
-        {/* Chroma Slider */}
-        <div className="lch-slider">
-          <div className="slider-header">
-            <label className="slider-label">Chroma</label>
-            <span className="slider-value">
-              {Math.round(currentC)}
-            </span>
-          </div>
-          <div className="slider-container">
-            <canvas
-              ref={(canvas) => {
-                canvasRefs.current[`${property}_c_bg`] =
-                  canvas;
-              }}
-              className="slider-bg-canvas"
-              width={200}
-            />
+          </label>
+          <label className="color-picker-field">
+            <span>HEX / CSS color</span>
             <input
-              type="range"
-              className="slider-input"
-              min={0}
-              max={100}
-              step={1}
-              value={currentC}
-              onChange={onColorChange(property, 'c')}
-            />
-          </div>
-          <div className="slider-bounds">
-            <span className="min-value">0</span>
-            <span className="max-value">100</span>
-          </div>
-        </div>
-
-        {/* Hue Slider */}
-        <div className="lch-slider">
-          <div className="slider-header">
-            <label className="slider-label">Hue</label>
-            <span className="slider-value">
-              {Math.round(currentH)}°
-            </span>
-          </div>
-          <div className="slider-container">
-            <canvas
-              ref={(canvas) => {
-                canvasRefs.current[`${property}_h_bg`] =
-                  canvas;
+              className="color-picker-hex-input"
+              type="text"
+              spellCheck={false}
+              value={draft}
+              onChange={(event) => setDraft(event.currentTarget.value)}
+              onBlur={commitDraft}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  commitDraft();
+                  event.currentTarget.blur();
+                } else if (event.key === 'Escape') {
+                  setDraft(currentHex);
+                }
               }}
-              className="slider-bg-canvas"
-              width={200}
+              aria-label={`${label} hexadecimal color`}
             />
-            <input
-              type="range"
-              className="slider-input"
-              min={0}
-              max={360}
-              step={1}
-              value={currentH}
-              onChange={onColorChange(property, 'h')}
-            />
+          </label>
+          <div className="color-picker-preset-label">Presets</div>
+          <div className="color-picker-presets">
+            {PRESETS.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                className="color-picker-preset"
+                style={{ backgroundColor: preset }}
+                aria-label={`Use color ${preset}`}
+                aria-pressed={preset === normalizedHex}
+                onClick={() => onHexChange(property, preset)}
+              />
+            ))}
           </div>
-          <div className="slider-bounds">
-            <span className="min-value">0°</span>
-            <span className="max-value">360°</span>
-          </div>
+          <button
+            type="button"
+            className="color-picker-advanced-toggle"
+            aria-expanded={advanced}
+            onClick={() => setAdvanced((value) => !value)}
+          >
+            Advanced HCL controls {advanced ? '▴' : '▾'}
+          </button>
+          {advanced && (
+            <div className="lch-sliders">
+              {([
+                ['l', 'Lightness', currentL, 100, ''],
+                ['c', 'Chroma', currentC, 100, ''],
+                ['h', 'Hue', currentH, 360, '°'],
+              ] as const).map(([component, name, value, max, suffix]) => (
+                <div key={component} className="lch-slider">
+                  <div className="slider-header">
+                    <label className="slider-label" htmlFor={`${property}-${component}`}>{name}</label>
+                    <span className="slider-value">{Math.round(value)}{suffix}</span>
+                  </div>
+                  <div className="slider-container">
+                    <canvas
+                      ref={(canvas) => { canvasRefs.current[component] = canvas; }}
+                      className="slider-bg-canvas" width={200} height={12}
+                      aria-hidden="true"
+                    />
+                    <input
+                      id={`${property}-${component}`}
+                      type="range" className="slider-input" min={0} max={max} step={1}
+                      value={value} onChange={onColorChange(property, component)}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 };

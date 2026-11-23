@@ -53,6 +53,7 @@ export const useVZCodeState = ({
   clearStoredAIPrompt,
   getStoredAIPrompt,
   additionalWidgets,
+  renderChatVoiceInput,
   iframeRef: externalIframeRef,
   handleChatError,
   onAIChatMessageSubmitted,
@@ -510,6 +511,7 @@ export const useVZCodeState = ({
 
     // Additional widgets that can be rendered in AI chat messages
     additionalWidgets,
+    renderChatVoiceInput,
 
     // Feature flags
     enableMinimalEditFlow,

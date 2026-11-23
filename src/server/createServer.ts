@@ -4,6 +4,8 @@ import express from 'express';
 import fs from 'fs';
 import http from 'http';
 import path from 'path';
+import { createAccessControl } from './accessControl.js';
+import { createWorkspacePathResolver } from './workspaceSecurity.js';
 import ShareDB from 'sharedb';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
@@ -15,6 +17,14 @@ import { handleAIChatMessage } from './handleAIChatMessage.js';
 import { isDirectory } from './isDirectory.js';
 import { createToken } from './livekit.js';
 import './setupEnv.js';
+import { diff } from '../ot.js';
+import {
+  copyFiles,
+  diskMatchesBaseline,
+  readWorkspaceDisk,
+  reconcileDisk,
+  type WorkspaceFiles,
+} from './workspaceSync.js';
 
 // The time in milliseconds by which auto-saving is debounced.
 const autoSaveDebounceTimeMS = 800;
@@ -45,6 +55,12 @@ export interface CreateVZCodeServerOptions {
    * `true`. Tests can disable this and call `save()` directly.
    */
   autoSave?: boolean;
+  /** Optional fixed capability token (otherwise generated per server). */
+  accessToken?: string;
+  /** Watch workspace files for out-of-editor edits (defaults to autoSave). */
+  watchFiles?: boolean;
+  /** Portable background rescan interval (default 1500ms). */
+  scanIntervalMS?: number;
 }
 
 export interface VZCodeServer {
@@ -53,12 +69,21 @@ export interface VZCodeServer {
   shareDBBackend: ShareDB;
   /** The server-side ShareDB document for the workspace. */
   shareDBDoc: any;
+  /** Random per-server token used to mint scoped browser sessions. */
+  accessToken: string;
   /** Resolves once the initial ShareDB document has been created. */
   ready: Promise<void>;
   /** Write changed files to disk (same routine used by auto-save). */
   save: () => void;
+  /** Reconcile disk edits immediately; also useful for deterministic tests. */
+  syncFromDisk: () => Promise<void>;
+  /** Resolve a conflict explicitly by choosing the disk or editor version. */
+  resolveConflict: (
+    name: string,
+    choice: 'disk' | 'editor',
+  ) => Promise<void>;
   /** Start listening; resolves with the actual bound port. */
-  listen: (port: number) => Promise<number>;
+  listen: (port: number, host?: string) => Promise<number>;
   /** Stop the HTTP/WebSocket servers and close ShareDB. */
   close: () => Promise<void>;
 }
@@ -75,12 +100,15 @@ export const createVZCodeServer = (
 ): VZCodeServer => {
   const cwd = options.cwd ?? process.cwd();
   const autoSave = options.autoSave ?? true;
+  const watchFiles = options.watchFiles ?? autoSave;
+  const scanIntervalMS = options.scanIntervalMS ?? 1500;
+  const workspace = createWorkspacePathResolver(cwd);
+  const access = createAccessControl(options.accessToken);
 
   // Resolve file names from the ShareDB document against the workspace
   // root, so the server can operate on a directory other than the
   // process's current working directory.
-  const resolvePath = (name: string): string =>
-    path.resolve(cwd, name);
+  const resolvePath = workspace.resolve;
 
   const serveStaticDir =
     options.serveStaticDir === undefined
@@ -92,15 +120,20 @@ export const createVZCodeServer = (
         )
       : options.serveStaticDir;
 
-  const initialDocument = computeInitialDocument({
-    fullPath: cwd,
-  });
+  const initialDocument = {
+    ...computeInitialDocument({
+      fullPath: workspace.root,
+    }),
+    workspaceConflicts: [] as string[],
+  };
+  workspace.validateFiles(initialDocument.files);
 
   // Register our custom OT type,
   // because it does not ship with ShareDB.
   ShareDB.types.register(json1Presence.type);
 
   const app = express();
+  access.install(app);
 
   // Use ShareDB over WebSocket
   const shareDBBackend = new ShareDB({
@@ -108,8 +141,39 @@ export const createVZCodeServer = (
     presence: true,
     doNotForwardSendPresenceErrorsToClient: true,
   });
+  // Validate the committed post-operation snapshot, not merely the
+  // operation payload. A rejected submission must never reach autosave.
+  shareDBBackend.use('commit', (context: any, next) => {
+    try {
+      if (context.collection !== 'documents' ||
+          context.id !== '1') {
+        throw new Error('Unauthorized ShareDB document');
+      }
+      workspace.validateFiles(context.snapshot?.data?.files);
+      next();
+    } catch (error: any) {
+      next(error);
+    }
+  });
   const httpServer = http.createServer(app);
-  const wss = new WebSocketServer({ server: httpServer });
+  // Authentication is enforced before ShareDB attaches to the socket.
+  const wss = new WebSocketServer({ noServer: true });
+  httpServer.on('upgrade', (req, socket, head) => {
+    const pathname = (req.url || '').split('?')[0];
+    if (pathname !== '/ws') {
+      socket.write('HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+    if (!access.authorized(req)) {
+      socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit('connection', ws, req);
+    });
+  });
   wss.on('connection', (ws) => {
     const clientStream = new WebSocketJSONStream(ws);
     shareDBBackend.listen(clientStream);
@@ -144,144 +208,309 @@ export const createVZCodeServer = (
   );
 
   // The state of the document when files were last auto-saved.
-  let previousDocument = initialDocument;
+  let previousDocument = {
+    ...initialDocument,
+    files: copyFiles(initialDocument.files),
+  };
+  let identities: Record<string, string | undefined> = {};
+  const initialDisk = readWorkspaceDisk(workspace.root);
+  for (const [id, file] of Object.entries(previousDocument.files)) {
+    identities[id] = initialDisk.get(file.name)?.identity;
+  }
+  let conflictNames: string[] = [];
+  let runningSync: Promise<void> | null = null;
+  let closing = false;
+  let watcher: fs.FSWatcher | undefined;
+  let interval: ReturnType<typeof setInterval> | undefined;
+  let changeTimer: ReturnType<typeof setTimeout> | undefined;
 
   // Saves the files that changed.
   const save = () => {
     const currentDocument = shareDBDoc.data;
+    if (conflictNames.length) {
+      throw new Error(
+        'Workspace conflicts require resolution: ' +
+          conflictNames.join(', '),
+      );
+    }
+    // Do not write a single byte if the disk has changed since the
+    // last successful save/import. This also protects against events
+    // arriving before a filesystem watch callback is delivered.
+    if (
+      !diskMatchesBaseline(
+        previousDocument.files,
+        readWorkspaceDisk(workspace.root),
+      )
+    ) {
+      void syncFromDisk().catch((error) =>
+        console.error('VZCode disk reconciliation failed:', error),
+      );
+      throw new Error('External filesystem change detected; save deferred');
+    }
+    // Fail closed before the first write in this batch. Repeat checks
+    // at each filesystem call to reject newly created symlinks.
+    workspace.validateFiles(previousDocument.files);
+    workspace.validateFiles(currentDocument.files);
 
-    // Take a look at each file (key) previously and currently.
-    const allKeys = Object.keys({
-      ...currentDocument.files,
-      ...previousDocument.files,
-    });
+    const before = previousDocument.files;
+    const after = currentDocument.files;
+    const oldEntries = Object.entries(before);
+    const newEntries = Object.entries(after);
+    const depth = (name: string) => name.split('/').length;
+    const removed = oldEntries.filter(([id]) => !after[id]);
+    const changed = newEntries.filter(
+      ([id]) => !!before[id],
+    );
+    const created = newEntries.filter(
+      ([id]) => !before[id],
+    );
 
-    const directoriesToDelete = [];
-
-    for (const key of allKeys) {
-      const previous = previousDocument.files[key];
-      const current = currentDocument.files[key];
-
-      // If this file was neither created nor deleted...
-      if (previous && current) {
-        // Handle changing of text content.
-        if (previous.text !== current.text) {
-          if (isImageFile(current.name)) {
-            // Write image files as binary from base64
-            const buffer = Buffer.from(
-              current.text,
-              'base64',
-            );
-            fs.writeFileSync(
-              resolvePath(current.name),
-              buffer,
-            );
-          } else {
-            // Write non-image files as text
-            fs.writeFileSync(
-              resolvePath(current.name),
-              current.text,
-            );
-          }
-        }
-
-        // Handle renaming files.
-        if (previous.name !== current.name) {
-          if (isDirectory(previous.name)) {
-            // If the directory itself is being renamed,
-            // Phase I: Ignore it, and get the files moved
-            // Phase II: Keep track of these, and delete them after
-            //           all the files moved.
-            directoriesToDelete.push(previous.name);
-          } else {
-            const newDir = path.dirname(current.name);
-
-            // Check if the new directory exists, if not, create it
-            if (!fs.existsSync(resolvePath(newDir))) {
-              fs.mkdirSync(resolvePath(newDir), {
-                recursive: true,
-              });
-            }
-
-            // Move the file to the new directory
-            fs.renameSync(
-              resolvePath(previous.name),
-              resolvePath(current.name),
-            );
-          }
-        }
+    // Create destination directories first, including renamed folders.
+    for (const [, file] of newEntries
+      .filter(([, file]) => isDirectory(file.name))
+      .sort((a, b) => depth(a[1].name) - depth(b[1].name))) {
+      if (!fs.existsSync(resolvePath(file.name))) {
+        fs.mkdirSync(resolvePath(file.name), { recursive: true });
       }
+    }
 
-      // handle deleting files and directories.
-      if (previous && !current) {
-        const stats = fs.statSync(
-          resolvePath(previous.name),
-        );
-        //Check if the file path we are trying to delete is a directory
-        if (!stats.isDirectory()) {
-          fs.unlinkSync(resolvePath(previous.name));
-        } else {
-          //Performs directory deletion.
-          fs.rm(
-            resolvePath(previous.name),
-            {
-              recursive: true, //Makes sure that all files in directory are deleted.
-            },
-            (error) => {
-              if (error) {
-                console.log(error);
-              }
-            },
-          );
-        }
-      }
+    // Delete removed files before moving another file into their path.
+    for (const [, file] of removed
+      .filter(([, file]) => !isDirectory(file.name))) {
+      fs.unlinkSync(resolvePath(file.name));
+    }
 
-      // Handle creating files and Directories.
-      if (!previous && current) {
-        //File Creation
-        if (!isDirectory(current.name)) {
-          if (isImageFile(current.name)) {
-            // Write image files as binary from base64
-            const buffer = Buffer.from(
-              current.text,
-              'base64',
-            );
-            fs.writeFileSync(
-              resolvePath(current.name),
-              buffer,
-            );
-          } else {
-            // Write non-image files as text
-            fs.writeFileSync(
-              resolvePath(current.name),
-              current.text,
-            );
-          }
-        } else {
-          fs.mkdirSync(resolvePath(current.name), {
+    // Move surviving files before writing their updated contents. Moving
+    // only the leaf (not directories) preserves file IDs across folder
+    // renames and avoids writing to the old location.
+    for (const [id, current] of changed) {
+      const previous = before[id];
+      if (
+        previous.name !== current.name &&
+        !isDirectory(current.name)
+      ) {
+        const destinationDir = path.dirname(current.name);
+        if (destinationDir !== '.') {
+          fs.mkdirSync(resolvePath(destinationDir), {
             recursive: true,
           });
         }
+        fs.renameSync(
+          resolvePath(previous.name),
+          resolvePath(current.name),
+        );
       }
     }
-    // TODO deleted all directories under directoriesToDelete
 
-    for (const dir of directoriesToDelete) {
-      //Performs directory deletion.
-      fs.rm(
-        resolvePath(dir),
-        {
-          recursive: true, //Makes sure that all files in directory are deleted.
-        },
-        (error) => {
-          if (error) {
-            console.log(error);
-          }
-        },
-      );
+    // Apply edited contents and new files, including binary images.
+    for (const [id, current] of [...changed, ...created]) {
+      if (isDirectory(current.name)) continue;
+      if (
+        !before[id] ||
+        before[id].text !== current.text
+      ) {
+        const parent = path.dirname(current.name);
+        if (parent !== '.') {
+          fs.mkdirSync(resolvePath(parent), {
+            recursive: true,
+          });
+        }
+        const data = isImageFile(current.name)
+          ? Buffer.from(current.text as string, 'base64')
+          : (current.text as string);
+        workspace.writeFile(current.name, data);
+      }
     }
 
-    previousDocument = currentDocument;
+    // Remove obsolete directories after moving or removing children.
+    const obsoleteDirs = [
+      ...removed
+        .filter(([, file]) => isDirectory(file.name))
+        .map(([, file]) => file.name),
+      ...changed
+        .filter(
+          ([id, file]) =>
+            isDirectory(before[id].name) &&
+            before[id].name !== file.name,
+        )
+        .map(([id]) => before[id].name),
+    ];
+    for (const name of [...new Set(obsoleteDirs)].sort(
+      (a, b) => depth(b) - depth(a),
+    )) {
+      const full = resolvePath(name);
+      if (fs.existsSync(full)) {
+        fs.rmSync(full, { recursive: true });
+      }
+    }
+
+    previousDocument = {
+      ...currentDocument,
+      files: copyFiles(currentDocument.files),
+    };
+    const disk = readWorkspaceDisk(workspace.root);
+    identities = Object.fromEntries(
+      Object.entries(previousDocument.files).map(
+        ([id, file]) => [id, disk.get(file.name)?.identity],
+      ),
+    );
+  };
+
+  const publishDiskUpdate = (
+    files: WorkspaceFiles,
+    conflicts: string[],
+  ): Promise<void> => {
+    const current = shareDBDoc.data;
+    const next = {
+      ...current,
+      files,
+      workspaceConflicts: conflicts,
+    };
+    const operation = diff(current, next);
+    if (!operation || (Array.isArray(operation) && !operation.length)) {
+      return Promise.resolve();
+    }
+    return new Promise<void>((resolve, reject) => {
+      shareDBDoc.submitOp(
+        operation,
+        { source: 'filesystem' },
+        (error: Error | null) => {
+          if (error) reject(error);
+          else resolve();
+        },
+      );
+    });
+  };
+
+  /** Serialized rescans avoid overlapping external imports. */
+  const syncFromDisk = (): Promise<void> => {
+    if (runningSync) return runningSync;
+    if (closing) return Promise.resolve();
+    const scan = async () => {
+      const disk = readWorkspaceDisk(workspace.root);
+      if (
+        !conflictNames.length &&
+        diskMatchesBaseline(previousDocument.files, disk)
+      ) {
+        identities = Object.fromEntries(
+          Object.entries(previousDocument.files).map(
+            ([id, file]) => [id, disk.get(file.name)?.identity],
+          ),
+        );
+        return;
+      }
+      const plan = reconcileDisk({
+        baseline: previousDocument.files,
+        current: shareDBDoc.data.files,
+        disk,
+        identities,
+      });
+      await publishDiskUpdate(plan.files, plan.conflicts);
+      previousDocument = {
+        ...previousDocument,
+        files: plan.baseline,
+      };
+      identities = plan.identities;
+      conflictNames = plan.conflicts;
+
+      // A local edit may have been pending while an unrelated external
+      // change was imported. Resume its save after the OT is committed.
+      if (autoSave && !conflictNames.length &&
+          !diskMatchesBaseline(plan.files, disk)) {
+        debounceSave();
+      }
+    };
+    runningSync = scan().finally(() => {
+      runningSync = null;
+    });
+    return runningSync;
+  };
+
+  const resolveConflict = async (
+    name: string,
+    choice: 'disk' | 'editor',
+  ): Promise<void> => {
+    await syncFromDisk();
+    if (!conflictNames.includes(name)) {
+      throw new Error('Unknown or already resolved conflict');
+    }
+    const disk = readWorkspaceDisk(workspace.root);
+    const nextFiles = copyFiles(shareDBDoc.data.files);
+    const nextBaseline = copyFiles(previousDocument.files);
+    const id = Object.keys(nextBaseline).find(
+      (key) => nextBaseline[key].name === name,
+    ) ?? Object.keys(nextFiles).find(
+      (key) => nextFiles[key].name === name,
+    );
+    if (!id) throw new Error('Conflict entry disappeared');
+
+    let observed = disk.get(name);
+    // External renames may have changed the path but preserved the inode.
+    if (!observed && identities[id]) {
+      const candidates = Array.from(disk.values()).filter(
+        (file) => file.identity === identities[id],
+      );
+      if (candidates.length === 1) observed = candidates[0];
+    }
+
+    if (choice === 'disk') {
+      if (observed) {
+        nextFiles[id] = {
+          name: observed.name,
+          text: observed.text,
+        };
+      } else {
+        delete nextFiles[id];
+      }
+    }
+    if (observed) {
+      nextBaseline[id] = {
+        name: observed.name,
+        text: observed.text,
+      };
+      identities[id] = observed.identity;
+    } else {
+      delete nextBaseline[id];
+      delete identities[id];
+    }
+    const remaining = conflictNames.filter(
+      (conflict) => conflict !== name,
+    );
+    // All other tracked files must still match disk before allowing an
+    // editor-wins write. A new disk change requires another reconciliation.
+    if (choice === 'editor' && !remaining.length &&
+        !diskMatchesBaseline(nextBaseline, disk)) {
+      throw new Error('Disk changed again; retry after reconciling');
+    }
+    await publishDiskUpdate(nextFiles, remaining);
+    previousDocument = {
+      ...previousDocument,
+      files: nextBaseline,
+    };
+    conflictNames = remaining;
+    if (autoSave && !remaining.length) {
+      debounceSave();
+    }
+  };
+
+  const scheduleSync = () => {
+    if (closing) return;
+    clearTimeout(changeTimer);
+    changeTimer = setTimeout(() => {
+      void syncFromDisk().catch((error) =>
+        console.error('VZCode disk watcher failed:', error),
+      );
+    }, 80);
+  };
+
+  // Invalid paths or external filesystem changes must not crash the
+  // process from a delayed timer. Expose errors in logs for operators.
+  const autoSaveSafely = () => {
+    try {
+      save();
+    } catch (error) {
+      console.error('VZCode autosave refused:', error);
+    }
   };
 
   let lastExecutedTime = Date.now();
@@ -293,13 +522,13 @@ export const createVZCodeServer = (
     const timeSinceLastExecution = now - lastExecutedTime;
 
     if (timeSinceLastExecution > throttleTimeMS) {
-      save();
+      autoSaveSafely();
       lastExecutedTime = now;
     } else {
       // Clear the previous timeout and set a new one to save the last change
       clearTimeout(lastChangeTimeout);
       lastChangeTimeout = setTimeout(() => {
-        save();
+        autoSaveSafely();
         lastExecutedTime = now;
       }, throttleTimeMS - timeSinceLastExecution);
     }
@@ -310,7 +539,7 @@ export const createVZCodeServer = (
   function debounceSave() {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(
-      save,
+      autoSaveSafely,
       autoSaveDebounceTimeMS,
     );
   }
@@ -327,8 +556,9 @@ export const createVZCodeServer = (
           if (subscribeError) return reject(subscribeError);
 
           if (autoSave) {
-            // Subscribe to listen for modifications
-            shareDBDoc.on('op', () => {
+            // Filesystem imports must not trigger a write-back loop.
+            shareDBDoc.on('op', (_op, source) => {
+              if (source === 'filesystem') return;
               if (shareDBDoc.data.isInteracting) {
                 throttleSave();
               } else {
@@ -337,15 +567,55 @@ export const createVZCodeServer = (
             });
           }
 
+          if (watchFiles) {
+            // Root watcher gives low-latency notifications. The periodic
+            // recursive scan handles nested files and lost/coalesced events.
+            try {
+              watcher = fs.watch(workspace.root, scheduleSync);
+              watcher.on('error', (error) => {
+                console.error('VZCode watcher error:', error);
+              });
+            } catch (error) {
+              // Some filesystems do not offer watch notifications.
+              console.warn(
+                'VZCode using polling-only filesystem monitoring:',
+                error,
+              );
+            }
+            interval = setInterval(scheduleSync, scanIntervalMS);
+            interval.unref();
+          }
           resolve();
         });
       },
     );
   });
 
+  // Conflict decisions are explicit, authenticated user actions.
+  app.post(
+    '/workspace-conflicts/resolve',
+    access.requireAuth,
+    bodyParser.json(),
+    async (req, res) => {
+      const { name, choice } = req.body || {};
+      if (typeof name !== 'string' ||
+          (choice !== 'disk' && choice !== 'editor')) {
+        res.status(400).json({ error: 'Invalid conflict resolution' });
+        return;
+      }
+      try {
+        await resolveConflict(name, choice);
+        res.sendStatus(204);
+      } catch (error: any) {
+        res.status(409).json({ error: error.message });
+      }
+    },
+  );
+
   // Handle AI Assist requests.
   app.post(
     '/ai-assist',
+    access.requireAuth,
     bodyParser.json(),
     handleAIAssist(shareDBDoc),
   );
@@ -353,6 +623,7 @@ export const createVZCodeServer = (
   // Handle AI Copilot requests.
   app.post(
     '/ai-copilot',
+    access.requireAuth,
     bodyParser.json(),
     handleAICopilot(),
   );
@@ -360,6 +631,7 @@ export const createVZCodeServer = (
   // Handle AI Chat Message requests.
   app.post(
     '/ai-chat-message',
+    access.requireAuth,
     bodyParser.json(),
     handleAIChatMessage({
       shareDBDoc,
@@ -368,16 +640,22 @@ export const createVZCodeServer = (
   );
 
   // Livekit Token Generator
-  app.get('/livekit-token', async (req, res) => {
+  app.get('/livekit-token', access.requireAuth, async (req, res) => {
     const { room, username } = req.query;
     res.send(await createToken(room, username));
   });
 
-  const listen = (port: number): Promise<number> =>
+  const listen = (
+    port: number,
+    host?: string,
+  ): Promise<number> =>
     new Promise((resolve, reject) => {
-      const onError = (error: Error) => reject(error);
+      const onError = (error: Error) => {
+        httpServer.removeListener('error', onError);
+        reject(error);
+      };
       httpServer.once('error', onError);
-      httpServer.listen(port, () => {
+      const onListening = () => {
         httpServer.removeListener('error', onError);
         const address = httpServer.address();
         const actualPort =
@@ -385,13 +663,27 @@ export const createVZCodeServer = (
             ? address.port
             : port;
         resolve(actualPort);
-      });
+      };
+      if (host) {
+        httpServer.listen(port, host, onListening);
+      } else {
+        httpServer.listen(port, onListening);
+      }
     });
 
   const close = (): Promise<void> =>
     new Promise((resolve, reject) => {
+      closing = true;
+      watcher?.close();
+      clearInterval(interval);
+      clearTimeout(changeTimer);
       clearTimeout(lastChangeTimeout);
       clearTimeout(debounceTimeout);
+      access.close();
+      // An upgraded WebSocket otherwise prevents CLI shutdown.
+      for (const client of wss.clients) {
+        client.terminate();
+      }
       wss.close(() => {
         httpServer.close((error) => {
           if (error) return reject(error);
@@ -405,8 +697,11 @@ export const createVZCodeServer = (
     httpServer,
     shareDBBackend,
     shareDBDoc,
+    accessToken: access.token,
     ready,
     save,
+    syncFromDisk,
+    resolveConflict,
     listen,
     close,
   };

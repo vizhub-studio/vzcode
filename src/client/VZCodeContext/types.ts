@@ -15,6 +15,7 @@ import {
 } from '../../types';
 import { VizFiles, VizContent } from '@vizhub/viz-types';
 import { ThemeLabel } from '../themes';
+import type { ChatVoiceInputRenderer } from '../../llm-streaming-ui/props';
 import { EditorCache } from '../useEditorCache';
 
 // The type of the object provided by this context.
@@ -213,6 +214,9 @@ export type VZCodeContextValue = {
     ) => Promise<any>;
   }) => React.ReactNode;
 
+  /** Optional host-owned microphone beside the AI Chat Send button. */
+  renderChatVoiceInput?: ChatVoiceInputRenderer;
+
   // Feature flags
   enableMinimalEditFlow: boolean;
 
@@ -268,6 +272,8 @@ export interface VZCodeProviderProps {
       options?: Record<string, string>,
     ) => Promise<any>;
   }) => React.ReactNode;
+  /** Host-owned chat voice input, independent of the legacy VZCode voice flag. */
+  renderChatVoiceInput?: ChatVoiceInputRenderer;
   iframeRef?: React.MutableRefObject<HTMLIFrameElement>;
   handleChatError?: (
     error: string,

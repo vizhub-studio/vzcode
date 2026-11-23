@@ -10,6 +10,12 @@ export default defineConfig({
         target: 'ws://localhost:3030',
         ws: true,
       },
+      '/auth': {
+        target: 'http://localhost:3030',
+      },
+      '/workspace-conflicts': {
+        target: 'http://localhost:3030',
+      },
       '/ai-assist': {
         target: 'http://localhost:3030',
       },

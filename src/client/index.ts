@@ -6,6 +6,8 @@ export {
   VZCodeContext,
 } from './VZCodeContext';
 export { VZSidebar } from './VZSidebar';
+export { VisualEditorControls } from './VZSidebar/VisualEditor/VisualEditorControls';
+export type { VisualEditorControlsProps } from './VZSidebar/VisualEditor/VisualEditorControls';
 export { VZSettings } from './VZSettings';
 export { VZKeyboardShortcutsDoc } from './VZKeyboardShortcutsDoc';
 export { VZResizer } from './VZResizer';

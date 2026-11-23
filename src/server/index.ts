@@ -16,7 +16,7 @@ function getPortFromArgs(defaultPort = 3030) {
 // Server port.
 const port = getPortFromArgs();
 
-const { ready, listen } = createVZCodeServer();
+const { ready, listen, accessToken } = createVZCodeServer();
 
 ready.catch((error) => {
   console.error(
@@ -30,8 +30,7 @@ listen(port).then((actualPort) => {
   // variable (for development) or the default port.
   const livePort = process.env.EDITOR_PORT || actualPort;
   console.log(`EDITOR_PORT: ${process.env.EDITOR_PORT}`);
-  console.log(
-    `Editor is live at http://localhost:${livePort}`,
-  );
-  open(`http://localhost:${livePort}`);
+  const accessUrl = `http://localhost:${livePort}/#vzcode-token=${accessToken}`;
+  console.log(`Editor is live at ${accessUrl}`);
+  open(accessUrl);
 });

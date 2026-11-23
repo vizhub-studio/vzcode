@@ -66,9 +66,14 @@ unsupported: do **not** expose the port through a proxy or tunnel until
 TLS, host configuration, network access controls, and authorization have
 been reviewed. See [Security](docs/SECURITY.md).
 
-VZCode loads and auto-saves files in its workspace directory. It does **not**
-watch for external filesystem changes, so simultaneous edits from other
-applications may be overwritten. Use a separate working copy if necessary.
+VZCode monitors its workspace for external changes (e.g. Git, formatters,
+other editors), using filesystem notifications and periodic recursive
+scans. Non-conflicting changes appear in the collaborative editor; concurrent
+changes to the same file **pause autosave** until you explicitly choose
+**Load disk version** or **Overwrite disk with editor** in the conflict
+banner. The latter intentionally replaces the disk version. New and renamed
+files are detected, including nested directories. See
+[Filesystem synchronization](docs/FILESYSTEM_SYNC.md) for details and limits.
 
 To validate the distributable from a source checkout, build and smoke-test
 the exact packed npm artifact:

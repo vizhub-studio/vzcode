@@ -46,9 +46,7 @@ export type SearchMatch = Array<{
   text: string;
 }>;
 export type SearchFileVisibility =
-  | 'open'
-  | 'flattened'
-  | 'closed';
+  'open' | 'flattened' | 'closed';
 export type SearchResult = { [id: string]: SearchFile };
 
 export interface SearchFile {
@@ -314,9 +312,7 @@ export interface StreamingChatMessage {
 
 /** Embedding hosts can choose which sidebar VZCode opens initially. */
 export type VZInitialSidebarView =
-  | 'ai-chat'
-  | 'files'
-  | 'visual';
+  'ai-chat' | 'files' | 'visual';
 
 /** Reason a visualization cannot yet render visual-editor controls. */
 export type VisualEditorEmptyReason =

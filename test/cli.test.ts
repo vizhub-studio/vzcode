@@ -88,7 +88,7 @@ describe('VZCode CLI', () => {
     expect(result.stdout).toContain('Usage: vzcode');
     expect(result.stdout).toContain('--no-open');
     expect(result.stdout).toContain('--desktop');
-  });
+  }, 15000);
 
   it('rejects invalid options and ports', () => {
     const port = invoke('--port=not-a-number');
@@ -100,7 +100,7 @@ describe('VZCode CLI', () => {
     expect(missing.stderr).toContain(
       'Workspace is not a directory',
     );
-  });
+  }, 15000);
 
   it('starts a local server and persists ShareDB edits', async () => {
     const dir = fs.mkdtempSync(

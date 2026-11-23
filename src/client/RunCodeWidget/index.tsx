@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useState,
+  type JSX,
 } from 'react';
 import { PlaySVG } from '../Icons';
 import { SplitEditorSVG } from '../Icons/SplitEditorSVG';

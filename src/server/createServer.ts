@@ -233,8 +233,7 @@ export const createVZCodeServer = (
   let watcher: fs.FSWatcher | undefined;
   let interval: ReturnType<typeof setInterval> | undefined;
   let changeTimer:
-    | ReturnType<typeof setTimeout>
-    | undefined;
+    ReturnType<typeof setTimeout> | undefined;
 
   // Saves the files that changed.
   const save = () => {

@@ -14,7 +14,9 @@ const runDelay = 1000;
 export const usePending = (
   shareDBDoc: ShareDBDoc<VizContent>,
 ) => {
-  const lastOpTimerRef = useRef<NodeJS.Timeout>();
+  const lastOpTimerRef = useRef<NodeJS.Timeout | undefined>(
+    undefined,
+  );
 
   // TODO rename this to isPending,
   // and also rename connected to isConnected.

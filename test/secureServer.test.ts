@@ -116,7 +116,7 @@ describe('standalone server security', () => {
     ).toBe(401);
     expect(
       (
-        await fetch(base() + '/livekit-token'),
+        await fetch(base() + '/livekit-token')
       ).status,
     ).toBe(401);
 

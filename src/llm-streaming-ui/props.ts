@@ -27,6 +27,26 @@ export type AdditionalWidgets = (props: {
 }) => ReactNode;
 
 /**
+ * Optional host-owned control rendered beside Send in the chat composer.
+ *
+ * The host owns recording, permissions, transcript cleanup, and teardown.
+ * VZCode only owns its draft string and submission buttons.
+ *
+ * Return a React element containing the host component; do not call React
+ * hooks directly from this renderer callback.
+ */
+export type ChatVoiceInputRenderer = (props: {
+  /** Current committed chat draft. */
+  value: string;
+  /** Commit a new full draft (not just the dictated fragment). */
+  onChange: (nextValue: string) => void;
+  /** Set true during permission, recording, or transcript processing. */
+  onBusyChange: (busy: boolean) => void;
+  /** Optional transient transcript preview; null clears it. */
+  onPreviewChange: (preview: string | null) => void;
+}) => ReactNode;
+
+/**
  * Props for the main `AIChat` component.
  *
  * The component is fully controlled: it owns no application state and
@@ -69,8 +89,10 @@ export interface AIChatProps {
   enableDiffView?: boolean;
   /** Show the ask/edit mode toggle in the input. */
   enableAskMode?: boolean;
-  /** Show the voice input microphone button. */
+  /** Show VZCode's legacy voice input button when no host renderer exists. */
   enableVoiceInput?: boolean;
+  /** Optional host-owned voice control; takes precedence over enableVoiceInput. */
+  renderChatVoiceInput?: ChatVoiceInputRenderer;
   /** Whether the minimal AI edit flow is enabled. */
   enableMinimalEditFlow?: boolean;
 }
@@ -88,8 +110,10 @@ export interface ChatInputProps {
   resetMessageHistoryNavigation: () => void;
   /** Show the ask/edit mode toggle. */
   enableAskMode?: boolean;
-  /** Show the voice input microphone button. */
+  /** Show VZCode's legacy voice input button when no host renderer exists. */
   enableVoiceInput?: boolean;
+  /** Optional host-owned voice control; takes precedence over enableVoiceInput. */
+  renderChatVoiceInput?: ChatVoiceInputRenderer;
 }
 
 /** Props for the unified diff view. */

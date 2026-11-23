@@ -39,6 +39,7 @@ export type {
   AIChatProps,
   AIChatMode,
   AdditionalWidgets,
+  ChatVoiceInputRenderer,
   ChatInputProps,
   DiffViewProps,
   HandleSendMessage,

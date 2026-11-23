@@ -258,6 +258,23 @@ test.describe('VZCode browser end-to-end', () => {
     }, { timeout: 20_000 }).toBe('Square');
   });
 
+  test('grouped visual properties can reset an edited value', async ({ page }) => {
+    await page.goto('/');
+    await expectConnected(page);
+    await page.locator('#visual-editor-icon').click();
+    const shape = page.getByRole('group', { name: 'Mark shape' });
+    await shape.getByRole('button', { name: 'Square' }).click();
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markShape;
+    }, { timeout: 20_000 }).toBe('Square');
+    await page.getByRole('button', { name: 'Reset Mark shape to default' }).click();
+    await expect.poll(async () => {
+      const config = JSON.parse(await readWorkspaceFile('config.json'));
+      return config.markShape;
+    }, { timeout: 20_000 }).toBe('Circle');
+  });
+
   test('creates, renames, and deletes a file', async ({
     page,
   }) => {

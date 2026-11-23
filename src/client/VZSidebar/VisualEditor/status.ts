@@ -50,6 +50,40 @@ export function getVisualEditorEmptyReason(
     );
     if (!found) return 'invalid-widgets';
 
+    // Optional metadata augments the UI but does not change legacy schemas.
+    if (
+      (widget.section !== undefined &&
+        (typeof widget.section !== 'string' ||
+          !widget.section.trim() ||
+          widget.section.length > 80)) ||
+      (widget.description !== undefined &&
+        (typeof widget.description !== 'string' ||
+          widget.description.length > 240)) ||
+      (widget.unit !== undefined &&
+        (typeof widget.unit !== 'string' || widget.unit.length > 16))
+    ) return 'invalid-widgets';
+    if (widget.defaultValue !== undefined) {
+      const initial = widget.defaultValue;
+      if (
+        typeof initial !== typeof value ||
+        (typeof initial === 'number' && !Number.isFinite(initial))
+      ) return 'invalid-widgets';
+      if (
+        widget.type === 'slider' &&
+        (typeof initial !== 'number' ||
+          initial < (widget.min as number) || initial > (widget.max as number))
+      ) return 'invalid-widgets';
+      if (
+        (widget.type === 'dropdown' || widget.type === 'segmented') &&
+        (!Array.isArray(widget.options) ||
+          !widget.options.includes(initial))
+      ) return 'invalid-widgets';
+      if (widget.type === 'color') {
+        const rgb = typeof initial === 'string' ? color(initial)?.rgb() : null;
+        if (!rgb || rgb.opacity !== 1) return 'invalid-widgets';
+      }
+    }
+
     switch (widget.type) {
       case 'slider':
         if (

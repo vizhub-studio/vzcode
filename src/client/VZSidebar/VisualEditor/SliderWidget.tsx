@@ -8,12 +8,13 @@ interface SliderWidgetProps {
   max: number;
   step?: number;
   currentValue: number;
+  unit?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onNumberChange: (value: number) => void;
 }
 
 export const SliderWidget: React.FC<SliderWidgetProps> = ({
-  property, label, min, max, step = 1, currentValue, onChange, onNumberChange,
+  property, label, min, max, step = 1, currentValue, unit, onChange, onNumberChange,
 }) => {
   const [draft, setDraft] = useState(String(currentValue));
   useEffect(() => setDraft(String(currentValue)), [currentValue]);
@@ -34,6 +35,7 @@ export const SliderWidget: React.FC<SliderWidgetProps> = ({
     <div className="visual-editor-slider">
       <div className="slider-header">
         <label htmlFor={property} className="slider-label">{label}</label>
+        <div className="slider-number-wrapper">
         <input
           type="number"
           className="slider-number-input"
@@ -49,6 +51,8 @@ export const SliderWidget: React.FC<SliderWidgetProps> = ({
             if (event.key === 'Escape') setDraft(String(currentValue));
           }}
         />
+        {unit && <span className="slider-number-unit">{unit}</span>}
+        </div>
       </div>
       <div className="slider-container">
         <input

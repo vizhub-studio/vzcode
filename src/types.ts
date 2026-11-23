@@ -199,34 +199,27 @@ export type SubmitOperation = (
 ) => void;
 
 // A value that has the capacity to be changed in the visual editor
-export type VisualEditorConfigEntry =
-  | {
-      type: 'slider';
-      property: string;
-      label: string;
-      min: number;
-      max: number;
-      step?: number;
-    }
-  | {
-      type: 'checkbox';
-      property: string;
-      label: string;
-    }
-  | { type: 'textInput'; property: string; label: string }
-  | {
-      type: 'dropdown';
-      property: string;
-      label: string;
-      options: string[];
-    }
-  | { type: 'color'; property: string; label: string }
-  | {
-      type: 'segmented';
-      property: string;
-      label: string;
-      options: string[];
-    };
+export type VisualEditorWidgetMetadata = {
+  property: string;
+  label: string;
+  /** Display grouping; old configs default to Appearance. */
+  section?: string;
+  /** Supporting help beneath a property control. */
+  description?: string;
+  /** Display-only suffix for numeric widgets, e.g. px or %. */
+  unit?: string;
+  /** Optional reset target; type must match the actual property. */
+  defaultValue?: string | number | boolean;
+};
+
+export type VisualEditorConfigEntry = VisualEditorWidgetMetadata & (
+  | { type: 'slider'; min: number; max: number; step?: number }
+  | { type: 'checkbox' }
+  | { type: 'textInput' }
+  | { type: 'dropdown'; options: string[] }
+  | { type: 'color' }
+  | { type: 'segmented'; options: string[] }
+);
 
 // ============================================================================
 // AI Chat Streaming Types

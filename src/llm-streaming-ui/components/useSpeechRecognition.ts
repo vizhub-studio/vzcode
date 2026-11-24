@@ -3,8 +3,6 @@ import {
   useEffect,
   useCallback,
   useRef,
-  Dispatch,
-  SetStateAction,
 } from 'react';
 
 export interface UseSpeechRecognitionResult {
@@ -23,7 +21,7 @@ export interface UseSpeechRecognitionResult {
  * user has asked for voice input.
  */
 export const useSpeechRecognition = (
-  onTranscriptChange: Dispatch<SetStateAction<string>>,
+  onTranscriptChange: (value: string) => void,
 ): UseSpeechRecognitionResult => {
   const [isSpeaking, setIsSpeaking] =
     useState<boolean>(false);

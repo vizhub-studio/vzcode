@@ -88,9 +88,13 @@ export const handleAICopilot = () => {
       res.status(200).send({ text });
     } catch (error) {
       console.error('handleAICopilot error:', error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : String(error);
       res.status(500).send({
         message: 'Internal Server Error',
-        error: error.message,
+        error: message,
       });
     }
   };

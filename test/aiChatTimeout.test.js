@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 test('AI Chat Timeout Prevention - Basic Logic', async () => {
   // Test that the conceptual change is correct:
@@ -42,20 +42,41 @@ test('AI Chat Timeout Prevention - Basic Logic', async () => {
     return { httpResponse, aiProcessing, aiStatus };
   };
 
-  // Test old behavior
-  const oldResult = await oldBehavior();
-  expect(oldResult.responseTime).toBeGreaterThan(99); // Had to wait for AI
+  vi.useFakeTimers();
+  try {
+    // The old response stays pending until AI work finishes.
+    const oldResponse = vi.fn();
+    const oldPending = oldBehavior().then(oldResponse);
+    await vi.advanceTimersByTimeAsync(99);
+    expect(oldResponse).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    await oldPending;
+    expect(oldResponse).toHaveBeenCalledWith({
+      status: 'success',
+      responseTime: 100,
+    });
 
-  // Test new behavior
-  const newResult = await newBehavior();
-  expect(newResult.httpResponse.responseTime).toBeLessThan(
-    10,
-  ); // Returns immediately
-  expect(newResult.aiStatus).toBe('generating'); // Status tracked in ShareDB
+    // The new response arrives without advancing the clock.
+    const newResult = await newBehavior();
+    expect(newResult.httpResponse).toEqual({
+      status: 'success',
+      responseTime: 0,
+    });
+    expect(newResult.aiStatus).toBe('generating');
 
-  // Verify AI processing still happens
-  const finalAiResult = await newResult.aiProcessing;
-  expect(finalAiResult.aiStatus).toBe('completed');
+    const completed = vi.fn();
+    const processing =
+      newResult.aiProcessing.then(completed);
+    await vi.advanceTimersByTimeAsync(99);
+    expect(completed).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    await processing;
+    expect(completed).toHaveBeenCalledWith({
+      aiStatus: 'completed',
+    });
+  } finally {
+    vi.useRealTimers();
+  }
 });
 
 test('ShareDB aiStatus State Management', () => {

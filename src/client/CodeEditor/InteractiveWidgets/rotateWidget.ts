@@ -57,7 +57,8 @@ export const rotationIndicator = ViewPlugin.fromClass(
 
       document.addEventListener(
         'updateRotateDrag',
-        (e: CustomEvent) => {
+        (event: Event) => {
+          const e = event as CustomEvent<number>;
           this.textPosition = this.view.posAtCoords(
             rotationOrigin,
             false,

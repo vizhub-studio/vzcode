@@ -345,7 +345,10 @@ test.describe('VZCode browser end-to-end', () => {
     await page.locator('#fileName').fill('e2e-created.js');
     await page
       .getByRole('dialog')
-      .getByRole('button', { name: 'Create File' })
+      .getByRole('button', {
+        name: 'Create File',
+        exact: true,
+      })
       .click();
     await expect(
       page
@@ -413,7 +416,10 @@ test.describe('VZCode browser end-to-end', () => {
       .fill('ui-consistency-test.js');
     const create = page
       .getByRole('dialog')
-      .getByRole('button', { name: 'Create File' });
+      .getByRole('button', {
+        name: 'Create File',
+        exact: true,
+      });
     await expect(create).toHaveCSS(
       'background-color',
       'rgb(3, 102, 214)',

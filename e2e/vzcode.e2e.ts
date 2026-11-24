@@ -163,8 +163,12 @@ test.describe('VZCode browser end-to-end', () => {
     const pageA = await contextA.newPage();
     const pageB = await contextB.newPage();
     try {
-      await pageA.goto('/');
-      await pageB.goto('/');
+      await pageA.goto(
+        '/#vzcode-token=development-only-e2e-token-please-change',
+      );
+      await pageB.goto(
+        '/#vzcode-token=development-only-e2e-token-please-change',
+      );
       await expectConnected(pageA);
       await expectConnected(pageB);
 
@@ -343,7 +347,10 @@ test.describe('VZCode browser end-to-end', () => {
     await page.locator('#new-file-icon').click();
     await page.locator('#fileName').fill('e2e-created.js');
     await page
-      .getByRole('button', { name: 'Create File' })
+      .getByRole('button', {
+        name: 'Create File',
+        exact: true,
+      })
       .click();
     await expect(
       page
@@ -411,6 +418,7 @@ test.describe('VZCode browser end-to-end', () => {
       .fill('ui-consistency-test.js');
     const create = page.getByRole('button', {
       name: 'Create File',
+      exact: true,
     });
     await expect(create).toHaveCSS(
       'background-color',
@@ -442,6 +450,7 @@ test.describe('VZCode browser end-to-end', () => {
       name: 'Search',
       exact: true,
     });
+    await files.click();
     await expect(files).toHaveAttribute(
       'aria-pressed',
       'true',

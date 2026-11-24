@@ -127,12 +127,14 @@ export const DiffView = forwardRef<
     const fileNameElements = container.querySelectorAll(
       '.d2h-file-name',
     );
+    const handleFileNameClickEvent = (event: Event) =>
+      handleFileNameClick(event as MouseEvent);
 
     // Add click event listeners and cursor pointer style
     fileNameElements.forEach((element) => {
       element.addEventListener(
         'click',
-        handleFileNameClick,
+        handleFileNameClickEvent,
       );
       (element as HTMLElement).style.cursor = 'pointer';
       (element as HTMLElement).style.textDecoration =
@@ -145,7 +147,7 @@ export const DiffView = forwardRef<
       fileNameElements.forEach((element) => {
         element.removeEventListener(
           'click',
-          handleFileNameClick,
+          handleFileNameClickEvent,
         );
       });
     };

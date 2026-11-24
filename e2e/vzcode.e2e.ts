@@ -11,6 +11,8 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 // Must match E2E_WORKSPACE in playwright.config.ts / start-backend.ts.
 const workspaceDir = path.join(here, '.workspace');
+const accessUrl =
+  '/#vzcode-token=development-only-e2e-token-please-change';
 
 const readWorkspaceFile = (name: string): string =>
   fs.readFileSync(path.join(workspaceDir, name), 'utf8');
@@ -77,9 +79,7 @@ const setRangeValue = async (
 
 test.describe('VZCode browser end-to-end', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(
-      '/#vzcode-token=development-only-e2e-token-please-change',
-    );
+    await page.goto(accessUrl);
     await expectConnected(page);
   });
   test('loads the app and lists the workspace files', async ({
@@ -163,8 +163,9 @@ test.describe('VZCode browser end-to-end', () => {
     const pageA = await contextA.newPage();
     const pageB = await contextB.newPage();
     try {
-      await pageA.goto('/');
-      await pageB.goto('/');
+      // Each isolated browser context needs its own session.
+      await pageA.goto(accessUrl);
+      await pageB.goto(accessUrl);
       await expectConnected(pageA);
       await expectConnected(pageB);
 
@@ -343,6 +344,7 @@ test.describe('VZCode browser end-to-end', () => {
     await page.locator('#new-file-icon').click();
     await page.locator('#fileName').fill('e2e-created.js');
     await page
+      .getByRole('dialog')
       .getByRole('button', { name: 'Create File' })
       .click();
     await expect(
@@ -409,9 +411,9 @@ test.describe('VZCode browser end-to-end', () => {
     await page
       .locator('#fileName')
       .fill('ui-consistency-test.js');
-    const create = page.getByRole('button', {
-      name: 'Create File',
-    });
+    const create = page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Create File' });
     await expect(create).toHaveCSS(
       'background-color',
       'rgb(3, 102, 214)',
@@ -442,6 +444,13 @@ test.describe('VZCode browser end-to-end', () => {
       name: 'Search',
       exact: true,
     });
+    // Standalone VZCode starts in AI chat without a file URL.
+    await expect(files).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+    await files.focus();
+    await files.press('Enter');
     await expect(files).toHaveAttribute(
       'aria-pressed',
       'true',

@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { getConstrainedPaneWidths } from '../src/client/SplitPaneResizeContext';
+import {
+  getConstrainedPaneWidths,
+  splitPaneReducer,
+} from '../src/client/SplitPaneResizeContext';
 
 const chatLayout = {
   sidebarWidth: 800,
@@ -71,5 +74,93 @@ describe('responsive split pane widths', () => {
     expect(
       panes.sidebarWidth + panes.codeEditorWidth,
     ).toBeLessThanOrEqual(320);
+  });
+});
+
+const filesLayout = {
+  ...chatLayout,
+  sidebarWidth: 300,
+  isAIChatOpen: false,
+};
+
+describe('externally managed preview', () => {
+  it.each([0, 150, 320, 420, 700, 912, 1200, 2560])(
+    'fills the entire editor container at %ipx',
+    (containerWidth) => {
+      const panes = getConstrainedPaneWidths(
+        { ...filesLayout, containerWidth },
+        'external',
+      );
+      expect(panes.sidebarWidth).toBeGreaterThanOrEqual(0);
+      expect(panes.codeEditorWidth).toBeGreaterThanOrEqual(0);
+      expect(
+        panes.sidebarWidth + panes.codeEditorWidth,
+      ).toBeCloseTo(containerWidth);
+      expect(panes.codeEditorWidth).toBeGreaterThanOrEqual(
+        Math.min(200, containerWidth),
+      );
+    },
+  );
+
+  it('expands beyond the preferred code width', () => {
+    const panes = getConstrainedPaneWidths(
+      { ...filesLayout, containerWidth: 1600 },
+      'external',
+    );
+    expect(panes).toEqual({
+      sidebarWidth: 300,
+      codeEditorWidth: 1300,
+    });
+  });
+
+  it('constrains chat without reserving a second preview', () => {
+    const narrow = getConstrainedPaneWidths(
+      { ...chatLayout, containerWidth: 650 },
+      'external',
+    );
+    expect(narrow).toEqual({
+      sidebarWidth: 450,
+      codeEditorWidth: 200,
+    });
+    expect(
+      getConstrainedPaneWidths(chatLayout, 'external'),
+    ).toEqual({ sidebarWidth: 800, codeEditorWidth: 900 });
+  });
+
+  it('reallocates width when the left divider moves', () => {
+    const state = { ...filesLayout, containerWidth: 900 };
+    const moved = splitPaneReducer(
+      state,
+      { type: 'move', side: 'left', movementX: 100 },
+      'external',
+    );
+    expect(
+      getConstrainedPaneWidths(moved, 'external'),
+    ).toEqual({ sidebarWidth: 400, codeEditorWidth: 500 });
+    expect(
+      splitPaneReducer(
+        moved,
+        { type: 'move', side: 'right', movementX: 100 },
+        'external',
+      ),
+    ).toBe(moved);
+    const shrunk = splitPaneReducer(
+      moved,
+      { type: 'setContainerWidth', width: 500 },
+      'external',
+    );
+    expect(
+      getConstrainedPaneWidths(shrunk, 'external'),
+    ).toEqual({ sidebarWidth: 300, codeEditorWidth: 200 });
+    expect(
+      getConstrainedPaneWidths(
+        splitPaneReducer(
+          shrunk,
+          { type: 'setContainerWidth', width: 900 },
+          'external',
+        ),
+        'external',
+      ),
+    ).toEqual({ sidebarWidth: 400, codeEditorWidth: 500 });
   });
 });

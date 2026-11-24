@@ -35,6 +35,7 @@ export const VZResizer = ({
   const {
     sidebarWidth,
     codeEditorWidth,
+    previewMode,
     moveSplitPane,
     isDraggingRight,
     isDraggingLeft,
@@ -47,7 +48,8 @@ export const VZResizer = ({
   const { activePane } = useContext(VZCodeContext);
 
   const shouldRenderResizer =
-    side === 'left' || activePane.activeFileId;
+    side === 'left' ||
+    (previewMode === 'internal' && activePane.activeFileId);
 
   const previousClientX = useRef<number>(0);
   const resizerRef = useRef<HTMLDivElement>(null);

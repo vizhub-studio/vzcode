@@ -23,6 +23,7 @@ export {
   SplitPaneResizeProvider,
   SplitPaneResizeContext,
 } from './SplitPaneResizeContext';
+export type { PreviewMode } from './SplitPaneResizeContext';
 export { useSubmitOperation } from './useSubmitOperation';
 export { shouldTriggerRun } from './shouldTriggerRun';
 export { mergeFileChanges } from 'editcodewithai';

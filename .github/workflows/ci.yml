@@ -42,5 +42,65 @@ jobs:
       - name: Compile CLI for tests
         run: npm run build:server
 
-      - name: Run unit and CLI tests (exclude server E2E)
+      - name: Run unit and CLI tests
         run: npm test -- --exclude test/serverE2E.test.ts
+
+      - name: Run server end-to-end tests
+        run: npm run test:e2e
+
+  package:
+    name: Release build and packed CLI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build release
+        run: npm run build-release
+
+      - name: Smoke test packed npm package
+        run: npm run test:package
+
+  browser:
+    name: Browser end-to-end tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium and system dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: npm run e2e
+
+      - name: Upload browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

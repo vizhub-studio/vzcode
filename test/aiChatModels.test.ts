@@ -3,6 +3,7 @@ import {
   DEFAULT_AI_CHAT_MODEL,
   LEAF_AI_CHAT_MODELS,
   resolveAIChatModel,
+  resolveAIChatRequestModel,
 } from '../src/aiChatModels';
 import { getStandaloneAIChatModelConfig } from '../src/server/aiChatModelConfig';
 
@@ -48,5 +49,7 @@ describe('AI chat model selection', () => {
       resolveAIChatModel({ defaultModel: 'fixed' }, 'openai/gpt-oss-120b'),
     ).toBe('fixed');
     expect(resolveAIChatModel(undefined, 'old')).toBeUndefined();
+    expect(resolveAIChatRequestModel({ defaultModel: 'fixed' }, 'old')).toBeUndefined();
+    expect(resolveAIChatRequestModel(config, 'openai/gpt-oss-120b')).toBe('openai/gpt-oss-120b');
   });
 });

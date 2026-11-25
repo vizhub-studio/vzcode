@@ -195,7 +195,16 @@ try {
     '--pack-destination',
     tmp,
   ]);
-  const packed = JSON.parse(output)[0];
+  const packResult = JSON.parse(output);
+  const packed = Array.isArray(packResult)
+    ? packResult[0]
+    : packResult.filename
+      ? packResult
+      : Object.values(packResult)[0];
+  assert.ok(
+    packed?.filename,
+    'npm pack returned no tarball',
+  );
   const tarball = path.join(tmp, packed.filename);
   await run(npm, [
     'install',

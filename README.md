@@ -202,7 +202,9 @@ remembers the selected model locally. Claude Haiku 5.5 is the default unless
 `VZCODE_EDIT_WITH_AI_MODEL_NAME` is set. Custom OpenAI-compatible endpoints
 retain their configured model without a picker. Hosts embedding VZCode can
 pass `aiChatModelConfig={{ defaultModel: 'your-model-id' }}` to fix the model
-and hide the selector, or include a `models` array of `{ id, label }` options.
+and hide the selector; the host's backend remains responsible for enforcing
+that model. Only a selectable `models` array of `{ id, label }` options
+adds a client model field to the chat request.
 Prompts and project context are sent to the configured provider.
 
 Set these variables in the client build environment to enable optional voice

@@ -127,7 +127,7 @@ export const VZMiddle = ({
   // host hasn't taken over the sidebar button with a custom event.
   const enableBuiltInAIChat =
     enableAIChat && !aiChatButtonEvent;
-  const { codeEditorWidth } = useContext(
+  const { codeEditorWidth, previewMode } = useContext(
     SplitPaneResizeContext,
   );
 
@@ -150,7 +150,11 @@ export const VZMiddle = ({
   return shouldShowEditorPanes ? (
     <div
       className="middle"
-      style={{ width: codeEditorWidth + 'px' }}
+      style={
+        previewMode === 'external'
+          ? { flex: '1 1 0', minWidth: 0 }
+          : { width: codeEditorWidth + 'px' }
+      }
     >
       <PaneView
         pane={pane}

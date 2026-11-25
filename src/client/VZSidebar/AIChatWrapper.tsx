@@ -71,11 +71,13 @@ export const AIChatWrapper = () => {
               setSelectedAIChatModel(event.target.value)
             }
           >
-            {aiChatModelConfig.models.map(({ id, label }) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
+            {aiChatModelConfig.models.map(
+              ({ id, label }) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ),
+            )}
           </select>
         ) : undefined
       }

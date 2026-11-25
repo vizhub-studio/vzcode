@@ -45,7 +45,9 @@ export function useAIChatSession({
   const [aiChatMessage, setAIChatMessage] = useState('');
   const [storedModel, setStoredModel] = useState(() => {
     try {
-      return localStorage.getItem('vzcode.aiChatModel') ?? '';
+      return (
+        localStorage.getItem('vzcode.aiChatModel') ?? ''
+      );
     } catch {
       return '';
     }
@@ -54,10 +56,18 @@ export function useAIChatSession({
     aiChatModelConfig,
     storedModel,
   );
-  const requestModel = resolveAIChatRequestModel(aiChatModelConfig, storedModel);
+  const requestModel = resolveAIChatRequestModel(
+    aiChatModelConfig,
+    storedModel,
+  );
   const setSelectedAIChatModel = useCallback(
     (model: string) => {
-      if (!aiChatModelConfig?.models?.some(({ id }) => id === model)) return;
+      if (
+        !aiChatModelConfig?.models?.some(
+          ({ id }) => id === model,
+        )
+      )
+        return;
       setStoredModel(model);
       try {
         localStorage.setItem('vzcode.aiChatModel', model);
@@ -253,7 +263,9 @@ export function useAIChatSession({
             chatId: chatIdForRequest,
             mode: aiChatMode,
             ...options,
-            ...(requestModel ? { model: requestModel } : {}),
+            ...(requestModel
+              ? { model: requestModel }
+              : {}),
           }),
         });
 

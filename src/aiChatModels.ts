@@ -9,16 +9,24 @@ export interface AIChatModelConfig {
   models?: readonly AIChatModelOption[];
 }
 
-export const DEFAULT_AI_CHAT_MODEL = 'anthropic/claude-haiku-5.5';
+export const DEFAULT_AI_CHAT_MODEL =
+  'anthropic/claude-haiku-5.5';
 
 /** Snapshot of VizHub's Leaf catalog; intentionally no paid-tier models. */
-export const LEAF_AI_CHAT_MODELS: readonly AIChatModelOption[] = [
-  { id: 'openai/gpt-oss-120b', label: 'GPT-OSS 120B' },
-  { id: 'deepseek/deepseek-v4.1-flash', label: 'DeepSeek V4.1 Flash' },
-  { id: 'openai/gpt-6-luna', label: 'GPT-6 Luna' },
-  { id: DEFAULT_AI_CHAT_MODEL, label: 'Claude Haiku 5.5' },
-  { id: 'z-ai/glm-5.3-flash', label: 'GLM 5.3 Flash' },
-];
+export const LEAF_AI_CHAT_MODELS: readonly AIChatModelOption[] =
+  [
+    { id: 'openai/gpt-oss-120b', label: 'GPT-OSS 120B' },
+    {
+      id: 'deepseek/deepseek-v4.1-flash',
+      label: 'DeepSeek V4.1 Flash',
+    },
+    { id: 'openai/gpt-6-luna', label: 'GPT-6 Luna' },
+    {
+      id: DEFAULT_AI_CHAT_MODEL,
+      label: 'Claude Haiku 5.5',
+    },
+    { id: 'z-ai/glm-5.3-flash', label: 'GLM 5.3 Flash' },
+  ];
 
 export function resolveAIChatModel(
   config: AIChatModelConfig | undefined,

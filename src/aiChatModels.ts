@@ -30,3 +30,13 @@ export function resolveAIChatModel(
     ? selected
     : config.defaultModel;
 }
+
+/** Only opt-in selectable catalogs send a client model to the backend. */
+export function resolveAIChatRequestModel(
+  config: AIChatModelConfig | undefined,
+  selected: unknown,
+): string | undefined {
+  return config?.models?.length
+    ? resolveAIChatModel(config, selected)
+    : undefined;
+}

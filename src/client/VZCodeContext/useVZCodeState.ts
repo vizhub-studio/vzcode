@@ -49,6 +49,7 @@ export const useVZCodeState = ({
   setLiveKitConnection,
   aiChatEndpoint,
   aiChatOptions,
+  aiChatModelConfig,
   autoForkAndRetryAI,
   clearStoredAIPrompt,
   getStoredAIPrompt,
@@ -272,6 +273,8 @@ export const useVZCodeState = ({
     useState(false);
 
   const {
+    selectedAIChatModel,
+    setSelectedAIChatModel,
     aiChatMessage,
     setAIChatMessage,
     currentChatId,
@@ -289,6 +292,7 @@ export const useVZCodeState = ({
     aiChatMode,
     aiChatEndpoint,
     aiChatOptions,
+    aiChatModelConfig,
     autoForkAndRetryAI,
     handleChatError,
     onAIChatMessageSubmitted,
@@ -429,6 +433,7 @@ export const useVZCodeState = ({
     setAIChatMode,
     aiChatEndpoint,
     aiChatOptions,
+    aiChatModelConfig,
 
     isSettingsOpen,
     setIsSettingsOpen,
@@ -490,6 +495,8 @@ export const useVZCodeState = ({
     voiceChatModalOpen,
     setVoiceChatModalOpen,
 
+    selectedAIChatModel,
+    setSelectedAIChatModel,
     aiChatMessage,
     setAIChatMessage,
     currentChatId,

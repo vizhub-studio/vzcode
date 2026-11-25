@@ -680,9 +680,13 @@ export const createVZCodeServer = (
   );
 
   // The local runner advertises its model catalog only to authenticated clients.
-  app.get('/ai-chat-models', access.requireAuth, (_req, res) => {
-    res.json(getStandaloneAIChatModelConfig() ?? null);
-  });
+  app.get(
+    '/ai-chat-models',
+    access.requireAuth,
+    (_req, res) => {
+      res.json(getStandaloneAIChatModelConfig() ?? null);
+    },
+  );
 
   // Only the standalone route accepts a client-selected model. Hosted
   // integrations continue passing a trusted server-side model to the handler.
@@ -693,9 +697,13 @@ export const createVZCodeServer = (
     (req, res) => {
       const config = getStandaloneAIChatModelConfig();
       const requested = req.body?.model;
-      if (requested !== undefined &&
-          !config?.models?.some(({ id }) => id === requested)) {
-        res.status(400).json({ error: 'Unsupported AI chat model' });
+      if (
+        requested !== undefined &&
+        !config?.models?.some(({ id }) => id === requested)
+      ) {
+        res
+          .status(400)
+          .json({ error: 'Unsupported AI chat model' });
         return;
       }
       return handleAIChatMessage({

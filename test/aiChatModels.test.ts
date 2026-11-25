@@ -25,12 +25,18 @@ describe('AI chat model selection', () => {
         VZCODE_EDIT_WITH_AI_API_KEY: 'secret',
         VZCODE_EDIT_WITH_AI_MODEL_NAME: 'custom/model',
       })?.models,
-    ).toContainEqual({ id: 'custom/model', label: 'custom/model' });
-    expect(getStandaloneAIChatModelConfig({})).toBeUndefined();
+    ).toContainEqual({
+      id: 'custom/model',
+      label: 'custom/model',
+    });
+    expect(
+      getStandaloneAIChatModelConfig({}),
+    ).toBeUndefined();
     expect(
       getStandaloneAIChatModelConfig({
         VZCODE_EDIT_WITH_AI_API_KEY: 'secret',
-        VZCODE_EDIT_WITH_AI_BASE_URL: 'http://localhost:8080/v1',
+        VZCODE_EDIT_WITH_AI_BASE_URL:
+          'http://localhost:8080/v1',
       }),
     ).toBeUndefined();
   });
@@ -39,17 +45,32 @@ describe('AI chat model selection', () => {
       defaultModel: DEFAULT_AI_CHAT_MODEL,
       models: LEAF_AI_CHAT_MODELS,
     };
-    expect(resolveAIChatModel(config, 'openai/gpt-oss-120b')).toBe(
-      'openai/gpt-oss-120b',
-    );
-    expect(resolveAIChatModel(config, 'removed/model')).toBe(
-      DEFAULT_AI_CHAT_MODEL,
-    );
     expect(
-      resolveAIChatModel({ defaultModel: 'fixed' }, 'openai/gpt-oss-120b'),
+      resolveAIChatModel(config, 'openai/gpt-oss-120b'),
+    ).toBe('openai/gpt-oss-120b');
+    expect(
+      resolveAIChatModel(config, 'removed/model'),
+    ).toBe(DEFAULT_AI_CHAT_MODEL);
+    expect(
+      resolveAIChatModel(
+        { defaultModel: 'fixed' },
+        'openai/gpt-oss-120b',
+      ),
     ).toBe('fixed');
-    expect(resolveAIChatModel(undefined, 'old')).toBeUndefined();
-    expect(resolveAIChatRequestModel({ defaultModel: 'fixed' }, 'old')).toBeUndefined();
-    expect(resolveAIChatRequestModel(config, 'openai/gpt-oss-120b')).toBe('openai/gpt-oss-120b');
+    expect(
+      resolveAIChatModel(undefined, 'old'),
+    ).toBeUndefined();
+    expect(
+      resolveAIChatRequestModel(
+        { defaultModel: 'fixed' },
+        'old',
+      ),
+    ).toBeUndefined();
+    expect(
+      resolveAIChatRequestModel(
+        config,
+        'openai/gpt-oss-120b',
+      ),
+    ).toBe('openai/gpt-oss-120b');
   });
 });

@@ -66,7 +66,9 @@ function App() {
   useEffect(() => {
     const controller = new AbortController();
     fetch('/ai-chat-models', { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : null)
+      .then((response) =>
+        response.ok ? response.json() : null,
+      )
       .then((config) => {
         if (!controller.signal.aborted) {
           setAIChatModelConfig(config ?? undefined);

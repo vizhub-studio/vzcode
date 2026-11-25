@@ -43,6 +43,7 @@ const ChatList = ({
 };
 
 export const AIChat = ({
+  modelSelector,
   aiChatFocused,
   content,
   aiChatMode,
@@ -368,6 +369,7 @@ export const AIChat = ({
         </div>
       </div>
       <div className="ai-chat-input-fixed">
+        {modelSelector}
         <ChatInput
           aiChatMessage={aiChatMessage}
           setAIChatMessage={setAIChatMessage}

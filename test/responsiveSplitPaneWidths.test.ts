@@ -92,7 +92,9 @@ describe('externally managed preview', () => {
         'external',
       );
       expect(panes.sidebarWidth).toBeGreaterThanOrEqual(0);
-      expect(panes.codeEditorWidth).toBeGreaterThanOrEqual(0);
+      expect(panes.codeEditorWidth).toBeGreaterThanOrEqual(
+        0,
+      );
       expect(
         panes.sidebarWidth + panes.codeEditorWidth,
       ).toBeCloseTo(containerWidth);

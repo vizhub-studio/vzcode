@@ -20,6 +20,7 @@ export default defineConfig([
       'tsconfig.json',
       'tsconfig.server.json',
       'test/sampleDirectories/**',
+      'test-results/**',
     ],
   },
   // JavaScript files

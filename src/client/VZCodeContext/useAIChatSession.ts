@@ -5,7 +5,10 @@ import {
   useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { resolveAIChatModel } from '../../aiChatModels';
+import {
+  resolveAIChatModel,
+  resolveAIChatRequestModel,
+} from '../../aiChatModels';
 import type { VZCodeProviderProps } from './types';
 import {
   shouldReuseChatId,
@@ -51,6 +54,7 @@ export function useAIChatSession({
     aiChatModelConfig,
     storedModel,
   );
+  const requestModel = resolveAIChatRequestModel(aiChatModelConfig, storedModel);
   const setSelectedAIChatModel = useCallback(
     (model: string) => {
       if (!aiChatModelConfig?.models?.some(({ id }) => id === model)) return;
@@ -249,7 +253,7 @@ export function useAIChatSession({
             chatId: chatIdForRequest,
             mode: aiChatMode,
             ...options,
-            ...(selectedAIChatModel ? { model: selectedAIChatModel } : {}),
+            ...(requestModel ? { model: requestModel } : {}),
           }),
         });
 
@@ -327,7 +331,7 @@ export function useAIChatSession({
       aiChatMessage,
       aiChatEndpoint,
       aiChatOptions,
-      selectedAIChatModel,
+      requestModel,
       activeChatId,
       aiChatMode,
       autoForkAndRetryAI,

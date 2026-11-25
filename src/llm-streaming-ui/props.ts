@@ -54,6 +54,8 @@ export type ChatVoiceInputRenderer = (props: {
  * bind these props to a host application's state.
  */
 export interface AIChatProps {
+  /** Optional host-controlled model picker shown in the composer. */
+  modelSelector?: ReactNode;
   /** ShareDB content, used to read chats and resolve file links. */
   content: VizContent | null;
   /** Whether the chat input should steal focus. */

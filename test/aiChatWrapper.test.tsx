@@ -41,6 +41,26 @@ const render = (value: Record<string, unknown>) =>
   );
 
 describe('AIChatWrapper wiring', () => {
+  it('renders model choices only for an opted-in catalog', () => {
+    const model = { id: 'model-a', label: 'Model A' };
+    expect(
+      render(makeContext({
+        aiChatModelConfig: {
+          defaultModel: model.id,
+          models: [model, { id: 'model-b', label: 'Model B' }],
+        },
+        selectedAIChatModel: model.id,
+        setSelectedAIChatModel: noop,
+      })),
+    ).toContain('aria-label="AI chat model"');
+    expect(
+      render(makeContext({
+        aiChatModelConfig: { defaultModel: model.id },
+        selectedAIChatModel: model.id,
+      })),
+    ).not.toContain('aria-label="AI chat model"');
+  });
+
   it('renders the empty chat state from context values', () => {
     const html = render(makeContext());
     expect(html).toContain('How can I help you?');

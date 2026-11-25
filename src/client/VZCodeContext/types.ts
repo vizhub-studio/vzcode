@@ -15,6 +15,7 @@ import {
 } from '../../types';
 import { VizFiles, VizContent } from '@vizhub/viz-types';
 import { ThemeLabel } from '../themes';
+import type { AIChatModelConfig } from '../../aiChatModels';
 import type { ChatVoiceInputRenderer } from '../../llm-streaming-ui/props';
 import { EditorCache } from '../useEditorCache';
 
@@ -111,6 +112,7 @@ export type VZCodeContextValue = {
   setAIChatMode: (mode: 'ask' | 'edit') => void;
   aiChatEndpoint?: string;
   aiChatOptions?: { [key: string]: any };
+  aiChatModelConfig?: AIChatModelConfig;
   setSearchResults: (files: ShareDBDoc<VizContent>) => void;
   setSearchFileVisibility: (
     files: ShareDBDoc<VizContent>,
@@ -175,6 +177,8 @@ export type VZCodeContextValue = {
   setLiveKitConnection: (state: boolean) => void;
   voiceChatModalOpen: boolean;
   setVoiceChatModalOpen: (state: boolean) => void;
+  selectedAIChatModel?: string;
+  setSelectedAIChatModel?: (model: string) => void;
   aiChatMessage: string;
   setAIChatMessage: (message: string) => void;
   currentChatId: string;
@@ -254,6 +258,7 @@ export interface VZCodeProviderProps {
   setLiveKitConnection?: (state: boolean) => void;
   aiChatEndpoint?: string;
   aiChatOptions?: { [key: string]: any };
+  aiChatModelConfig?: AIChatModelConfig;
   autoForkAndRetryAI?: (
     prompt: string,
     modelName: string,

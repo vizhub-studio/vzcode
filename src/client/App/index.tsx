@@ -1,4 +1,5 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import type { AIChatModelConfig } from '../../aiChatModels';
 import ShareDBClient from 'sharedb-client-browser/dist/sharedb-client-umd.cjs';
 import { json1Presence } from '../../ot';
 import { Username } from '../../types';
@@ -60,6 +61,23 @@ const PersistUsername = () => {
 };
 
 function App() {
+  const [aiChatModelConfig, setAIChatModelConfig] =
+    useState<AIChatModelConfig>();
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/ai-chat-models', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((config) => {
+        if (!controller.signal.aborted) {
+          setAIChatModelConfig(config ?? undefined);
+        }
+      })
+      .catch(() => {
+        // Older or unconfigured runners have no model selector.
+      });
+    return () => controller.abort();
+  }, []);
+
   const {
     shareDBDoc,
     content,
@@ -152,6 +170,7 @@ function App() {
         setLiveKitConnection={setLiveKitConnection}
         aiChatEndpoint="/ai-chat-message"
         aiChatOptions={{}}
+        aiChatModelConfig={aiChatModelConfig}
       >
         {enableLiveKit ? (
           <LiveKitRoom

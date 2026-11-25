@@ -18,6 +18,9 @@ import {
 export const AIChatWrapper = () => {
   const {
     content,
+    aiChatModelConfig,
+    selectedAIChatModel,
+    setSelectedAIChatModel,
     aiChatFocused,
     aiChatMode,
     aiChatMessage,
@@ -55,6 +58,27 @@ export const AIChatWrapper = () => {
 
   return (
     <AIChat
+      modelSelector={
+        aiChatModelConfig?.models &&
+        aiChatModelConfig.models.length > 1 &&
+        setSelectedAIChatModel ? (
+          <select
+            aria-label="AI chat model"
+            className="vz-chat-button vz-chat-button--outline-secondary"
+            style={{ maxWidth: '100%', margin: '4px 8px' }}
+            value={selectedAIChatModel}
+            onChange={(event) =>
+              setSelectedAIChatModel(event.target.value)
+            }
+          >
+            {aiChatModelConfig.models.map(({ id, label }) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        ) : undefined
+      }
       content={content}
       aiChatFocused={aiChatFocused}
       aiChatMode={aiChatMode}

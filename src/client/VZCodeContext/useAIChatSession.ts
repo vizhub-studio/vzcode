@@ -5,6 +5,10 @@ import {
   useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  resolveAIChatModel,
+  resolveAIChatRequestModel,
+} from '../../aiChatModels';
 import type { VZCodeProviderProps } from './types';
 import {
   shouldReuseChatId,
@@ -17,6 +21,7 @@ type AIChatSessionOptions = Pick<
   | 'submitOperation'
   | 'aiChatEndpoint'
   | 'aiChatOptions'
+  | 'aiChatModelConfig'
   | 'autoForkAndRetryAI'
   | 'handleChatError'
   | 'onAIChatMessageSubmitted'
@@ -32,11 +37,36 @@ export function useAIChatSession({
   aiChatMode,
   aiChatEndpoint,
   aiChatOptions,
+  aiChatModelConfig,
   autoForkAndRetryAI,
   handleChatError,
   onAIChatMessageSubmitted,
 }: AIChatSessionOptions) {
   const [aiChatMessage, setAIChatMessage] = useState('');
+  const [storedModel, setStoredModel] = useState(() => {
+    try {
+      return localStorage.getItem('vzcode.aiChatModel') ?? '';
+    } catch {
+      return '';
+    }
+  });
+  const selectedAIChatModel = resolveAIChatModel(
+    aiChatModelConfig,
+    storedModel,
+  );
+  const requestModel = resolveAIChatRequestModel(aiChatModelConfig, storedModel);
+  const setSelectedAIChatModel = useCallback(
+    (model: string) => {
+      if (!aiChatModelConfig?.models?.some(({ id }) => id === model)) return;
+      setStoredModel(model);
+      try {
+        localStorage.setItem('vzcode.aiChatModel', model);
+      } catch {
+        // Selection still works for this session.
+      }
+    },
+    [aiChatModelConfig],
+  );
 
   const DEBUG = false;
 
@@ -223,6 +253,7 @@ export function useAIChatSession({
             chatId: chatIdForRequest,
             mode: aiChatMode,
             ...options,
+            ...(requestModel ? { model: requestModel } : {}),
           }),
         });
 
@@ -300,6 +331,7 @@ export function useAIChatSession({
       aiChatMessage,
       aiChatEndpoint,
       aiChatOptions,
+      requestModel,
       activeChatId,
       aiChatMode,
       autoForkAndRetryAI,
@@ -310,6 +342,8 @@ export function useAIChatSession({
   );
 
   return {
+    selectedAIChatModel,
+    setSelectedAIChatModel,
     aiChatMessage,
     setAIChatMessage,
     currentChatId,

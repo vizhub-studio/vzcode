@@ -14,6 +14,7 @@ import { computeInitialDocument } from './computeInitialDocument.js';
 import { handleAIAssist } from './handleAIAssist.js';
 import { handleAICopilot } from './handleAICopilot.js';
 import { handleAIChatMessage } from './handleAIChatMessage.js';
+import { getStandaloneAIChatModelConfig } from './aiChatModelConfig.js';
 import { isDirectory } from './isDirectory.js';
 import { createToken } from './livekit.js';
 import './setupEnv.js';
@@ -678,15 +679,31 @@ export const createVZCodeServer = (
     handleAICopilot(),
   );
 
-  // Handle AI Chat Message requests.
+  // The local runner advertises its model catalog only to authenticated clients.
+  app.get('/ai-chat-models', access.requireAuth, (_req, res) => {
+    res.json(getStandaloneAIChatModelConfig() ?? null);
+  });
+
+  // Only the standalone route accepts a client-selected model. Hosted
+  // integrations continue passing a trusted server-side model to the handler.
   app.post(
     '/ai-chat-message',
     access.requireAuth,
     bodyParser.json(),
-    handleAIChatMessage({
-      shareDBDoc,
-      onCreditDeduction: undefined,
-    }),
+    (req, res) => {
+      const config = getStandaloneAIChatModelConfig();
+      const requested = req.body?.model;
+      if (requested !== undefined &&
+          !config?.models?.some(({ id }) => id === requested)) {
+        res.status(400).json({ error: 'Unsupported AI chat model' });
+        return;
+      }
+      return handleAIChatMessage({
+        shareDBDoc,
+        model: requested ?? config?.defaultModel,
+        onCreditDeduction: undefined,
+      })(req, res);
+    },
   );
 
   // Livekit Token Generator

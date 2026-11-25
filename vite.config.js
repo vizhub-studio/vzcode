@@ -25,6 +25,9 @@ export default defineConfig({
       '/livekit-token': {
         target: 'http://localhost:3030',
       },
+      '/ai-chat-models': {
+        target: 'http://localhost:3030',
+      },
       '/ai-chat-message': {
         target: 'http://localhost:3030',
       },
